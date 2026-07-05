@@ -11,16 +11,23 @@ export class VisitCard {
    * @returns {string} HTML string
    */
   static create(visit, options = {}) {
-    const { isSelected = false } = options
+    const {
+      isSelected = false,
+      pendingFromPoints = false,
+      pendingGroupKey = "all",
+      trackId = null,
+      pointCount = null,
+      timezone = null,
+    } = options
     const isSuggested = visit.status === "suggested"
     const isConfirmed = visit.status === "confirmed"
     const isDeclined = visit.status === "declined"
 
-    // Format date and time
+    // Format date and time in the user's configured timezone
     const startDate = new Date(visit.started_at)
     const endDate = new Date(visit.ended_at)
-    const dateStr = formatISODate(startDate)
-    const timeRange = `${formatISOTime(startDate)} - ${formatISOTime(endDate)}`
+    const dateStr = formatISODate(startDate, timezone)
+    const timeRange = `${formatISOTime(startDate, timezone)} - ${formatISOTime(endDate, timezone)}`
 
     // Format duration (duration is in minutes from the backend)
     const hours = Math.floor(visit.duration / 60)
@@ -28,25 +35,35 @@ export class VisitCard {
     const durationStr = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
 
     // Border style based on status
-    const borderClass = isSuggested ? "border-dashed" : ""
+    const borderClass =
+      isSuggested || pendingFromPoints ? "border-dashed" : ""
     const bgClass = isDeclined ? "bg-base-200 opacity-60" : "bg-base-100"
     const selectedClass = isSelected ? "ring-2 ring-primary" : ""
+    const cardAttrs = pendingFromPoints
+      ? 'data-visit-pending-from-points="true"'
+      : `data-visit-id="${visit.id}" data-visit-status="${visit.status || ""}"`
+    const hoverHandlers = pendingFromPoints
+      ? ""
+      : `onmouseenter="this.querySelector('.visit-checkbox').classList.remove('hidden')"
+           onmouseleave="if(!this.querySelector('.visit-checkbox input').checked) this.querySelector('.visit-checkbox').classList.add('hidden')"`
 
     return `
       <div class="visit-card card ${bgClass} ${borderClass} ${selectedClass} border-2 border-base-content/20 mb-2 hover:shadow-md transition-all relative"
-           data-visit-id="${visit.id}"
-           data-visit-status="${visit.status}"
-           onmouseenter="this.querySelector('.visit-checkbox').classList.remove('hidden')"
-           onmouseleave="if(!this.querySelector('.visit-checkbox input').checked) this.querySelector('.visit-checkbox').classList.add('hidden')">
+           ${cardAttrs}
+           ${hoverHandlers}>
 
-        <!-- Checkbox (hidden by default, shown on hover) -->
+        ${
+          pendingFromPoints
+            ? ""
+            : `<!-- Checkbox (hidden by default, shown on hover) -->
         <div class="visit-checkbox absolute top-3 right-3 z-10 ${isSelected ? "" : "hidden"}">
           <input type="checkbox"
                  class="checkbox checkbox-primary checkbox-sm"
                  ${isSelected ? "checked" : ""}
                  data-visit-select="${visit.id}"
                  onclick="event.stopPropagation()">
-        </div>
+        </div>`
+        }
 
         <div class="card-body p-3">
           <!-- Visit Name -->
@@ -74,7 +91,48 @@ export class VisitCard {
               </svg>
               <span class="truncate">${durationStr}</span>
             </div>
+            ${
+              pendingFromPoints && pointCount != null
+                ? `
+            <div class="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span class="truncate">${pointCount} point${pointCount === 1 ? "" : "s"}</span>
+            </div>
+          `
+                : ""
+            }
+            ${
+              pendingFromPoints && trackId != null
+                ? `
+            <div class="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V6.618a2 2 0 011.553-1.894L9 2l5.447 2.724A2 2 0 0116 6.618v8.764a2 2 0 01-1.553 1.894L9 20z" />
+              </svg>
+              <span class="truncate">Track #${trackId}</span>
+            </div>
+          `
+                : ""
+            }
           </div>
+
+          <!-- Action buttons for pending visit from selected points -->
+          ${
+            pendingFromPoints
+              ? `
+            <div class="card-actions justify-end mt-3 gap-1.5">
+              <button type="button" class="btn btn-xs btn-primary" data-visit-create-from-points="${pendingGroupKey}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Create
+              </button>
+            </div>
+          `
+              : ""
+          }
 
           <!-- Action buttons for suggested visits -->
           ${
@@ -113,6 +171,44 @@ export class VisitCard {
         </div>
       </div>
     `
+  }
+
+  /**
+   * Draft visit card for creating a visit from selected points in area selection.
+   * Shows date/time/duration like existing visits, with a Create action instead of confirm/delete.
+   * @param {{ start: Date, end: Date }} timeRange
+   * @returns {string} HTML string
+   */
+  static createPendingFromPoints(
+    timeRange,
+    { groupKey = "all", trackId = null, pointCount = null, timezone = null } = {},
+  ) {
+    if (!timeRange?.start || !timeRange?.end) return ""
+
+    let { start, end } = timeRange
+    if (end <= start) {
+      end = new Date(start.getTime() + 60 * 1000)
+    }
+
+    const durationMinutes = Math.max(
+      1,
+      Math.round((end.getTime() - start.getTime()) / 60000),
+    )
+
+    return VisitCard.create(
+      {
+        started_at: start.toISOString(),
+        ended_at: end.toISOString(),
+        duration: durationMinutes,
+      },
+      {
+        pendingFromPoints: true,
+        pendingGroupKey: groupKey,
+        trackId,
+        pointCount,
+        timezone,
+      },
+    )
   }
 
   /**

@@ -116,9 +116,7 @@ export class AreaSelectionManager {
       }
 
       // Display visits in side panel and on map
-      if (visits.length > 0) {
-        this.displaySelectedVisits(visits)
-      }
+      this.renderVisitsInArea(visits)
 
       // Update UI - show action buttons
       if (this.controller.hasSelectionActionsTarget) {
@@ -167,16 +165,36 @@ export class AreaSelectionManager {
   }
 
   /**
-   * Display selected visits in side panel
+   * Render visits in area panel, including a draft card when points are selected
    */
-  displaySelectedVisits(visits) {
+  renderVisitsInArea(visits = []) {
     if (!this.controller.hasSelectedVisitsContainerTarget) return
 
     this.selectedVisits = visits
     this.selectedVisitIds = new Set()
 
+    const trackGroups = this.selectedPointsLayer?.getTrackGroups() ?? []
+    const hasSelectedPoints = trackGroups.length > 0
+    const timezone = this.controller.timezoneValue || "UTC"
+
+    if (!hasSelectedPoints && visits.length === 0) {
+      this.controller.selectedVisitsContainerTarget.classList.add("hidden")
+      this.controller.selectedVisitsContainerTarget.innerHTML = ""
+      return
+    }
+
+    const pendingCardHTML = trackGroups
+      .map((group) =>
+        VisitCard.createPendingFromPoints(group.timeRange, {
+          groupKey: group.groupKey,
+          trackId: group.trackId,
+          pointCount: group.pointCount,
+          timezone,
+        }),
+      )
+      .join("")
     const cardsHTML = visits
-      .map((visit) => VisitCard.create(visit, { isSelected: false }))
+      .map((visit) => VisitCard.create(visit, { isSelected: false, timezone }))
       .join("")
 
     this.controller.selectedVisitsContainerTarget.innerHTML = `
@@ -188,16 +206,26 @@ export class AreaSelectionManager {
           </svg>
           <h3 class="text-sm font-bold">Visits in Area (${visits.length})</h3>
         </div>
+        ${pendingCardHTML}
         ${cardsHTML}
       </div>
     `
 
     this.controller.selectedVisitsContainerTarget.classList.remove("hidden")
     this.attachVisitCardListeners()
+    this.attachPendingVisitListeners()
 
     requestAnimationFrame(() => {
       this.updateBulkActions()
     })
+  }
+
+  /**
+   * Display selected visits in side panel
+   * @deprecated Use renderVisitsInArea instead
+   */
+  displaySelectedVisits(visits) {
+    this.renderVisitsInArea(visits)
   }
 
   /**
@@ -235,6 +263,36 @@ export class AreaSelectionManager {
           await this.deleteVisit(visitId)
         })
       })
+  }
+
+  attachPendingVisitListeners() {
+    this.controller.element
+      .querySelectorAll("[data-visit-create-from-points]")
+      .forEach((btn) => {
+        btn.addEventListener("click", () => {
+          this.createVisitFromSelectedPoints(btn.dataset.visitCreateFromPoints)
+        })
+      })
+  }
+
+  /**
+   * Open Create Visit modal prefilled from a track group in the current selection
+   * @param {string} groupKey - Track group key from SelectedPointsLayer.trackGroupKey
+   */
+  createVisitFromSelectedPoints(groupKey) {
+    const groups = this.selectedPointsLayer?.getTrackGroups() ?? []
+    const group = groups.find((entry) => entry.groupKey === groupKey)
+
+    if (!group) {
+      Toast.error("No points selected")
+      return
+    }
+
+    this.controller.visitsManager.openVisitCreationModal(
+      group.centroid.lat,
+      group.centroid.lng,
+      { timeRange: group.timeRange },
+    )
   }
 
   /**
@@ -458,7 +516,10 @@ export class AreaSelectionManager {
       (a, b) => new Date(a.started_at) - new Date(b.started_at),
     )
 
-    const newCardHTML = VisitCard.create(mergedVisit, { isSelected: false })
+    const newCardHTML = VisitCard.create(mergedVisit, {
+      isSelected: false,
+      timezone: this.controller.timezoneValue || "UTC",
+    })
 
     if (insertBeforeCard) {
       insertBeforeCard.insertAdjacentHTML("beforebegin", newCardHTML)
@@ -472,6 +533,7 @@ export class AreaSelectionManager {
     }
 
     this.attachVisitCardListeners()
+    this.attachPendingVisitListeners()
   }
 
   /**
@@ -495,7 +557,7 @@ export class AreaSelectionManager {
           bounds.start.lng > bounds.end.lng ? bounds.start.lng : bounds.end.lng,
       })
 
-      this.displaySelectedVisits(visits)
+      this.renderVisitsInArea(visits)
     } catch (error) {
       console.error("[Maps V2] Failed to refresh visits:", error)
     }

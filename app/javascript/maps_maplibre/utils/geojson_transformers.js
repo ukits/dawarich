@@ -15,6 +15,7 @@ export function pointsToGeoJSON(points) {
       properties: {
         id: point.id,
         timestamp: point.timestamp,
+        track_id: point.track_id ?? null,
         altitude: point.altitude,
         battery: point.battery,
         accuracy: point.accuracy,

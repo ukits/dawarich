@@ -372,7 +372,7 @@ export class VisitsManager {
   /**
    * Open visit creation modal
    */
-  openVisitCreationModal(lat, lng) {
+  openVisitCreationModal(lat, lng, { timeRange = null } = {}) {
     const modalElement = document.querySelector(
       '[data-controller="visit-creation-v2"]',
     )
@@ -389,9 +389,12 @@ export class VisitsManager {
       )
 
     if (controller) {
-      const timeRange =
+      const resolvedTimeRange =
+        timeRange ??
         this.controller.areaSelectionManager?.getSelectedPointsTimeRange?.()
-      controller.open(lat, lng, this.controller, { timeRange })
+      controller.open(lat, lng, this.controller, {
+        timeRange: resolvedTimeRange,
+      })
     } else {
       Toast.error("Visit creation controller not available")
     }

@@ -304,6 +304,16 @@ export default class extends Controller {
       this.boundHandleVisitCreated,
     )
 
+    this.boundRefreshSelectedVisitsInArea =
+      this.areaSelectionManager.refreshSelectedVisits.bind(
+        this.areaSelectionManager,
+      )
+    this.cleanup.addEventListener(
+      document,
+      "visit:created",
+      this.boundRefreshSelectedVisitsInArea,
+    )
+
     this.boundHandleVisitUpdated = this.visitsManager.handleVisitUpdated.bind(
       this.visitsManager,
     )
@@ -1248,6 +1258,9 @@ export default class extends Controller {
   }
   deleteSelectedAnomalies() {
     return this.areaSelectionManager.deleteSelectedAnomalies()
+  }
+  createVisitFromSelectedPoints() {
+    return this.areaSelectionManager.createVisitFromSelectedPoints()
   }
 
   // Visits Manager methods

@@ -45,7 +45,7 @@
     <span class="text-xs text-base-content/55 truncate min-w-0 tabular-nums">
       <span aria-hidden="true" class="opacity-40 mr-1">·</span><%=
         segment_distance(segment) %><span aria-hidden="true" class="opacity-40 mx-1">·</span><%=
-        segment_duration(segment) %>
+        segment_duration(segment) %><% if (time_range = segment_time_range(segment)).present? %><span aria-hidden="true" class="opacity-40 mx-1">·</span><%= time_range %><% end %>
     </span>
 
     <% if segment.manually_corrected? %>

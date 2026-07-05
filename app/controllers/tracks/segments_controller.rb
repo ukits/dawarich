@@ -8,6 +8,7 @@ class Tracks::SegmentsController < ApplicationController
 
   def index
     @segments = @track.track_segments.order(:start_index)
+    @track.ordered_point_timestamps
     render layout: false
   end
 

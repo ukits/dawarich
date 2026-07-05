@@ -91,6 +91,10 @@ class Track < ApplicationRecord
     self.avg_speed = self.class.avg_speed_kmh(distance, duration)
   end
 
+  def ordered_point_timestamps
+    @ordered_point_timestamps ||= points.order(:timestamp).pluck(:timestamp)
+  end
+
   def self.last_for_day(user, day)
     day_start = day.beginning_of_day
     day_end = day.end_of_day

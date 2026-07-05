@@ -20,6 +20,19 @@ RSpec.describe 'Tracks::Segments', type: :request do
       expect(response.body).to include("segment-row-#{segment.id}")
     end
 
+    it 'renders duration in compact minutes and segment time range' do
+      base = Time.zone.parse('2026-07-05 10:00:00')
+      track.points.destroy_all
+      11.times do |i|
+        create(:point, user: user, track: track, timestamp: base.to_i + (i * 60))
+      end
+
+      get track_segments_path(track)
+
+      expect(response.body).to include('10m')
+      expect(response.body).to include('10:00 - 10:10')
+    end
+
     it 'returns 404 when accessing another user track' do
       other_track = create(:track, user: create(:user))
       get track_segments_path(other_track)

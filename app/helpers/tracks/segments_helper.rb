@@ -37,8 +37,25 @@ module Tracks::SegmentsHelper
     return '-' unless segment.duration
 
     minutes = segment.duration / 60
-    return "#{minutes} min" if minutes < 60
+    return "#{minutes}m" if minutes < 60
 
-    "#{minutes / 60}h #{minutes % 60}m"
+    h = minutes / 60
+    m = minutes % 60
+    return "#{h}h" if m.zero?
+
+    "#{h}h #{m}m"
+  end
+
+  def segment_time_range(segment)
+    timestamps = segment.track.ordered_point_timestamps
+    return nil if timestamps.blank?
+
+    start_ts = timestamps[segment.start_index]
+    end_ts = timestamps[segment.end_index]
+    return nil unless start_ts && end_ts
+
+    start_label = Time.zone.at(start_ts).strftime('%H:%M')
+    end_label = Time.zone.at(end_ts).strftime('%H:%M')
+    "#{start_label} - #{end_label}"
   end
 end

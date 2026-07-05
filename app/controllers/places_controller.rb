@@ -100,7 +100,14 @@ class PlacesController < ApplicationController
   def destroy
     @place.destroy!
 
-    redirect_to places_url, notice: 'Place was successfully destroyed.', status: :see_other
+    respond_to do |format|
+      format.html do
+        redirect_to places_url, notice: 'Place was successfully destroyed.', status: :see_other
+      end
+      format.turbo_stream do
+        render turbo_stream: stream_flash(:success, 'Place was successfully destroyed.')
+      end
+    end
   end
 
   private

@@ -301,6 +301,22 @@ export class PlacesManager {
   }
 
   /**
+   * Remove a deleted place from the layer without a full reload.
+   */
+  handlePlaceDeleted(event) {
+    const placeId = Number.parseInt(event?.detail?.placeId, 10)
+    if (Number.isNaN(placeId)) return
+
+    const placesLayer = this.layerManager.getLayer("places")
+    if (!placesLayer?.data?.features?.length) return
+
+    const features = placesLayer.data.features.filter(
+      (feature) => feature.properties?.id !== placeId,
+    )
+    placesLayer.update({ type: "FeatureCollection", features })
+  }
+
+  /**
    * Append or replace a single place feature on the layer without touching
    * the backend. Replaces by id when the place is already present (edit).
    */

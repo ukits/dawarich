@@ -75,6 +75,12 @@
 
         <div class="modal-action">
           <button type="button" class="btn btn-ghost" data-action="click->place-creation#close">Cancel</button>
+          <button type="button"
+                  class="btn btn-error hidden"
+                  data-place-creation-target="deleteButton"
+                  data-action="click->place-creation#deletePlace">
+            Delete Place
+          </button>
           <%= f.submit "Create Place", class: "btn btn-primary",
               data: { place_creation_target: "submitButton", disable_with: "Saving..." } %>
         </div>

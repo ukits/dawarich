@@ -124,6 +124,30 @@ export class PlacesManager {
         }
       })
     })
+
+    document.addEventListener("place:deleted", (event) => {
+      const placeId = Number.parseInt(event.detail.placeId, 10)
+      this.removePlaceFromMap(placeId)
+    })
+  }
+
+  removePlaceFromMap(placeId) {
+    if (this.markers[placeId]) {
+      this.placesLayer.removeLayer(this.markers[placeId])
+      delete this.markers[placeId]
+    }
+
+    this.map.eachLayer((layer) => {
+      if (layer instanceof L.LayerGroup) {
+        layer.eachLayer((marker) => {
+          if (marker.options?.placeId === placeId) {
+            layer.removeLayer(marker)
+          }
+        })
+      }
+    })
+
+    this.places = this.places.filter((p) => p.id !== placeId)
   }
 
   async loadPlaces(tagIds = null, untaggedOnly = false) {

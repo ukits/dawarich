@@ -341,6 +341,15 @@ export default class extends Controller {
       this.boundHandlePlaceUpdated,
     )
 
+    this.boundHandlePlaceDeleted = this.placesManager.handlePlaceDeleted.bind(
+      this.placesManager,
+    )
+    this.cleanup.addEventListener(
+      document,
+      "place:deleted",
+      this.boundHandlePlaceDeleted,
+    )
+
     this.boundHandleAreaCreated = this.handleAreaCreated.bind(this)
     this.cleanup.addEventListener(
       document,

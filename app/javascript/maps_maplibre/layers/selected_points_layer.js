@@ -1,4 +1,5 @@
 import { BaseLayer } from "./base_layer"
+import { parseTimestamp } from "../utils/geojson_transformers"
 
 /**
  * Layer for displaying selected points with distinct styling
@@ -96,5 +97,27 @@ export class SelectedPointsLayer extends BaseLayer {
    */
   getCount() {
     return this.pointIds.length
+  }
+
+  /**
+   * Min/max timestamps of selected points
+   * @returns {{ start: Date, end: Date }|null}
+   */
+  getTimeRange() {
+    if (!this.data?.features?.length) return null
+
+    let start = null
+    let end = null
+
+    for (const feature of this.data.features) {
+      const date = parseTimestamp(feature.properties?.timestamp)
+      if (!date) continue
+
+      if (!start || date < start) start = date
+      if (!end || date > end) end = date
+    }
+
+    if (!start || !end) return null
+    return { start, end }
   }
 }

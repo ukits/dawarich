@@ -389,7 +389,9 @@ export class VisitsManager {
       )
 
     if (controller) {
-      controller.open(lat, lng, this.controller)
+      const timeRange =
+        this.controller.areaSelectionManager?.getSelectedPointsTimeRange?.()
+      controller.open(lat, lng, this.controller, { timeRange })
     } else {
       Toast.error("Visit creation controller not available")
     }

@@ -37,8 +37,10 @@ export default class extends Controller {
 
   /**
    * Open the modal with coordinates
+   * @param {Object} [options]
+   * @param {{ start: Date, end: Date }|null} [options.timeRange] - Prefill from selected points
    */
-  open(lat, lng, mapController) {
+  open(lat, lng, mapController, { timeRange = null } = {}) {
     this.editingVisitId = null
     this.mapController = mapController
     this.latitudeInputTarget.value = lat
@@ -52,12 +54,7 @@ export default class extends Controller {
       this.submitButtonTarget.textContent = "Create Visit"
     }
 
-    // Set default times
-    const now = new Date()
-    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000)
-
-    this.startTimeInputTarget.value = this.formatDateTime(now)
-    this.endTimeInputTarget.value = this.formatDateTime(oneHourLater)
+    this.setDefaultTimes(timeRange)
 
     // Show modal
     this.modalTarget.classList.add("modal-open")
@@ -249,6 +246,30 @@ export default class extends Controller {
    */
   cleanup() {
     this.removeMarker()
+  }
+
+  /**
+   * Set Start/End Time defaults, optionally from selected points min/max
+   */
+  setDefaultTimes(timeRange) {
+    if (timeRange?.start && timeRange?.end) {
+      let { start, end } = timeRange
+
+      // Visit model requires ended_at > started_at (single-point selections share one timestamp)
+      if (end <= start) {
+        end = new Date(start.getTime() + 60 * 1000)
+      }
+
+      this.startTimeInputTarget.value = this.formatDateTime(start)
+      this.endTimeInputTarget.value = this.formatDateTime(end)
+      return
+    }
+
+    const now = new Date()
+    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000)
+
+    this.startTimeInputTarget.value = this.formatDateTime(now)
+    this.endTimeInputTarget.value = this.formatDateTime(oneHourLater)
   }
 
   /**

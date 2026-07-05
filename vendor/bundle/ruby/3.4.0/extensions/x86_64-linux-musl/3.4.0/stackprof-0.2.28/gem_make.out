@@ -1,0 +1,22 @@
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/stackprof-0.2.28/ext/stackprof
+/usr/local/bin/ruby extconf.rb
+checking for rb_postponed_job_preregister()... yes
+checking for rb_profile_frames()... yes
+checking for rb_tracepoint_new()... yes
+checking for RUBY_INTERNAL_EVENT_NEWOBJ... yes
+creating Makefile
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/stackprof-0.2.28/ext/stackprof
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-p03cmg sitelibdir\=./.gem.20260704-313-p03cmg clean
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/stackprof-0.2.28/ext/stackprof
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-p03cmg sitelibdir\=./.gem.20260704-313-p03cmg
+compiling stackprof.c
+linking shared-object stackprof/stackprof.so
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/stackprof-0.2.28/ext/stackprof
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-p03cmg sitelibdir\=./.gem.20260704-313-p03cmg install
+/usr/bin/install -c -m 0755 stackprof.so ./.gem.20260704-313-p03cmg/stackprof
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/stackprof-0.2.28/ext/stackprof
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-p03cmg sitelibdir\=./.gem.20260704-313-p03cmg clean

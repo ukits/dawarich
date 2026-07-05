@@ -1,0 +1,426 @@
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/h3-3.7.4/ext/h3
+/usr/local/bin/ruby extconf.rb
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/h3-3.7.4/ext/h3
+make DESTDIR\= sitearchdir\=./.gem.20260704-312-1zi2oo sitelibdir\=./.gem.20260704-312-1zi2oo clean
+: # do nothing, cleanup happens when gem uninstalled
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/h3-3.7.4/ext/h3
+make DESTDIR\= sitearchdir\=./.gem.20260704-312-1zi2oo sitelibdir\=./.gem.20260704-312-1zi2oo
+cd src; cmake . -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_SHARED_LIBS=true -DBUILD_FILTERS=OFF -DBUILD_BENCHMARKS=OFF -DENABLE_LINTING=OFF; make
+CMake Deprecation Warning at CMakeLists.txt:15 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- The C compiler identification is GNU 14.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+CMake Warning at CMakeLists.txt:278 (message):
+  clang-format was not detected, so automatic source code reformatting is
+  disabled
+
+
+CMake Warning at CMakeLists.txt:290 (message):
+  clang-tidy was not detected, so source code linting is disabled
+
+
+-- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
+-- Configuring done (0.4s)
+-- Generating done (0.8s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_POLICY_VERSION_MINIMUM
+
+
+-- Build files have been written to: /var/app/vendor/bundle/ruby/3.4.0/gems/h3-3.7.4/ext/h3/src
+make[1]: Entering directory '/var/app/vendor/bundle/ruby/3.4.0/gems/h3-3.7.4/ext/h3/src'
+[  0%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/algos.c.o
+[  1%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/coordijk.c.o
+[  1%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/bbox.c.o
+[  1%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/polygon.c.o
+[  1%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/h3Index.c.o
+[  1%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/vec2d.c.o
+[  2%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/vec3d.c.o
+[  2%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/vertex.c.o
+[  2%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/linkedGeo.c.o
+[  2%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/localij.c.o
+[  4%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/geoCoord.c.o
+[  4%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/h3UniEdge.c.o
+[  4%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/mathExtensions.c.o
+[  4%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/vertexGraph.c.o
+[  5%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/faceijk.c.o
+[  5%] Building C object CMakeFiles/h3.dir/src/h3lib/lib/baseCells.c.o
+[  5%] Linking C shared library lib/libh3.so
+[  5%] Built target h3
+[  5%] Building C object CMakeFiles/generateBaseCellNeighbors.dir/src/apps/miscapps/generateBaseCellNeighbors.c.o
+[  5%] Building C object CMakeFiles/generateBaseCellNeighbors.dir/src/apps/applib/lib/test.c.o
+[  5%] Building C object CMakeFiles/generateBaseCellNeighbors.dir/src/apps/applib/lib/kml.c.o
+[  6%] Building C object CMakeFiles/generateBaseCellNeighbors.dir/src/apps/applib/lib/utility.c.o
+[  6%] Building C object CMakeFiles/generateBaseCellNeighbors.dir/src/apps/applib/lib/args.c.o
+[  6%] Linking C executable bin/generateBaseCellNeighbors
+[  6%] Built target generateBaseCellNeighbors
+[  6%] Building C object CMakeFiles/generatePentagonDirectionFaces.dir/src/apps/miscapps/generatePentagonDirectionFaces.c.o
+[  6%] Building C object CMakeFiles/generatePentagonDirectionFaces.dir/src/apps/applib/lib/test.c.o
+[  6%] Building C object CMakeFiles/generatePentagonDirectionFaces.dir/src/apps/applib/lib/kml.c.o
+[  8%] Building C object CMakeFiles/generatePentagonDirectionFaces.dir/src/apps/applib/lib/utility.c.o
+[  8%] Building C object CMakeFiles/generatePentagonDirectionFaces.dir/src/apps/applib/lib/args.c.o
+[  8%] Linking C executable bin/generatePentagonDirectionFaces
+[  8%] Built target generatePentagonDirectionFaces
+[  9%] Building C object CMakeFiles/generateNumHexagons.dir/src/apps/miscapps/generateNumHexagons.c.o
+[  9%] Building C object CMakeFiles/generateNumHexagons.dir/src/apps/applib/lib/test.c.o
+[  9%] Building C object CMakeFiles/generateNumHexagons.dir/src/apps/applib/lib/kml.c.o
+[  9%] Building C object CMakeFiles/generateNumHexagons.dir/src/apps/applib/lib/utility.c.o
+[ 10%] Building C object CMakeFiles/generateNumHexagons.dir/src/apps/applib/lib/args.c.o
+[ 10%] Linking C executable bin/generateNumHexagons
+[ 10%] Built target generateNumHexagons
+[ 10%] Building C object CMakeFiles/generateFaceCenterPoint.dir/src/apps/miscapps/generateFaceCenterPoint.c.o
+[ 12%] Building C object CMakeFiles/generateFaceCenterPoint.dir/src/apps/applib/lib/test.c.o
+[ 12%] Building C object CMakeFiles/generateFaceCenterPoint.dir/src/apps/applib/lib/kml.c.o
+[ 12%] Building C object CMakeFiles/generateFaceCenterPoint.dir/src/apps/applib/lib/utility.c.o
+[ 12%] Building C object CMakeFiles/generateFaceCenterPoint.dir/src/apps/applib/lib/args.c.o
+[ 12%] Linking C executable bin/generateFaceCenterPoint
+[ 12%] Built target generateFaceCenterPoint
+[ 12%] Building C object CMakeFiles/mkRandGeo.dir/src/apps/testapps/mkRandGeo.c.o
+[ 12%] Building C object CMakeFiles/mkRandGeo.dir/src/apps/applib/lib/test.c.o
+[ 12%] Building C object CMakeFiles/mkRandGeo.dir/src/apps/applib/lib/kml.c.o
+[ 13%] Building C object CMakeFiles/mkRandGeo.dir/src/apps/applib/lib/utility.c.o
+[ 13%] Building C object CMakeFiles/mkRandGeo.dir/src/apps/applib/lib/args.c.o
+[ 13%] Linking C executable bin/mkRandGeo
+[ 13%] Built target mkRandGeo
+[ 13%] Building C object CMakeFiles/mkRandGeoBoundary.dir/src/apps/testapps/mkRandGeoBoundary.c.o
+[ 15%] Building C object CMakeFiles/mkRandGeoBoundary.dir/src/apps/applib/lib/test.c.o
+[ 15%] Building C object CMakeFiles/mkRandGeoBoundary.dir/src/apps/applib/lib/kml.c.o
+[ 15%] Building C object CMakeFiles/mkRandGeoBoundary.dir/src/apps/applib/lib/utility.c.o
+[ 15%] Building C object CMakeFiles/mkRandGeoBoundary.dir/src/apps/applib/lib/args.c.o
+[ 16%] Linking C executable bin/mkRandGeoBoundary
+[ 16%] Built target mkRandGeoBoundary
+[ 16%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/algos.c.o
+[ 16%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/coordijk.c.o
+[ 17%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/bbox.c.o
+[ 17%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/polygon.c.o
+[ 17%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/h3Index.c.o
+[ 17%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/vec2d.c.o
+[ 19%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/vec3d.c.o
+[ 19%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/vertex.c.o
+[ 19%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/linkedGeo.c.o
+[ 19%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/localij.c.o
+[ 19%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/geoCoord.c.o
+[ 20%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/h3UniEdge.c.o
+[ 20%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/mathExtensions.c.o
+[ 20%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/vertexGraph.c.o
+[ 20%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/faceijk.c.o
+[ 21%] Building C object CMakeFiles/h3WithTestAllocators.dir/src/h3lib/lib/baseCells.c.o
+[ 21%] Linking C shared library lib/libh3WithTestAllocators.so
+[ 21%] Built target h3WithTestAllocators
+[ 21%] Building C object CMakeFiles/testH3ToGeo.dir/src/apps/testapps/testH3ToGeo.c.o
+[ 21%] Building C object CMakeFiles/testH3ToGeo.dir/src/apps/applib/lib/test.c.o
+[ 23%] Building C object CMakeFiles/testH3ToGeo.dir/src/apps/applib/lib/kml.c.o
+[ 23%] Building C object CMakeFiles/testH3ToGeo.dir/src/apps/applib/lib/utility.c.o
+[ 23%] Building C object CMakeFiles/testH3ToGeo.dir/src/apps/applib/lib/args.c.o
+[ 23%] Linking C executable bin/testH3ToGeo
+[ 23%] Built target testH3ToGeo
+[ 23%] Building C object CMakeFiles/testGeoToH3.dir/src/apps/testapps/testGeoToH3.c.o
+[ 23%] Building C object CMakeFiles/testGeoToH3.dir/src/apps/applib/lib/test.c.o
+[ 24%] Building C object CMakeFiles/testGeoToH3.dir/src/apps/applib/lib/kml.c.o
+[ 24%] Building C object CMakeFiles/testGeoToH3.dir/src/apps/applib/lib/utility.c.o
+[ 24%] Building C object CMakeFiles/testGeoToH3.dir/src/apps/applib/lib/args.c.o
+[ 24%] Linking C executable bin/testGeoToH3
+[ 24%] Built target testGeoToH3
+[ 26%] Building C object CMakeFiles/testH3ToGeoBoundary.dir/src/apps/testapps/testH3ToGeoBoundary.c.o
+[ 26%] Building C object CMakeFiles/testH3ToGeoBoundary.dir/src/apps/applib/lib/test.c.o
+[ 26%] Building C object CMakeFiles/testH3ToGeoBoundary.dir/src/apps/applib/lib/kml.c.o
+[ 26%] Building C object CMakeFiles/testH3ToGeoBoundary.dir/src/apps/applib/lib/utility.c.o
+[ 26%] Building C object CMakeFiles/testH3ToGeoBoundary.dir/src/apps/applib/lib/args.c.o
+[ 27%] Linking C executable bin/testH3ToGeoBoundary
+[ 27%] Built target testH3ToGeoBoundary
+[ 27%] Building C object CMakeFiles/testCompact.dir/src/apps/testapps/testCompact.c.o
+[ 27%] Building C object CMakeFiles/testCompact.dir/src/apps/applib/lib/test.c.o
+[ 27%] Building C object CMakeFiles/testCompact.dir/src/apps/applib/lib/kml.c.o
+[ 28%] Building C object CMakeFiles/testCompact.dir/src/apps/applib/lib/utility.c.o
+[ 28%] Building C object CMakeFiles/testCompact.dir/src/apps/applib/lib/args.c.o
+[ 28%] Linking C executable bin/testCompact
+[ 28%] Built target testCompact
+[ 28%] Building C object CMakeFiles/testKRing.dir/src/apps/testapps/testKRing.c.o
+[ 30%] Building C object CMakeFiles/testKRing.dir/src/apps/applib/lib/test.c.o
+[ 30%] Building C object CMakeFiles/testKRing.dir/src/apps/applib/lib/kml.c.o
+[ 30%] Building C object CMakeFiles/testKRing.dir/src/apps/applib/lib/utility.c.o
+[ 30%] Building C object CMakeFiles/testKRing.dir/src/apps/applib/lib/args.c.o
+[ 30%] Linking C executable bin/testKRing
+[ 30%] Built target testKRing
+[ 30%] Building C object CMakeFiles/testHexRing.dir/src/apps/testapps/testHexRing.c.o
+[ 30%] Building C object CMakeFiles/testHexRing.dir/src/apps/applib/lib/test.c.o
+[ 30%] Building C object CMakeFiles/testHexRing.dir/src/apps/applib/lib/kml.c.o
+[ 30%] Building C object CMakeFiles/testHexRing.dir/src/apps/applib/lib/utility.c.o
+[ 31%] Building C object CMakeFiles/testHexRing.dir/src/apps/applib/lib/args.c.o
+[ 31%] Linking C executable bin/testHexRing
+[ 31%] Built target testHexRing
+[ 31%] Building C object CMakeFiles/testHexRanges.dir/src/apps/testapps/testHexRanges.c.o
+[ 31%] Building C object CMakeFiles/testHexRanges.dir/src/apps/applib/lib/test.c.o
+[ 32%] Building C object CMakeFiles/testHexRanges.dir/src/apps/applib/lib/kml.c.o
+[ 32%] Building C object CMakeFiles/testHexRanges.dir/src/apps/applib/lib/utility.c.o
+[ 32%] Building C object CMakeFiles/testHexRanges.dir/src/apps/applib/lib/args.c.o
+[ 32%] Linking C executable bin/testHexRanges
+[ 32%] Built target testHexRanges
+[ 32%] Building C object CMakeFiles/testH3ToParent.dir/src/apps/testapps/testH3ToParent.c.o
+[ 34%] Building C object CMakeFiles/testH3ToParent.dir/src/apps/applib/lib/test.c.o
+[ 34%] Building C object CMakeFiles/testH3ToParent.dir/src/apps/applib/lib/kml.c.o
+[ 34%] Building C object CMakeFiles/testH3ToParent.dir/src/apps/applib/lib/utility.c.o
+[ 34%] Building C object CMakeFiles/testH3ToParent.dir/src/apps/applib/lib/args.c.o
+[ 35%] Linking C executable bin/testH3ToParent
+[ 35%] Built target testH3ToParent
+[ 35%] Building C object CMakeFiles/testH3ToCenterChild.dir/src/apps/testapps/testH3ToCenterChild.c.o
+[ 35%] Building C object CMakeFiles/testH3ToCenterChild.dir/src/apps/applib/lib/test.c.o
+[ 36%] Building C object CMakeFiles/testH3ToCenterChild.dir/src/apps/applib/lib/kml.c.o
+[ 36%] Building C object CMakeFiles/testH3ToCenterChild.dir/src/apps/applib/lib/utility.c.o
+[ 36%] Building C object CMakeFiles/testH3ToCenterChild.dir/src/apps/applib/lib/args.c.o
+[ 36%] Linking C executable bin/testH3ToCenterChild
+[ 36%] Built target testH3ToCenterChild
+[ 38%] Building C object CMakeFiles/testH3ToChildren.dir/src/apps/testapps/testH3ToChildren.c.o
+[ 38%] Building C object CMakeFiles/testH3ToChildren.dir/src/apps/applib/lib/test.c.o
+[ 38%] Building C object CMakeFiles/testH3ToChildren.dir/src/apps/applib/lib/kml.c.o
+[ 38%] Building C object CMakeFiles/testH3ToChildren.dir/src/apps/applib/lib/utility.c.o
+[ 39%] Building C object CMakeFiles/testH3ToChildren.dir/src/apps/applib/lib/args.c.o
+[ 39%] Linking C executable bin/testH3ToChildren
+[ 39%] Built target testH3ToChildren
+[ 39%] Building C object CMakeFiles/testH3GetFaces.dir/src/apps/testapps/testH3GetFaces.c.o
+[ 39%] Building C object CMakeFiles/testH3GetFaces.dir/src/apps/applib/lib/test.c.o
+[ 39%] Building C object CMakeFiles/testH3GetFaces.dir/src/apps/applib/lib/kml.c.o
+[ 41%] Building C object CMakeFiles/testH3GetFaces.dir/src/apps/applib/lib/utility.c.o
+[ 41%] Building C object CMakeFiles/testH3GetFaces.dir/src/apps/applib/lib/args.c.o
+[ 41%] Linking C executable bin/testH3GetFaces
+[ 41%] Built target testH3GetFaces
+[ 42%] Building C object CMakeFiles/testMaxH3ToChildrenSize.dir/src/apps/testapps/testMaxH3ToChildrenSize.c.o
+[ 42%] Building C object CMakeFiles/testMaxH3ToChildrenSize.dir/src/apps/applib/lib/test.c.o
+[ 42%] Building C object CMakeFiles/testMaxH3ToChildrenSize.dir/src/apps/applib/lib/kml.c.o
+[ 42%] Building C object CMakeFiles/testMaxH3ToChildrenSize.dir/src/apps/applib/lib/utility.c.o
+[ 42%] Building C object CMakeFiles/testMaxH3ToChildrenSize.dir/src/apps/applib/lib/args.c.o
+[ 43%] Linking C executable bin/testMaxH3ToChildrenSize
+[ 43%] Built target testMaxH3ToChildrenSize
+[ 45%] Building C object CMakeFiles/testH3Index.dir/src/apps/testapps/testH3Index.c.o
+[ 45%] Building C object CMakeFiles/testH3Index.dir/src/apps/applib/lib/test.c.o
+[ 45%] Building C object CMakeFiles/testH3Index.dir/src/apps/applib/lib/kml.c.o
+[ 45%] Building C object CMakeFiles/testH3Index.dir/src/apps/applib/lib/utility.c.o
+[ 45%] Building C object CMakeFiles/testH3Index.dir/src/apps/applib/lib/args.c.o
+[ 46%] Linking C executable bin/testH3Index
+[ 46%] Built target testH3Index
+[ 46%] Building C object CMakeFiles/testH3Api.dir/src/apps/testapps/testH3Api.c.o
+[ 46%] Building C object CMakeFiles/testH3Api.dir/src/apps/applib/lib/test.c.o
+[ 47%] Building C object CMakeFiles/testH3Api.dir/src/apps/applib/lib/kml.c.o
+[ 47%] Building C object CMakeFiles/testH3Api.dir/src/apps/applib/lib/utility.c.o
+[ 47%] Building C object CMakeFiles/testH3Api.dir/src/apps/applib/lib/args.c.o
+[ 47%] Linking C executable bin/testH3Api
+[ 47%] Built target testH3Api
+[ 47%] Building C object CMakeFiles/testH3SetToLinkedGeo.dir/src/apps/testapps/testH3SetToLinkedGeo.c.o
+[ 47%] Building C object CMakeFiles/testH3SetToLinkedGeo.dir/src/apps/applib/lib/test.c.o
+[ 47%] Building C object CMakeFiles/testH3SetToLinkedGeo.dir/src/apps/applib/lib/kml.c.o
+[ 49%] Building C object CMakeFiles/testH3SetToLinkedGeo.dir/src/apps/applib/lib/utility.c.o
+[ 49%] Building C object CMakeFiles/testH3SetToLinkedGeo.dir/src/apps/applib/lib/args.c.o
+[ 49%] Linking C executable bin/testH3SetToLinkedGeo
+[ 49%] Built target testH3SetToLinkedGeo
+[ 49%] Building C object CMakeFiles/testH3SetToVertexGraph.dir/src/apps/testapps/testH3SetToVertexGraph.c.o
+[ 50%] Building C object CMakeFiles/testH3SetToVertexGraph.dir/src/apps/applib/lib/test.c.o
+[ 50%] Building C object CMakeFiles/testH3SetToVertexGraph.dir/src/apps/applib/lib/kml.c.o
+[ 50%] Building C object CMakeFiles/testH3SetToVertexGraph.dir/src/apps/applib/lib/utility.c.o
+[ 50%] Building C object CMakeFiles/testH3SetToVertexGraph.dir/src/apps/applib/lib/args.c.o
+[ 52%] Linking C executable bin/testH3SetToVertexGraph
+[ 52%] Built target testH3SetToVertexGraph
+[ 52%] Building C object CMakeFiles/testLinkedGeo.dir/src/apps/testapps/testLinkedGeo.c.o
+[ 52%] Building C object CMakeFiles/testLinkedGeo.dir/src/apps/applib/lib/test.c.o
+[ 52%] Building C object CMakeFiles/testLinkedGeo.dir/src/apps/applib/lib/kml.c.o
+[ 53%] Building C object CMakeFiles/testLinkedGeo.dir/src/apps/applib/lib/utility.c.o
+[ 53%] Building C object CMakeFiles/testLinkedGeo.dir/src/apps/applib/lib/args.c.o
+[ 53%] Linking C executable bin/testLinkedGeo
+[ 53%] Built target testLinkedGeo
+[ 54%] Building C object CMakeFiles/testPolyfill.dir/src/apps/testapps/testPolyfill.c.o
+[ 54%] Building C object CMakeFiles/testPolyfill.dir/src/apps/applib/lib/test.c.o
+[ 54%] Building C object CMakeFiles/testPolyfill.dir/src/apps/applib/lib/kml.c.o
+[ 54%] Building C object CMakeFiles/testPolyfill.dir/src/apps/applib/lib/utility.c.o
+[ 56%] Building C object CMakeFiles/testPolyfill.dir/src/apps/applib/lib/args.c.o
+[ 56%] Linking C executable bin/testPolyfill
+[ 56%] Built target testPolyfill
+[ 56%] Building C object CMakeFiles/testPolyfillReported.dir/src/apps/testapps/testPolyfillReported.c.o
+[ 56%] Building C object CMakeFiles/testPolyfillReported.dir/src/apps/applib/lib/test.c.o
+[ 56%] Building C object CMakeFiles/testPolyfillReported.dir/src/apps/applib/lib/kml.c.o
+[ 57%] Building C object CMakeFiles/testPolyfillReported.dir/src/apps/applib/lib/utility.c.o
+[ 57%] Building C object CMakeFiles/testPolyfillReported.dir/src/apps/applib/lib/args.c.o
+[ 57%] Linking C executable bin/testPolyfillReported
+[ 57%] Built target testPolyfillReported
+[ 57%] Building C object CMakeFiles/testVertexGraph.dir/src/apps/testapps/testVertexGraph.c.o
+[ 57%] Building C object CMakeFiles/testVertexGraph.dir/src/apps/applib/lib/test.c.o
+[ 57%] Building C object CMakeFiles/testVertexGraph.dir/src/apps/applib/lib/kml.c.o
+[ 58%] Building C object CMakeFiles/testVertexGraph.dir/src/apps/applib/lib/utility.c.o
+[ 58%] Building C object CMakeFiles/testVertexGraph.dir/src/apps/applib/lib/args.c.o
+[ 58%] Linking C executable bin/testVertexGraph
+[ 58%] Built target testVertexGraph
+[ 58%] Building C object CMakeFiles/testH3UniEdge.dir/src/apps/testapps/testH3UniEdge.c.o
+[ 58%] Building C object CMakeFiles/testH3UniEdge.dir/src/apps/applib/lib/test.c.o
+[ 58%] Building C object CMakeFiles/testH3UniEdge.dir/src/apps/applib/lib/kml.c.o
+[ 60%] Building C object CMakeFiles/testH3UniEdge.dir/src/apps/applib/lib/utility.c.o
+[ 60%] Building C object CMakeFiles/testH3UniEdge.dir/src/apps/applib/lib/args.c.o
+[ 60%] Linking C executable bin/testH3UniEdge
+[ 60%] Built target testH3UniEdge
+[ 61%] Building C object CMakeFiles/testGeoCoord.dir/src/apps/testapps/testGeoCoord.c.o
+[ 61%] Building C object CMakeFiles/testGeoCoord.dir/src/apps/applib/lib/test.c.o
+[ 61%] Building C object CMakeFiles/testGeoCoord.dir/src/apps/applib/lib/kml.c.o
+[ 61%] Building C object CMakeFiles/testGeoCoord.dir/src/apps/applib/lib/utility.c.o
+[ 63%] Building C object CMakeFiles/testGeoCoord.dir/src/apps/applib/lib/args.c.o
+[ 63%] Linking C executable bin/testGeoCoord
+[ 63%] Built target testGeoCoord
+[ 63%] Building C object CMakeFiles/testBBox.dir/src/apps/testapps/testBBox.c.o
+[ 63%] Building C object CMakeFiles/testBBox.dir/src/apps/applib/lib/test.c.o
+[ 63%] Building C object CMakeFiles/testBBox.dir/src/apps/applib/lib/kml.c.o
+[ 63%] Building C object CMakeFiles/testBBox.dir/src/apps/applib/lib/utility.c.o
+[ 64%] Building C object CMakeFiles/testBBox.dir/src/apps/applib/lib/args.c.o
+[ 64%] Linking C executable bin/testBBox
+[ 64%] Built target testBBox
+[ 65%] Building C object CMakeFiles/testVertex.dir/src/apps/testapps/testVertex.c.o
+[ 65%] Building C object CMakeFiles/testVertex.dir/src/apps/applib/lib/test.c.o
+[ 65%] Building C object CMakeFiles/testVertex.dir/src/apps/applib/lib/kml.c.o
+[ 65%] Building C object CMakeFiles/testVertex.dir/src/apps/applib/lib/utility.c.o
+[ 65%] Building C object CMakeFiles/testVertex.dir/src/apps/applib/lib/args.c.o
+[ 67%] Linking C executable bin/testVertex
+[ 67%] Built target testVertex
+[ 67%] Building C object CMakeFiles/testPolygon.dir/src/apps/testapps/testPolygon.c.o
+[ 67%] Building C object CMakeFiles/testPolygon.dir/src/apps/applib/lib/test.c.o
+[ 67%] Building C object CMakeFiles/testPolygon.dir/src/apps/applib/lib/kml.c.o
+[ 68%] Building C object CMakeFiles/testPolygon.dir/src/apps/applib/lib/utility.c.o
+[ 68%] Building C object CMakeFiles/testPolygon.dir/src/apps/applib/lib/args.c.o
+[ 68%] Linking C executable bin/testPolygon
+[ 68%] Built target testPolygon
+[ 68%] Building C object CMakeFiles/testVec2d.dir/src/apps/testapps/testVec2d.c.o
+[ 69%] Building C object CMakeFiles/testVec2d.dir/src/apps/applib/lib/test.c.o
+[ 69%] Building C object CMakeFiles/testVec2d.dir/src/apps/applib/lib/kml.c.o
+[ 69%] Building C object CMakeFiles/testVec2d.dir/src/apps/applib/lib/utility.c.o
+[ 69%] Building C object CMakeFiles/testVec2d.dir/src/apps/applib/lib/args.c.o
+[ 71%] Linking C executable bin/testVec2d
+[ 71%] Built target testVec2d
+[ 71%] Building C object CMakeFiles/testVec3d.dir/src/apps/testapps/testVec3d.c.o
+[ 71%] Building C object CMakeFiles/testVec3d.dir/src/apps/applib/lib/test.c.o
+[ 71%] Building C object CMakeFiles/testVec3d.dir/src/apps/applib/lib/kml.c.o
+[ 72%] Building C object CMakeFiles/testVec3d.dir/src/apps/applib/lib/utility.c.o
+[ 72%] Building C object CMakeFiles/testVec3d.dir/src/apps/applib/lib/args.c.o
+[ 72%] Linking C executable bin/testVec3d
+[ 72%] Built target testVec3d
+[ 72%] Building C object CMakeFiles/testH3ToLocalIj.dir/src/apps/testapps/testH3ToLocalIj.c.o
+[ 73%] Building C object CMakeFiles/testH3ToLocalIj.dir/src/apps/applib/lib/test.c.o
+[ 73%] Building C object CMakeFiles/testH3ToLocalIj.dir/src/apps/applib/lib/kml.c.o
+[ 73%] Building C object CMakeFiles/testH3ToLocalIj.dir/src/apps/applib/lib/utility.c.o
+[ 73%] Building C object CMakeFiles/testH3ToLocalIj.dir/src/apps/applib/lib/args.c.o
+[ 73%] Linking C executable bin/testH3ToLocalIj
+[ 73%] Built target testH3ToLocalIj
+[ 73%] Building C object CMakeFiles/testH3Distance.dir/src/apps/testapps/testH3Distance.c.o
+[ 73%] Building C object CMakeFiles/testH3Distance.dir/src/apps/applib/lib/test.c.o
+[ 73%] Building C object CMakeFiles/testH3Distance.dir/src/apps/applib/lib/kml.c.o
+[ 73%] Building C object CMakeFiles/testH3Distance.dir/src/apps/applib/lib/utility.c.o
+[ 75%] Building C object CMakeFiles/testH3Distance.dir/src/apps/applib/lib/args.c.o
+[ 75%] Linking C executable bin/testH3Distance
+[ 75%] Built target testH3Distance
+[ 75%] Building C object CMakeFiles/testH3Line.dir/src/apps/testapps/testH3Line.c.o
+[ 75%] Building C object CMakeFiles/testH3Line.dir/src/apps/applib/lib/test.c.o
+[ 76%] Building C object CMakeFiles/testH3Line.dir/src/apps/applib/lib/kml.c.o
+[ 76%] Building C object CMakeFiles/testH3Line.dir/src/apps/applib/lib/utility.c.o
+[ 76%] Building C object CMakeFiles/testH3Line.dir/src/apps/applib/lib/args.c.o
+[ 76%] Linking C executable bin/testH3Line
+[ 76%] Built target testH3Line
+[ 78%] Building C object CMakeFiles/testH3CellArea.dir/src/apps/testapps/testH3CellArea.c.o
+[ 78%] Building C object CMakeFiles/testH3CellArea.dir/src/apps/applib/lib/test.c.o
+[ 78%] Building C object CMakeFiles/testH3CellArea.dir/src/apps/applib/lib/kml.c.o
+[ 78%] Building C object CMakeFiles/testH3CellArea.dir/src/apps/applib/lib/utility.c.o
+[ 79%] Building C object CMakeFiles/testH3CellArea.dir/src/apps/applib/lib/args.c.o
+[ 79%] Linking C executable bin/testH3CellArea
+[ 79%] Built target testH3CellArea
+[ 79%] Building C object CMakeFiles/testCoordIj.dir/src/apps/testapps/testCoordIj.c.o
+[ 80%] Building C object CMakeFiles/testCoordIj.dir/src/apps/applib/lib/test.c.o
+[ 80%] Building C object CMakeFiles/testCoordIj.dir/src/apps/applib/lib/kml.c.o
+[ 80%] Building C object CMakeFiles/testCoordIj.dir/src/apps/applib/lib/utility.c.o
+[ 80%] Building C object CMakeFiles/testCoordIj.dir/src/apps/applib/lib/args.c.o
+[ 82%] Linking C executable bin/testCoordIj
+[ 82%] Built target testCoordIj
+[ 82%] Building C object CMakeFiles/testCoordIjk.dir/src/apps/testapps/testCoordIjk.c.o
+[ 82%] Building C object CMakeFiles/testCoordIjk.dir/src/apps/applib/lib/test.c.o
+[ 83%] Building C object CMakeFiles/testCoordIjk.dir/src/apps/applib/lib/kml.c.o
+[ 83%] Building C object CMakeFiles/testCoordIjk.dir/src/apps/applib/lib/utility.c.o
+[ 83%] Building C object CMakeFiles/testCoordIjk.dir/src/apps/applib/lib/args.c.o
+[ 83%] Linking C executable bin/testCoordIjk
+[ 83%] Built target testCoordIjk
+[ 83%] Building C object CMakeFiles/testBaseCells.dir/src/apps/testapps/testBaseCells.c.o
+[ 84%] Building C object CMakeFiles/testBaseCells.dir/src/apps/applib/lib/test.c.o
+[ 84%] Building C object CMakeFiles/testBaseCells.dir/src/apps/applib/lib/kml.c.o
+[ 84%] Building C object CMakeFiles/testBaseCells.dir/src/apps/applib/lib/utility.c.o
+[ 84%] Building C object CMakeFiles/testBaseCells.dir/src/apps/applib/lib/args.c.o
+[ 84%] Linking C executable bin/testBaseCells
+[ 84%] Built target testBaseCells
+[ 84%] Building C object CMakeFiles/testPentagonIndexes.dir/src/apps/testapps/testPentagonIndexes.c.o
+[ 84%] Building C object CMakeFiles/testPentagonIndexes.dir/src/apps/applib/lib/test.c.o
+[ 86%] Building C object CMakeFiles/testPentagonIndexes.dir/src/apps/applib/lib/kml.c.o
+[ 86%] Building C object CMakeFiles/testPentagonIndexes.dir/src/apps/applib/lib/utility.c.o
+[ 86%] Building C object CMakeFiles/testPentagonIndexes.dir/src/apps/applib/lib/args.c.o
+[ 86%] Linking C executable bin/testPentagonIndexes
+[ 86%] Built target testPentagonIndexes
+[ 86%] Building C object CMakeFiles/testH3NeighborRotations.dir/src/apps/testapps/testH3NeighborRotations.c.o
+[ 86%] Building C object CMakeFiles/testH3NeighborRotations.dir/src/apps/applib/lib/test.c.o
+[ 86%] Building C object CMakeFiles/testH3NeighborRotations.dir/src/apps/applib/lib/kml.c.o
+[ 87%] Building C object CMakeFiles/testH3NeighborRotations.dir/src/apps/applib/lib/utility.c.o
+[ 87%] Building C object CMakeFiles/testH3NeighborRotations.dir/src/apps/applib/lib/args.c.o
+[ 87%] Linking C executable bin/testH3NeighborRotations
+[ 87%] Built target testH3NeighborRotations
+[ 87%] Building C object CMakeFiles/testH3UniEdgeExhaustive.dir/src/apps/testapps/testH3UniEdgeExhaustive.c.o
+[ 89%] Building C object CMakeFiles/testH3UniEdgeExhaustive.dir/src/apps/applib/lib/test.c.o
+[ 89%] Building C object CMakeFiles/testH3UniEdgeExhaustive.dir/src/apps/applib/lib/kml.c.o
+[ 89%] Building C object CMakeFiles/testH3UniEdgeExhaustive.dir/src/apps/applib/lib/utility.c.o
+[ 89%] Building C object CMakeFiles/testH3UniEdgeExhaustive.dir/src/apps/applib/lib/args.c.o
+[ 90%] Linking C executable bin/testH3UniEdgeExhaustive
+[ 90%] Built target testH3UniEdgeExhaustive
+[ 91%] Building C object CMakeFiles/testH3ToLocalIjExhaustive.dir/src/apps/testapps/testH3ToLocalIjExhaustive.c.o
+[ 91%] Building C object CMakeFiles/testH3ToLocalIjExhaustive.dir/src/apps/applib/lib/test.c.o
+[ 91%] Building C object CMakeFiles/testH3ToLocalIjExhaustive.dir/src/apps/applib/lib/kml.c.o
+[ 91%] Building C object CMakeFiles/testH3ToLocalIjExhaustive.dir/src/apps/applib/lib/utility.c.o
+[ 93%] Building C object CMakeFiles/testH3ToLocalIjExhaustive.dir/src/apps/applib/lib/args.c.o
+[ 93%] Linking C executable bin/testH3ToLocalIjExhaustive
+[ 93%] Built target testH3ToLocalIjExhaustive
+[ 93%] Building C object CMakeFiles/testH3LineExhaustive.dir/src/apps/testapps/testH3LineExhaustive.c.o
+[ 94%] Building C object CMakeFiles/testH3LineExhaustive.dir/src/apps/applib/lib/test.c.o
+[ 94%] Building C object CMakeFiles/testH3LineExhaustive.dir/src/apps/applib/lib/kml.c.o
+[ 94%] Building C object CMakeFiles/testH3LineExhaustive.dir/src/apps/applib/lib/utility.c.o
+[ 94%] Building C object CMakeFiles/testH3LineExhaustive.dir/src/apps/applib/lib/args.c.o
+[ 95%] Linking C executable bin/testH3LineExhaustive
+[ 95%] Built target testH3LineExhaustive
+[ 95%] Building C object CMakeFiles/testH3DistanceExhaustive.dir/src/apps/testapps/testH3DistanceExhaustive.c.o
+[ 95%] Building C object CMakeFiles/testH3DistanceExhaustive.dir/src/apps/applib/lib/test.c.o
+[ 97%] Building C object CMakeFiles/testH3DistanceExhaustive.dir/src/apps/applib/lib/kml.c.o
+[ 97%] Building C object CMakeFiles/testH3DistanceExhaustive.dir/src/apps/applib/lib/utility.c.o
+[ 97%] Building C object CMakeFiles/testH3DistanceExhaustive.dir/src/apps/applib/lib/args.c.o
+[ 97%] Linking C executable bin/testH3DistanceExhaustive
+[ 97%] Built target testH3DistanceExhaustive
+[ 97%] Building C object CMakeFiles/testH3CellAreaExhaustive.dir/src/apps/testapps/testH3CellAreaExhaustive.c.o
+[ 97%] Building C object CMakeFiles/testH3CellAreaExhaustive.dir/src/apps/applib/lib/test.c.o
+[ 97%] Building C object CMakeFiles/testH3CellAreaExhaustive.dir/src/apps/applib/lib/kml.c.o
+[ 98%] Building C object CMakeFiles/testH3CellAreaExhaustive.dir/src/apps/applib/lib/utility.c.o
+[ 98%] Building C object CMakeFiles/testH3CellAreaExhaustive.dir/src/apps/applib/lib/args.c.o
+[ 98%] Linking C executable bin/testH3CellAreaExhaustive
+[ 98%] Built target testH3CellAreaExhaustive
+[ 98%] Building C object CMakeFiles/testH3Memory.dir/src/apps/testapps/testH3Memory.c.o
+[100%] Building C object CMakeFiles/testH3Memory.dir/src/apps/applib/lib/test.c.o
+[100%] Building C object CMakeFiles/testH3Memory.dir/src/apps/applib/lib/kml.c.o
+[100%] Building C object CMakeFiles/testH3Memory.dir/src/apps/applib/lib/utility.c.o
+[100%] Building C object CMakeFiles/testH3Memory.dir/src/apps/applib/lib/args.c.o
+[100%] Linking C executable bin/testH3Memory
+[100%] Built target testH3Memory
+make[1]: Leaving directory '/var/app/vendor/bundle/ruby/3.4.0/gems/h3-3.7.4/ext/h3/src'
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/h3-3.7.4/ext/h3
+make DESTDIR\= sitearchdir\=./.gem.20260704-312-1zi2oo sitelibdir\=./.gem.20260704-312-1zi2oo install
+: # do nothing, we'll load the lib directly
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/h3-3.7.4/ext/h3
+make DESTDIR\= sitearchdir\=./.gem.20260704-312-1zi2oo sitelibdir\=./.gem.20260704-312-1zi2oo clean
+: # do nothing, cleanup happens when gem uninstalled

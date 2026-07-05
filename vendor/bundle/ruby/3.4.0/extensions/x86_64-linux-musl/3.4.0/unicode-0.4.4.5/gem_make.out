@@ -1,0 +1,28 @@
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/unicode-0.4.4.5/ext/unicode
+/usr/local/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/unicode-0.4.4.5/ext/unicode
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-g9qvta sitelibdir\=./.gem.20260704-313-g9qvta clean
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/unicode-0.4.4.5/ext/unicode
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-g9qvta sitelibdir\=./.gem.20260704-313-g9qvta
+compiling unicode.c
+unicode.c: In function 'Init_unicode_native':
+unicode.c:1238:1: warning: old-style function definition [-Wold-style-definition]
+ 1238 | Init_unicode_native()
+      | ^~~~~~~~~~~~~~~~~~~
+At top level:
+cc1: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+compiling ustring.c
+compiling wstring.c
+linking shared-object unicode/unicode_native.so
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/unicode-0.4.4.5/ext/unicode
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-g9qvta sitelibdir\=./.gem.20260704-313-g9qvta install
+/usr/bin/install -c -m 0755 unicode_native.so ./.gem.20260704-313-g9qvta/unicode
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/unicode-0.4.4.5/ext/unicode
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-g9qvta sitelibdir\=./.gem.20260704-313-g9qvta clean

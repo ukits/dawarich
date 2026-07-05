@@ -1,0 +1,19 @@
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/resolv-0.7.1/ext/win32/resolv
+/usr/local/bin/ruby extconf.rb
+checking for GetNetworkParams() in -liphlpapi... no
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/resolv-0.7.1/ext/win32/resolv
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-r8jvyx sitelibdir\=./.gem.20260704-313-r8jvyx clean
+Done: clean
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/resolv-0.7.1/ext/win32/resolv
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-r8jvyx sitelibdir\=./.gem.20260704-313-r8jvyx
+Done: all
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/resolv-0.7.1/ext/win32/resolv
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-r8jvyx sitelibdir\=./.gem.20260704-313-r8jvyx install
+Done: install
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/resolv-0.7.1/ext/win32/resolv
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-r8jvyx sitelibdir\=./.gem.20260704-313-r8jvyx clean
+Done: clean

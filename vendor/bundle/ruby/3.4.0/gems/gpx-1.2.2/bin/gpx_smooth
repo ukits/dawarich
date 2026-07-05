@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+require File.expand_path('../lib/gpx', __dir__)
+require 'optparse'
+
+def str_to_int_or_time(str)
+  case str
+  when /\A\d{10}\Z/
+    Time.at(str.to_i)
+  when /\A\d+\Z/
+    str.to_i
+  else
+    DateTime.strptime(str, '%Y%m%d-%H:%M:%S').to_time
+  end
+end
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = 'Usage: smooth [options]'
+
+  opts.on('-i', '--input-file FILE', 'Input file to read gpx data from (if omitted, data will be read from stdin)') do |v|
+    options[:infile] = v
+  end
+  opts.on('-o', '--output-file FILE', 'Output file to write smoothed gpx data to (if omitted, data will be written to stdout)') do |v|
+    options[:outfile] = v
+  end
+  opts.on('-s', '--start-time [YYYYMMDD-HH:MM:SS|EPOCH|OFFSET]', 'Start smoothing from time or offset specified (if omitted start from the start of the file)') do |v|
+    options[:start] = v
+  end
+  opts.on('-e', '--end-time [YYYYMMDD-HH:MM:SS|EPOCH|OFFSET]', 'Finish smoothing from time or offset specified (if omitted finish at the end of the file)') do |v|
+    options[:end] = v
+  end
+end.parse!
+
+input = if options[:infile]
+          File.open(options[:infile])
+        else
+          $stdin
+        end
+
+options[:start] = str_to_int_or_time(options[:start]) if options[:start]
+options[:end] = str_to_int_or_time(options[:end]) if options[:end]
+
+gpx = GPX::GPXFile.new(gpx_data: input)
+warn "read track with distance #{gpx.distance}"
+
+# 1419062980
+gpx.tracks.each do |track|
+  track.segments.each do |segment|
+    segment.smooth_location_by_average(end: options[:end], start: options[:start])
+  end
+end
+gpx.recalculate_distance
+warn "smoothed distance #{gpx.distance}"
+
+if options[:outfile]
+  gpx.write(options[:outfile], false)
+else
+  puts gpx.to_s(false)
+end

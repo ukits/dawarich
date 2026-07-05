@@ -1,0 +1,25 @@
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/zlib-3.2.3/ext/zlib
+/usr/local/bin/ruby extconf.rb
+checking for deflateReset(NULL) in -lz... yes
+checking for crc32_combine() in zlib.h... yes
+checking for adler32_combine() in zlib.h... yes
+checking for z_crc_t in zlib.h... yes
+checking for z_size_t in zlib.h... yes
+checking for crc32_z() in zlib.h... yes
+checking for adler32_z() in zlib.h... yes
+creating Makefile
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/zlib-3.2.3/ext/zlib
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-6qbggk sitelibdir\=./.gem.20260704-313-6qbggk clean
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/zlib-3.2.3/ext/zlib
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-6qbggk sitelibdir\=./.gem.20260704-313-6qbggk
+compiling zlib.c
+linking shared-object zlib.so
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/zlib-3.2.3/ext/zlib
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-6qbggk sitelibdir\=./.gem.20260704-313-6qbggk install
+/usr/bin/install -c -m 0755 zlib.so ./.gem.20260704-313-6qbggk
+
+current directory: /var/app/vendor/bundle/ruby/3.4.0/gems/zlib-3.2.3/ext/zlib
+make DESTDIR\= sitearchdir\=./.gem.20260704-313-6qbggk sitelibdir\=./.gem.20260704-313-6qbggk clean

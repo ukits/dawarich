@@ -329,18 +329,23 @@
   height: 100%;
 }
 
-/* Single-column layout: calendar/filter rail stacked above visit list main.
-   No bottom padding so the day column reaches the panel edge; top + sides
-   keep the breathing room. */
+/* Single-column stack: rail sizes to its content, main fills remaining height
+   and scrolls independently. */
 .timeline-tab-content {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
   padding: 0.75rem 0.75rem 0;
-  align-items: start;
   flex: 1;
   min-height: 0;
   overflow: hidden;
+}
+
+/* Breathing room so the 7-column grid and selected-day outline don't clip
+   against the rail edge (especially the right side). */
+#timeline-calendar-frame {
+  display: block;
+  padding: 0 0.375rem;
 }
 
 /* --- Calendar grid (sits inside the timeline-rail) --- */

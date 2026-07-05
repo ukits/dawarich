@@ -1,4 +1,9 @@
 import { createPopupContent } from "./popups"
+import {
+  clampPointRadius,
+  DEFAULT_POINT_RADIUS,
+  getLeafletMarkerSize,
+} from "./point_size"
 
 const MARKER_DATA_INDICES = {
   LATITUDE: 0,
@@ -84,9 +89,12 @@ export function createInteractiveMarker(
   const pointId = point[6] // ID is at index 6
   const velocity = point[5] || 0 // velocity is at index 5
   const markerColor = velocity < 0 ? "orange" : "blue"
+  const markerSize = getLeafletMarkerSize(
+    clampPointRadius(userSettings.point_radius ?? DEFAULT_POINT_RADIUS),
+  )
 
   const marker = L.marker([lat, lng], {
-    icon: createStandardIcon(markerColor),
+    icon: createStandardIcon(markerColor, markerSize),
     draggable: true,
     autoPan: true,
     pointIndex: index,
@@ -120,9 +128,12 @@ export function createSimplifiedMarker(point, userSettings = {}) {
   const [lat, lng] = point
   const velocity = point[5] || 0
   const markerColor = velocity < 0 ? "orange" : "blue"
+  const markerSize = getLeafletMarkerSize(
+    clampPointRadius(userSettings.point_radius ?? DEFAULT_POINT_RADIUS),
+  )
 
   const marker = L.marker([lat, lng], {
-    icon: createStandardIcon(markerColor),
+    icon: createStandardIcon(markerColor, markerSize),
     draggable: true,
     autoPan: true,
   })

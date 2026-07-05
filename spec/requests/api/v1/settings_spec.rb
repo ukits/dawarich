@@ -44,6 +44,20 @@ RSpec.describe 'Api::V1::Settings', type: :request do
         expect(response.parsed_body['settings']['route_opacity'].to_f).to eq(0.3)
       end
 
+      it 'updates point_radius' do
+        patch "/api/v1/settings?api_key=#{api_key}", params: { settings: { point_radius: 3 } }
+
+        expect(response).to have_http_status(:success)
+        expect(user.reload.safe_settings.point_radius).to eq(3)
+        expect(response.parsed_body['settings']['point_radius']).to eq(3)
+      end
+
+      it 'clamps point_radius on read' do
+        patch "/api/v1/settings?api_key=#{api_key}", params: { settings: { point_radius: 99 } }
+
+        expect(response.parsed_body['settings']['point_radius']).to eq(12)
+      end
+
       it 'updates timezone' do
         patch "/api/v1/settings?api_key=#{api_key}", params: { settings: { timezone: 'Europe/Berlin' } }
 

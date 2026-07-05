@@ -3,10 +3,13 @@
  * Loads settings from backend API only (no localStorage)
  */
 
+import { clampPointRadius } from "maps/point_size"
+
 const DEFAULT_SETTINGS = {
   mapStyle: "light",
   enabledMapLayers: ["Heatmap", "Tracks"],
   routeOpacity: 0.6,
+  pointRadius: 6,
   fogOfWarRadius: 50,
   fogOfWarThreshold: 50,
   fogOfWarMode: "points",
@@ -73,6 +76,7 @@ const BACKEND_SETTINGS_MAP = {
   mapStyle: "maps_maplibre_style",
   enabledMapLayers: "enabled_map_layers",
   routeOpacity: "route_opacity",
+  pointRadius: "point_radius",
   fogOfWarRadius: "fog_of_war_meters",
   fogOfWarThreshold: "fog_of_war_threshold",
   fogOfWarMode: "fog_of_war_mode",
@@ -251,6 +255,13 @@ export class SettingsManager {
                 value,
                 DEFAULT_SETTINGS.routeOpacity,
               )
+            } else if (frontendKey === "pointRadius") {
+              value = clampPointRadius(
+                SettingsManager._parseIntOr(
+                  value,
+                  DEFAULT_SETTINGS.pointRadius,
+                ),
+              )
             } else if (frontendKey === "fogOfWarRadius") {
               value = SettingsManager._parseIntOr(
                 value,
@@ -383,6 +394,8 @@ export class SettingsManager {
 
             if (frontendKey === "routeOpacity") {
               value = parseFloat(value).toString()
+            } else if (frontendKey === "pointRadius") {
+              value = clampPointRadius(parseInt(value, 10)).toString()
             } else if (
               frontendKey === "fogOfWarRadius" ||
               frontendKey === "fogOfWarThreshold" ||

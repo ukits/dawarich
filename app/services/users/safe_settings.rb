@@ -20,6 +20,7 @@ class Users::SafeSettings
     'merge_threshold_minutes' => 15,
     'live_map_enabled' => true,
     'route_opacity' => 0.6,
+    'point_radius' => 6,
     'immich_url' => nil,
     'immich_api_key' => nil,
     'immich_skip_ssl_verification' => false,
@@ -89,6 +90,7 @@ class Users::SafeSettings
       merge_threshold_minutes: merge_threshold_minutes,
       live_map_enabled: live_map_enabled,
       route_opacity: route_opacity,
+      point_radius: point_radius,
       immich_url: immich_url,
       immich_api_key: immich_api_key,
       photoprism_url: photoprism_url,
@@ -159,6 +161,10 @@ class Users::SafeSettings
 
   def route_opacity
     settings['route_opacity']
+  end
+
+  def point_radius
+    settings['point_radius'].to_i.clamp(2, 12)
   end
 
   def immich_url

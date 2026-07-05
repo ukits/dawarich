@@ -396,6 +396,7 @@ export class LayerManager {
         visible: false,
         apiClient: this.api,
         timezone: this.settings.timezone,
+        pointRadius: this.settings.pointRadius,
       })
       this.layers.anomaliesLayer.add({
         type: "FeatureCollection",
@@ -411,6 +412,7 @@ export class LayerManager {
         apiClient: this.api,
         layerManager: this,
         styleName: this.settings.mapStyle,
+        pointRadius: this.settings.pointRadius,
       })
       this.layers.pointsLayer.add(pointsGeoJSON)
     } else {

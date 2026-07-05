@@ -7,6 +7,7 @@ import { countryCodesMap } from "../maps/country_codes"
 import { LiveMapHandler } from "../maps/live_map_handler"
 import { LocationSearch } from "../maps/location_search"
 import { createMarkersArray } from "../maps/markers"
+import { clampPointRadius, DEFAULT_POINT_RADIUS } from "../maps/point_size"
 import { fetchAndDisplayPhotos } from "../maps/photos"
 import { PlacesManager } from "../maps/places"
 import {
@@ -1310,6 +1311,13 @@ export default class extends BaseController {
 
           <div class="form-control">
             <label class="label py-1">
+              <span class="label-text text-xs">Point size, px</span>
+            </label>
+            <input type="number" class="input input-bordered input-sm w-full" id="point-radius" name="point_radius" min="2" max="12" step="1" value="${clampPointRadius(this.userSettings.point_radius ?? DEFAULT_POINT_RADIUS)}">
+          </div>
+
+          <div class="form-control">
+            <label class="label py-1">
               <span class="label-text text-xs">Fog of War radius</span>
             </label>
             <div class="join join-horizontal w-full">
@@ -1487,6 +1495,9 @@ export default class extends BaseController {
       body: JSON.stringify({
         settings: {
           route_opacity: decimalOpacity.toString(),
+          point_radius: clampPointRadius(
+            event.target.point_radius.value,
+          ).toString(),
           fog_of_war_meters: event.target.fog_of_war_meters.value,
           fog_of_war_threshold: event.target.fog_of_war_threshold.value,
           meters_between_routes: event.target.meters_between_routes.value,
@@ -1567,6 +1578,16 @@ export default class extends BaseController {
         if (this.polylinesLayer) {
           updatePolylinesOpacity(this.polylinesLayer, newOpacity)
         }
+      }
+
+      if (newSettings.point_radius !== this.userSettings.point_radius) {
+        this.markersArray = createMarkersArray(
+          this.markers,
+          { ...this.userSettings, ...newSettings },
+          this.apiKey,
+        )
+        this.markersLayer.clearLayers()
+        this.markersLayer.addLayer(L.layerGroup(this.markersArray))
       }
 
       // Update the local settings

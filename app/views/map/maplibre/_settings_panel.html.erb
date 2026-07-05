@@ -444,6 +444,31 @@
 
           <div class="divider"></div>
 
+          <!-- Point Size -->
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text font-medium">Point Size</span>
+              <span class="label-text-alt" data-maps--maplibre-target="pointRadiusValue">6px</span>
+            </label>
+            <input type="range"
+                   name="pointRadius"
+                   min="2"
+                   max="12"
+                   step="1"
+                   value="6"
+                   class="range range-sm"
+                   data-maps--maplibre-target="pointRadiusRange"
+                   data-action="input->maps--maplibre#updatePointRadius" />
+            <div class="w-full flex justify-between text-xs px-2 mt-1">
+              <span>2px</span>
+              <span>6px</span>
+              <span>12px</span>
+            </div>
+            <p class="text-xs text-base-content/60 mt-1">Size of location point markers on the map</p>
+          </div>
+
+          <div class="divider"></div>
+
           <!-- Fog of War Settings -->
           <div class="form-control w-full">
             <label class="label">

@@ -1,5 +1,6 @@
 import { Toast } from "maps_maplibre/components/toast"
 import { UpgradeBanner } from "maps_maplibre/components/upgrade_banner"
+import { applyPointSizeToMapLibre, clampPointRadius } from "maps/point_size"
 import { isGatedPlan } from "maps_maplibre/utils/layer_gate"
 import { SettingsManager } from "maps_maplibre/utils/settings_manager"
 import { getMapStyle } from "maps_maplibre/utils/style_manager"
@@ -125,6 +126,16 @@ export class SettingsController {
     if (controller.hasRouteOpacityRangeTarget) {
       controller.routeOpacityRangeTarget.value =
         (this.settings.routeOpacity || 1.0) * 100
+    }
+
+    // Sync point size slider
+    if (controller.hasPointRadiusRangeTarget) {
+      controller.pointRadiusRangeTarget.value = clampPointRadius(
+        this.settings.pointRadius,
+      )
+      if (controller.hasPointRadiusValueTarget) {
+        controller.pointRadiusValueTarget.textContent = `${controller.pointRadiusRangeTarget.value}px`
+      }
     }
 
     // Sync map style dropdown
@@ -1151,6 +1162,28 @@ export class SettingsController {
     SettingsManager.updateSetting("routeOpacity", opacity)
   }
 
+  updatePointRadius(event) {
+    const radius = clampPointRadius(parseInt(event.target.value, 10))
+
+    if (this.controller.hasPointRadiusValueTarget) {
+      this.controller.pointRadiusValueTarget.textContent = `${radius}px`
+    }
+
+    applyPointSizeToMapLibre(this.map, radius)
+
+    const pointsLayer = this.layerManager.getLayer("points")
+    if (pointsLayer) {
+      pointsLayer.pointRadius = radius
+    }
+
+    const anomaliesLayer = this.layerManager.getLayer("anomalies")
+    if (anomaliesLayer) {
+      anomaliesLayer.pointRadius = radius
+    }
+
+    SettingsManager.updateSetting("pointRadius", radius)
+  }
+
   /**
    * Update advanced settings from form submission
    */
@@ -1162,6 +1195,7 @@ export class SettingsController {
 
     const settings = {
       routeOpacity: parseFloat(formData.get("routeOpacity")) / 100,
+      pointRadius: clampPointRadius(parseInt(formData.get("pointRadius"), 10)),
       fogOfWarRadius: parseInt(formData.get("fogOfWarRadius"), 10),
       fogOfWarThreshold: parseInt(formData.get("fogOfWarThreshold"), 10),
       metersBetweenRoutes: parseInt(formData.get("metersBetweenRoutes"), 10),
@@ -1297,6 +1331,21 @@ export class SettingsController {
           "line-opacity",
           settings.routeOpacity,
         )
+      }
+    }
+
+    // Update point size
+    if (settings.pointRadius !== undefined) {
+      applyPointSizeToMapLibre(this.map, settings.pointRadius)
+
+      const pointsLayer = this.layerManager.getLayer("points")
+      if (pointsLayer) {
+        pointsLayer.pointRadius = settings.pointRadius
+      }
+
+      const anomaliesLayer = this.layerManager.getLayer("anomalies")
+      if (anomaliesLayer) {
+        anomaliesLayer.pointRadius = settings.pointRadius
       }
     }
 

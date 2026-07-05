@@ -1,4 +1,9 @@
 import { escapeHtml } from "../utils/geojson_transformers"
+import {
+  clampPointRadius,
+  DEFAULT_POINT_RADIUS,
+  getPointStrokeWidth,
+} from "maps/point_size"
 import { BaseLayer } from "./base_layer"
 
 /**
@@ -11,6 +16,9 @@ export class AnomaliesLayer extends BaseLayer {
     super(map, { id: "anomalies", visible: false, ...options })
     this.apiClient = options.apiClient
     this.timezone = options.timezone || "UTC"
+    this.pointRadius = clampPointRadius(
+      options.pointRadius ?? DEFAULT_POINT_RADIUS,
+    )
   }
 
   getSourceConfig() {
@@ -31,8 +39,8 @@ export class AnomaliesLayer extends BaseLayer {
         source: this.sourceId,
         paint: {
           "circle-color": "#f97316",
-          "circle-radius": 6,
-          "circle-stroke-width": 2,
+          "circle-radius": this.pointRadius,
+          "circle-stroke-width": getPointStrokeWidth(this.pointRadius),
           "circle-stroke-color": "#ea580c",
         },
       },

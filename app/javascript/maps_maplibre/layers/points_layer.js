@@ -1,5 +1,10 @@
 import { Toast } from "maps_maplibre/components/toast"
 import { getMarkerStrokeColor } from "../utils/marker_theme"
+import {
+  clampPointRadius,
+  DEFAULT_POINT_RADIUS,
+  getPointStrokeWidth,
+} from "maps/point_size"
 import { BaseLayer } from "./base_layer"
 
 /**
@@ -12,6 +17,9 @@ export class PointsLayer extends BaseLayer {
     this.apiClient = options.apiClient
     this.layerManager = options.layerManager
     this.styleName = options.styleName
+    this.pointRadius = clampPointRadius(
+      options.pointRadius ?? DEFAULT_POINT_RADIUS,
+    )
     this.isDragging = false
     this.hasMoved = false
     this.justDragged = false
@@ -50,8 +58,8 @@ export class PointsLayer extends BaseLayer {
         },
         paint: {
           "circle-color": "#3b82f6",
-          "circle-radius": 6,
-          "circle-stroke-width": 2,
+          "circle-radius": this.pointRadius,
+          "circle-stroke-width": getPointStrokeWidth(this.pointRadius),
           "circle-stroke-color": getMarkerStrokeColor(this.styleName),
         },
       },

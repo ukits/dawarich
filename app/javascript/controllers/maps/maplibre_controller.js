@@ -599,9 +599,9 @@ export default class extends Controller {
       if (this.hasContainerTarget) {
         this.containerTarget.classList.toggle("panel-open", isOpening)
         // The Timeline tab puts the map container in `panel-timeline-expanded`
-        // (720px-wide panel + matching margin-left). When the user closes the
+        // (440px-wide panel + matching margin-left). When the user closes the
         // panel we have to clear that too — otherwise the panel slides
-        // off-screen but the map keeps its 720px left margin and the user
+        // off-screen but the map keeps its 440px left margin and the user
         // sees an empty dark column where the panel used to be.
         if (!isOpening) {
           this.containerTarget.classList.remove("panel-timeline-expanded")

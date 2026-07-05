@@ -329,12 +329,12 @@
   height: 100%;
 }
 
-/* Two-column layout: calendar/filter rail (260px) + visit list main.
+/* Single-column layout: calendar/filter rail stacked above visit list main.
    No bottom padding so the day column reaches the panel edge; top + sides
    keep the breathing room. */
 .timeline-tab-content {
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-columns: 1fr;
   gap: 1rem;
   padding: 0.75rem 0.75rem 0;
   align-items: start;
@@ -343,17 +343,7 @@
   overflow: hidden;
 }
 
-/* Collapse to single column when the panel gets narrow (≤1024px panel) */
-@media (max-width: 1024px) {
-  .timeline-tab-content {
-    grid-template-columns: 1fr;
-  }
-  .timeline-rail {
-    gap: 0.5rem;
-  }
-}
-
-/* --- Calendar grid (sits inside the 260px timeline-rail) --- */
+/* --- Calendar grid (sits inside the timeline-rail) --- */
 .timeline-calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);

@@ -32,7 +32,7 @@ export default class extends Controller {
     // the Timeline tab. `openTabByName` both opens the panel (maps--maplibre
     // controller's toggleSettings, so the `.open` class lands) AND activates
     // the tab — necessary because `.timeline-expanded` positions the panel at
-    // `left: -720px`, which stays off-screen until `.open` is added.
+    // `left: -440px`, which stays off-screen until `.open` is added.
     // Defer to the next frame so the maps--maplibre controller has connected
     // and its target queries resolve.
     const params = new URLSearchParams(window.location.search)

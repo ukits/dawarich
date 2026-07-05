@@ -338,13 +338,13 @@
 }
 
 /* ===== Timeline tab expanded panel ===== */
-/* When the Timeline tab is active, the panel widens so the unified
-   calendar + visit list can breathe. Matching `.panel-timeline-expanded`
-   on the map container keeps the map offset so nothing is obscured. */
+/* When the Timeline tab is active the panel uses a narrow width (~440px)
+   matching the former main-column width from the old two-column layout,
+   so the map keeps more horizontal space with the single-column stack. */
 
 .map-control-panel.timeline-expanded {
-  width: 720px;
-  left: -720px;
+  width: 440px;
+  left: -440px;
 }
 
 .map-control-panel.timeline-expanded.open {
@@ -352,19 +352,8 @@
 }
 
 .maps-maplibre-container.panel-timeline-expanded {
-  margin-left: 720px;
-  width: calc(100% - 720px) !important;
-}
-
-@media (max-width: 1280px) {
-  .map-control-panel.timeline-expanded {
-    width: 620px;
-    left: -620px;
-  }
-  .maps-maplibre-container.panel-timeline-expanded {
-    margin-left: 620px;
-    width: calc(100% - 620px) !important;
-  }
+  margin-left: 440px;
+  width: calc(100% - 440px) !important;
 }
 
 @media (max-width: 1024px) {
@@ -404,8 +393,8 @@
    panel as it slides:
      - panel closed (panel.left = -480px → panel.right = 0): cluster at 12px
        (top-left of the map area, looks like a floating tab launcher)
-     - panel open (panel.left = 0 → panel.right = 480/720): cluster at
-       492/732px (visually attached to the panel, looks like the panel's
+     - panel open (panel.left = 0 → panel.right = 480/440): cluster at
+       492/452px (visually attached to the panel, looks like the panel's
        tab strip)
    Removes the need for the old in-panel `.panel-tabs` element since the
    cluster itself is the tab strip in both states. */
@@ -431,13 +420,7 @@
 }
 
 .maps-maplibre-container.panel-timeline-expanded ~ .map-button-cluster {
-  left: 732px;
-}
-
-@media (max-width: 1280px) {
-  .maps-maplibre-container.panel-timeline-expanded ~ .map-button-cluster {
-    left: 632px;
-  }
+  left: 452px;
 }
 
 @media (max-width: 1024px) {

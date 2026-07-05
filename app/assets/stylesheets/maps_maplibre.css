@@ -78,13 +78,7 @@
 }
 
 .maps-maplibre-container.panel-timeline-expanded ~ .map-progress-badge {
-  left: calc(50% + 360px);
-}
-
-@media (max-width: 1280px) {
-  .maps-maplibre-container.panel-timeline-expanded ~ .map-progress-badge {
-    left: calc(50% + 310px);
-  }
+  left: calc(50% + 220px);
 }
 
 @media (max-width: 1024px) {

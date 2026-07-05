@@ -31,9 +31,9 @@ RSpec.describe Timeline::MonthSummary do
       end
     end
 
-    it 'starts weeks on Monday' do
+    it 'starts weeks on Sunday' do
       first_cell = summary[:weeks].first.first
-      expect(Date.parse(first_cell[:date]).wday).to eq(1) # Monday
+      expect(Date.parse(first_cell[:date]).wday).to eq(0) # Sunday
     end
 
     context 'with visits and tracks' do

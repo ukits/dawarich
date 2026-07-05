@@ -4,7 +4,7 @@ module Timeline
   # Aggregates month-level activity for the calendar rail in the unified timeline.
   #
   # Produces a 6x7 grid of day cells with tracked activity (visits + tracks) grouped
-  # in the user's timezone. Weeks start on Monday (European convention).
+  # in the user's timezone. Weeks start on Sunday.
   #
   # Visit duration is stored in MINUTES; track duration is stored in SECONDS.
   # `tracked_seconds` normalizes both into seconds for intensity bucketing.
@@ -37,7 +37,7 @@ module Timeline
       d = normalize_month(date)
       tz = user.safe_settings.timezone.presence || 'UTC'
       plan_segment = user.plan_restricted? ? 'lite' : 'pro'
-      ['timeline_month_summary', user.id, d.strftime('%Y-%m'), tz, plan_segment, 'v3']
+      ['timeline_month_summary', user.id, d.strftime('%Y-%m'), tz, plan_segment, 'v4']
     end
 
     def self.normalize_month(date)
@@ -209,7 +209,7 @@ module Timeline
     end
 
     def weeks
-      grid_start = @month_start.beginning_of_week(:monday)
+      grid_start = @month_start.beginning_of_week(:sunday)
       grid_end = grid_start + (6 * 7) - 1
       dates = (grid_start..grid_end).to_a
 

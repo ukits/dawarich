@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module TimelineHelper
-  WEEKDAY_HEADER_LABELS = %w[M T W T F S S].freeze
   KOREAN_WEEKDAY_LABELS = %w[일 월 화 수 목 금 토].freeze
 
   # "YYYY-MM" for the calendar's initial month. Prefers, in order:
@@ -141,7 +140,7 @@ module TimelineHelper
   end
 
   def calendar_weekday_labels
-    WEEKDAY_HEADER_LABELS
+    KOREAN_WEEKDAY_LABELS
   end
 
   def calendar_day_number(cell)

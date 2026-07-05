@@ -681,10 +681,9 @@ export default class extends Controller {
 
     title.textContent = formatISOMonthParts(year, monthIdx)
 
-    // 6×7 grid, Monday-aligned — mirrors what MonthSummary builds server-side.
+    // 6×7 grid, Sunday-aligned — mirrors what MonthSummary builds server-side.
     const monthStart = new Date(year, monthIdx, 1)
-    // Day-of-week with Monday as 0
-    const offset = (monthStart.getDay() + 6) % 7
+    const offset = monthStart.getDay()
     const gridStart = new Date(year, monthIdx, 1 - offset)
 
     const cells = []

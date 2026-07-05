@@ -273,8 +273,8 @@ RSpec.describe TimelineHelper, type: :helper do
   end
 
   describe '#calendar_weekday_labels' do
-    it 'returns Mon-Sun single-letter labels' do
-      expect(helper.calendar_weekday_labels).to eq(%w[M T W T F S S])
+    it 'returns Korean weekday labels starting on Sunday' do
+      expect(helper.calendar_weekday_labels).to eq(%w[일 월 화 수 목 금 토])
     end
   end
 

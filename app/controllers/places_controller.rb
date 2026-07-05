@@ -7,7 +7,11 @@ class PlacesController < ApplicationController
   before_action :set_place, only: %i[destroy update]
 
   def index
-    @places = current_user.places.page(params[:page]).per(20)
+    @places = current_user.places
+                           .select('places.*, (SELECT COUNT(*) FROM visits WHERE visits.place_id = places.id) AS visits_count')
+                           .order(created_at: :desc)
+                           .page(params[:page])
+                           .per(20)
   end
 
   def show

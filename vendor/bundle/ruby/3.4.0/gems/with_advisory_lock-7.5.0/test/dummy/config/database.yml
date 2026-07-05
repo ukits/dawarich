@@ -1,0 +1,21 @@
+default: &default
+  pool: 20
+
+
+test:
+  primary:
+    <<: *default
+    url: "<%= ENV['DATABASE_URL_PG'] %>"
+  secondary:
+    <<: *default
+    url: "<%= ENV['DATABASE_URL_MYSQL'] %>"
+    properties:
+      allowPublicKeyRetrieval: true
+<% if ENV['DATABASE_URL_TRILOGY'] && !ENV['DATABASE_URL_TRILOGY'].empty? %>
+  trilogy:
+    <<: *default
+    url: "<%= ENV['DATABASE_URL_TRILOGY'] %>"
+    adapter: trilogy
+    properties:
+      allowPublicKeyRetrieval: true
+<% end %>

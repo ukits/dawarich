@@ -1,0 +1,1346 @@
+# frozen_string_literal: true
+
+require 'concurrent'
+require 'net/http'
+require 'json'
+require 'posthog/version'
+require 'posthog/logging'
+require 'posthog/defaults'
+require 'posthog/backoff_policy'
+require 'posthog/feature_flag'
+require 'posthog/flag_definition_cache'
+require 'digest'
+
+module PostHog
+  class InconclusiveMatchError < StandardError
+  end
+
+  # RequiresServerEvaluation is raised when feature flag evaluation requires
+  # server-side data that is not available locally (e.g., static cohorts,
+  # experience continuity). This error should propagate immediately to trigger
+  # API fallback, unlike InconclusiveMatchError which allows trying other conditions.
+  class RequiresServerEvaluation < StandardError
+  end
+
+  # Polls and evaluates feature flag definitions for {PostHog::Client}.
+  #
+  # @api private
+  class FeatureFlagsPoller
+    include PostHog::Logging
+    include PostHog::Utils
+
+    # @param polling_interval [Integer, nil] Seconds between local feature flag definition polls.
+    # @param personal_api_key [String, nil] Personal API key used to fetch local evaluation definitions.
+    # @param project_api_key [String] Project API key.
+    # @param host [String] PostHog API host URL.
+    # @param feature_flag_request_timeout_seconds [Integer] Timeout for feature flag requests.
+    # @param on_error [Proc, nil] Callback invoked as `on_error.call(status, error)`.
+    # @param flag_definition_cache_provider [Object, nil] Optional {FlagDefinitionCacheProvider} implementation.
+    # @param feature_flag_request_max_retries [Integer, nil] Retries after a transient network error or retryable
+    #   HTTP response status on a flag request. Defaults to {Defaults::FeatureFlags::FLAG_REQUEST_MAX_RETRIES}.
+    #   Set to 0 to disable retrying.
+    def initialize(
+      polling_interval,
+      personal_api_key,
+      project_api_key,
+      host,
+      feature_flag_request_timeout_seconds,
+      on_error = nil,
+      flag_definition_cache_provider: nil,
+      feature_flag_request_max_retries: nil
+    )
+      @polling_interval = polling_interval || 30
+      @personal_api_key = personal_api_key
+      @project_api_key = project_api_key
+      @host = host
+      @feature_flags = Concurrent::Array.new
+      @group_type_mapping = Concurrent::Hash.new
+      @cohorts = Concurrent::Hash.new
+      @loaded_flags_successfully_once = Concurrent::AtomicBoolean.new
+      @feature_flags_by_key = nil
+      @feature_flag_request_timeout_seconds = feature_flag_request_timeout_seconds
+      @feature_flag_request_max_retries =
+        feature_flag_request_max_retries || Defaults::FeatureFlags::FLAG_REQUEST_MAX_RETRIES
+      @on_error = on_error || proc { |status, error| }
+      @quota_limited = Concurrent::AtomicBoolean.new(false)
+      @flags_etag = Concurrent::AtomicReference.new(nil)
+      @flag_definitions_loaded_at = nil
+
+      @flag_definition_cache_provider = flag_definition_cache_provider
+      FlagDefinitionCacheProvider.validate!(@flag_definition_cache_provider) if @flag_definition_cache_provider
+
+      @task =
+        Concurrent::TimerTask.new(
+          execution_interval: polling_interval
+        ) { _load_feature_flags }
+
+      # If no personal API key, disable local evaluation & thus polling for definitions
+      if @personal_api_key.nil?
+        logger.info 'No personal API key provided, disabling local evaluation'
+        @loaded_flags_successfully_once.make_true
+      else
+        # load once before timer
+        load_feature_flags
+        @task.execute
+      end
+    end
+
+    def load_feature_flags(force_reload = false)
+      return unless @loaded_flags_successfully_once.false? || force_reload
+
+      _load_feature_flags
+    end
+
+    attr_reader :flag_definitions_loaded_at, :feature_flags_by_key
+
+    def get_feature_variants(
+      distinct_id,
+      groups = {},
+      person_properties = {},
+      group_properties = {},
+      only_evaluate_locally = false,
+      raise_on_error = false
+    )
+      # TODO: Convert to options hash for easier argument passing
+      flags_data = get_all_flags_and_payloads(
+        distinct_id,
+        groups,
+        person_properties,
+        group_properties,
+        only_evaluate_locally,
+        raise_on_error
+      )
+
+      if flags_data.key?(:featureFlags)
+        stringify_keys(flags_data[:featureFlags] || {})
+      else
+        logger.debug "Missing feature flags key: #{flags_data.to_json}"
+        {}
+      end
+    end
+
+    def get_feature_payloads(
+      distinct_id,
+      groups = {},
+      person_properties = {},
+      group_properties = {},
+      _only_evaluate_locally = false
+    )
+      flags_data = get_all_flags_and_payloads(
+        distinct_id,
+        groups,
+        person_properties,
+        group_properties
+      )
+
+      if flags_data.key?(:featureFlagPayloads)
+        stringify_keys(flags_data[:featureFlagPayloads] || {})
+      else
+        logger.debug "Missing feature flag payloads key: #{flags_data.to_json}"
+        {}
+      end
+    end
+
+    def get_flags(distinct_id, groups = {}, person_properties = {}, group_properties = {}, flag_keys = nil,
+                  disable_geoip = nil)
+      flag_keys = flag_keys.map(&:to_s) if flag_keys.is_a?(Array)
+      request_data = {
+        distinct_id: distinct_id,
+        groups: groups,
+        person_properties: person_properties,
+        group_properties: group_properties
+      }
+      request_data[:flag_keys_to_evaluate] = flag_keys if flag_keys && !flag_keys.empty?
+      request_data[:geoip_disable] = disable_geoip unless disable_geoip.nil?
+
+      flags_response = _request_feature_flag_evaluation(request_data)
+
+      # Only normalize if we have flags in the response
+      if flags_response[:flags]
+        # v4 format
+        flags_hash = flags_response[:flags].transform_values do |flag|
+          FeatureFlag.new(flag)
+        end
+        flags_response[:flags] = flags_hash
+        # Filter out flags that failed evaluation to avoid overwriting cached values
+        successful_flags = flags_hash.reject { |_, flag| flag.failed == true }
+        flags_response[:featureFlags] = successful_flags.transform_values(&:get_value).transform_keys(&:to_sym)
+        flags_response[:featureFlagPayloads] = successful_flags.transform_values(&:payload).transform_keys(&:to_sym)
+      elsif flags_response[:featureFlags]
+        # v3 format
+        flags_response[:featureFlags] = flags_response[:featureFlags] || {}
+        flags_response[:featureFlagPayloads] = flags_response[:featureFlagPayloads] || {}
+        flags_response[:flags] = flags_response[:featureFlags].to_h do |key, value|
+          [key, FeatureFlag.from_value_and_payload(key, value, flags_response[:featureFlagPayloads][key])]
+        end
+      end
+
+      flags_response
+    end
+
+    def get_remote_config_payload(flag_key)
+      _request_remote_config_payload(flag_key.to_s)
+    end
+
+    def get_feature_flag(
+      key,
+      distinct_id,
+      groups = {},
+      person_properties = {},
+      group_properties = {},
+      only_evaluate_locally = false
+    )
+      key = key.to_s
+
+      # make sure they're loaded on first run
+      load_feature_flags
+
+      symbolize_keys! groups
+      symbolize_keys! person_properties
+      symbolize_keys! group_properties
+
+      group_properties.each_value do |value|
+        symbolize_keys!(value)
+      end
+
+      response = nil
+      payload = nil
+      feature_flag = @feature_flags_by_key&.[](key)
+
+      unless feature_flag.nil?
+        begin
+          response = _compute_flag_locally(feature_flag, distinct_id, groups, person_properties, group_properties)
+          payload = _compute_flag_payload_locally(key, response) unless response.nil?
+          logger.debug "Successfully computed flag locally: #{key} -> #{response}"
+        rescue RequiresServerEvaluation, InconclusiveMatchError => e
+          logger.debug "Failed to compute flag #{key} locally: #{e}"
+        rescue StandardError => e
+          @on_error.call(-1, "Error computing flag locally: #{e}. #{e.backtrace.join("\n")}")
+        end
+      end
+
+      flag_was_locally_evaluated = !response.nil?
+
+      request_id = nil
+      evaluated_at = nil
+      feature_flag_error = nil
+
+      if !flag_was_locally_evaluated && !only_evaluate_locally
+        begin
+          errors = []
+          flags_data = get_all_flags_and_payloads(distinct_id, groups, person_properties, group_properties,
+                                                  only_evaluate_locally, true)
+          if flags_data.key?(:featureFlags)
+            flags = stringify_keys(flags_data[:featureFlags] || {})
+            payloads = stringify_keys(flags_data[:featureFlagPayloads] || {})
+            request_id = flags_data[:requestId]
+            evaluated_at = flags_data[:evaluatedAt]
+          else
+            logger.debug "Missing feature flags key: #{flags_data.to_json}"
+            flags = {}
+            payloads = {}
+          end
+
+          status = flags_data[:status]
+          errors << FeatureFlagError.api_error(status) if status && status >= 400
+          errors << FeatureFlagError::ERRORS_WHILE_COMPUTING if flags_data[:errorsWhileComputingFlags]
+          errors << FeatureFlagError::QUOTA_LIMITED if flags_data[:quotaLimited]&.include?('feature_flags')
+          errors << FeatureFlagError::FLAG_MISSING unless flags.key?(key.to_s)
+
+          response = flags[key]
+          response = false if response.nil?
+          payload = payloads[key]
+          feature_flag_error = errors.join(',') unless errors.empty?
+
+          logger.debug "Successfully computed flag remotely: #{key} -> #{response}"
+        rescue Timeout::Error => e
+          @on_error.call(-1, "Timeout while fetching flags remotely: #{e}")
+          feature_flag_error = FeatureFlagError::TIMEOUT
+        rescue Errno::ECONNRESET, Errno::ECONNREFUSED, EOFError, SocketError => e
+          @on_error.call(-1, "Connection error while fetching flags remotely: #{e}")
+          feature_flag_error = FeatureFlagError::CONNECTION_ERROR
+        rescue StandardError => e
+          @on_error.call(-1, "Error computing flag remotely: #{e}. #{e.backtrace.join("\n")}")
+          feature_flag_error = FeatureFlagError::UNKNOWN_ERROR
+        end
+      end
+
+      [response, flag_was_locally_evaluated, request_id, evaluated_at, feature_flag_error, payload]
+    end
+
+    def get_all_flags(
+      distinct_id,
+      groups = {},
+      person_properties = {},
+      group_properties = {},
+      only_evaluate_locally = false
+    )
+      if @quota_limited.true?
+        logger.debug 'Not fetching flags from server - quota limited'
+        return {}
+      end
+
+      # returns a string hash of all flags
+      response = get_all_flags_and_payloads(
+        distinct_id,
+        groups,
+        person_properties,
+        group_properties,
+        only_evaluate_locally
+      )
+
+      response[:featureFlags]
+    end
+
+    def get_all_flags_and_payloads(
+      distinct_id,
+      groups = {},
+      person_properties = {},
+      group_properties = {},
+      only_evaluate_locally = false,
+      raise_on_error = false
+    )
+      load_feature_flags
+
+      flags = {}
+      payloads = {}
+      fallback_to_server = @feature_flags.empty?
+      request_id = nil # Only for /flags requests
+      evaluated_at = nil # Only for /flags requests
+
+      @feature_flags.each do |flag|
+        match_value = _compute_flag_locally(flag, distinct_id, groups, person_properties, group_properties)
+        flags[flag[:key]] = match_value
+        match_payload = _compute_flag_payload_locally(flag[:key], match_value)
+        payloads[flag[:key]] = match_payload if match_payload
+      rescue RequiresServerEvaluation, InconclusiveMatchError
+        fallback_to_server = true
+      rescue StandardError => e
+        @on_error.call(-1, "Error computing flag locally: #{e}. #{e.backtrace.join("\n")} ")
+        fallback_to_server = true
+      end
+
+      errors_while_computing = false
+      quota_limited = nil
+      status_code = nil
+
+      if fallback_to_server && !only_evaluate_locally
+        begin
+          flags_and_payloads = get_flags(distinct_id, groups, person_properties, group_properties)
+          errors_while_computing = flags_and_payloads[:errorsWhileComputingFlags] || false
+          quota_limited = flags_and_payloads[:quotaLimited]
+          status_code = flags_and_payloads[:status]
+
+          unless flags_and_payloads.key?(:featureFlags)
+            raise StandardError, "Error flags response: #{flags_and_payloads}"
+          end
+
+          request_id = flags_and_payloads[:requestId]
+          evaluated_at = flags_and_payloads[:evaluatedAt]
+
+          # Check if feature_flags are quota limited
+          if quota_limited&.include?('feature_flags')
+            logger.warn '[FEATURE FLAGS] Quota limited for feature flags'
+            flags = {}
+            payloads = {}
+          else
+            server_flags = stringify_keys(flags_and_payloads[:featureFlags] || {})
+            server_payloads = stringify_keys(flags_and_payloads[:featureFlagPayloads] || {})
+
+            if errors_while_computing
+              # Merge server results into locally-evaluated results so that flags which
+              # failed server-side evaluation (already filtered out by get_flags) don't
+              # overwrite valid locally-evaluated values.
+              flags = stringify_keys(flags).merge(server_flags)
+              payloads = stringify_keys(payloads).merge(server_payloads)
+            else
+              flags = server_flags
+              payloads = server_payloads
+            end
+          end
+        rescue StandardError => e
+          @on_error.call(-1, "Error computing flag remotely: #{e}")
+          raise if raise_on_error
+        end
+      end
+
+      {
+        featureFlags: flags,
+        featureFlagPayloads: payloads,
+        requestId: request_id,
+        evaluatedAt: evaluated_at,
+        errorsWhileComputingFlags: errors_while_computing,
+        quotaLimited: quota_limited,
+        status: status_code
+      }
+    end
+
+    def get_feature_flag_payload(
+      key,
+      distinct_id,
+      match_value = nil,
+      groups = {},
+      person_properties = {},
+      group_properties = {},
+      only_evaluate_locally = false
+    )
+      key = key.to_s
+
+      if match_value.nil?
+        match_value = get_feature_flag(
+          key,
+          distinct_id,
+          groups,
+          person_properties,
+          group_properties,
+          true
+        )[0]
+      end
+      response = nil
+      response = _compute_flag_payload_locally(key, match_value) unless match_value.nil?
+      if response.nil? && !only_evaluate_locally
+        flags_payloads = get_feature_payloads(distinct_id, groups, person_properties, group_properties)
+        response = flags_payloads[key.downcase] || nil
+      end
+      response
+    end
+
+    def shutdown_poller
+      @task.shutdown
+      return unless @flag_definition_cache_provider
+
+      begin
+        @flag_definition_cache_provider.shutdown
+      rescue StandardError => e
+        logger.error("[FEATURE FLAGS] Cache provider shutdown error: #{e}")
+      end
+    end
+
+    # Class methods
+
+    def self.compare(lhs, rhs, operator)
+      case operator
+      when 'gt'
+        lhs > rhs
+      when 'gte'
+        lhs >= rhs
+      when 'lt'
+        lhs < rhs
+      when 'lte'
+        lhs <= rhs
+      else
+        raise "Invalid operator: #{operator}"
+      end
+    end
+
+    def self.relative_date_parse_for_feature_flag_matching(value)
+      match = /^-?([0-9]+)([a-z])$/.match(value)
+      parsed_dt = DateTime.now.new_offset(0)
+      return unless match
+
+      number = match[1].to_i
+
+      if number >= 10_000
+        # Guard against overflow, disallow numbers greater than 10_000
+        return nil
+      end
+
+      interval = match[2]
+      case interval
+      when 'h'
+        parsed_dt -= (number / 24.0)
+      when 'd'
+        parsed_dt = parsed_dt.prev_day(number)
+      when 'w'
+        parsed_dt = parsed_dt.prev_day(number * 7)
+      when 'm'
+        parsed_dt = parsed_dt.prev_month(number)
+      when 'y'
+        parsed_dt = parsed_dt.prev_year(number)
+      else
+        return nil
+      end
+
+      parsed_dt
+    end
+
+    # Parse a single semver numeric identifier, rejecting empty, non-digit, or
+    # leading-zero values per semver 2.0.0 §2.
+    def self.parse_semver_numeric(part)
+      raise InconclusiveMatchError, 'Invalid semver format' if part.nil? || part.empty? || part !~ /^\d+$/
+      # Semver 2.0.0 §2: numeric identifiers MUST NOT include leading zeros.
+      raise InconclusiveMatchError, 'Invalid semver format' if part.length > 1 && part[0] == '0'
+
+      part.to_i
+    end
+
+    # Parse a semver string into a comparable [major, minor, patch] integer array.
+    # Handles v-prefix, whitespace, pre-release suffixes. Defaults missing components to 0.
+    def self.parse_semver(value)
+      raise InconclusiveMatchError, 'Invalid semver format' if value.nil?
+
+      text = value.to_s.strip.sub(/^[vV]/, '')
+
+      raise InconclusiveMatchError, 'Invalid semver format' if text.empty?
+
+      # Strip pre-release and build metadata suffixes
+      text = text.split('-')[0].split('+')[0]
+      parts = text.split('.')
+
+      raise InconclusiveMatchError, 'Invalid semver format' if parts.empty? || parts[0].to_s.empty?
+
+      major = parse_semver_numeric(parts[0])
+      minor = parts.length > 1 ? parse_semver_numeric(parts[1]) : 0
+      patch = parts.length > 2 ? parse_semver_numeric(parts[2]) : 0
+
+      [major, minor, patch]
+    end
+
+    # Returns bounds for tilde (~) range:
+    # ~X       → >=X.0.0 <(X+1).0.0
+    # ~X.Y     → >=X.Y.0 <X.(Y+1).0
+    # ~X.Y.Z   → >=X.Y.Z <X.(Y+1).0
+    def self.semver_tilde_bounds(value)
+      major, minor, patch = parse_semver(value)
+      lower = [major, minor, patch]
+
+      # Determine how many components were provided
+      text = value.to_s.strip.sub(/^[vV]/, '')
+      text = text.split('-')[0].split('+')[0]
+      component_count = text.split('.').length
+
+      upper = if component_count == 1
+                # Major-only: bump major
+                [major + 1, 0, 0]
+              else
+                # Major.minor or major.minor.patch: bump minor
+                [major, minor + 1, 0]
+              end
+
+      [lower, upper]
+    end
+
+    # Returns bounds for caret (^) range per semver spec:
+    # ^X.Y.Z where X > 0 → >=X.Y.Z <(X+1).0.0
+    # ^0.Y.Z where Y > 0 → >=0.Y.Z <0.(Y+1).0
+    # ^0.0.Z → >=0.0.Z <0.0.(Z+1)
+    def self.semver_caret_bounds(value)
+      major, minor, patch = parse_semver(value)
+      lower = [major, minor, patch]
+
+      upper = if major.positive?
+                [major + 1, 0, 0]
+              elsif minor.positive?
+                [0, minor + 1, 0]
+              else
+                [0, 0, patch + 1]
+              end
+
+      [lower, upper]
+    end
+
+    # Returns bounds for wildcard (*) range:
+    # X.* or X → >=X.0.0 <(X+1).0.0
+    # X.Y.* → >=X.Y.0 <X.(Y+1).0
+    def self.semver_wildcard_bounds(value)
+      cleaned = value.to_s.strip.sub(/^[vV]/, '').gsub('*', '').chomp('.')
+      parts = cleaned.split('.').reject(&:empty?)
+
+      raise InconclusiveMatchError, 'Invalid semver wildcard format' if parts.empty?
+
+      numeric = parts.map do |part|
+        parse_semver_numeric(part)
+      rescue InconclusiveMatchError
+        raise InconclusiveMatchError, 'Invalid semver wildcard format'
+      end
+
+      major = numeric[0]
+      case numeric.length
+      when 1
+        [[major, 0, 0], [major + 1, 0, 0]]
+      when 2
+        minor = numeric[1]
+        [[major, minor, 0], [major, minor + 1, 0]]
+      else
+        minor = numeric[1]
+        patch = numeric[2]
+        [[major, minor, patch], [major, minor, patch + 1]]
+      end
+    end
+
+    def self.match_property(property, property_values, cohort_properties = {})
+      # only looks for matches where key exists in property_values
+      # doesn't support operator is_not_set
+
+      PostHog::Utils.symbolize_keys! property
+      PostHog::Utils.symbolize_keys! property_values
+
+      # Handle cohort properties
+      return match_cohort(property, property_values, cohort_properties) if extract_value(property, :type) == 'cohort'
+
+      key = property[:key].to_sym
+      value = property[:value]
+      operator = property[:operator] || 'exact'
+
+      if !property_values.key?(key)
+        raise InconclusiveMatchError, "Property #{key} not found in property_values"
+      elsif operator == 'is_not_set'
+        raise InconclusiveMatchError, 'Operator is_not_set not supported'
+      end
+
+      override_value = property_values[key]
+
+      case operator
+      when 'exact', 'is_not'
+        if value.is_a?(Array)
+          values_stringified = value.map { |val| val.to_s.downcase }
+          return values_stringified.any?(override_value.to_s.downcase) if operator == 'exact'
+
+          return values_stringified.none?(override_value.to_s.downcase)
+
+        end
+        if operator == 'exact'
+          value.to_s.downcase == override_value.to_s.downcase
+        else
+          value.to_s.downcase != override_value.to_s.downcase
+        end
+      when 'is_set'
+        property_values.key?(key)
+      when 'icontains'
+        override_value.to_s.downcase.include?(value.to_s.downcase)
+      when 'not_icontains'
+        !override_value.to_s.downcase.include?(value.to_s.downcase)
+      when 'regex'
+        PostHog::Utils.is_valid_regex(value.to_s) && !Regexp.new(value.to_s).match(override_value.to_s).nil?
+      when 'not_regex'
+        PostHog::Utils.is_valid_regex(value.to_s) && Regexp.new(value.to_s).match(override_value.to_s).nil?
+      when 'gt', 'gte', 'lt', 'lte'
+        parsed_value = nil
+        begin
+          parsed_value = Float(value)
+        rescue StandardError # rubocop:disable Lint/SuppressedException
+        end
+        if !parsed_value.nil? && !override_value.nil?
+          if override_value.is_a?(String)
+            compare(override_value, value.to_s, operator)
+          else
+            compare(override_value, parsed_value, operator)
+          end
+        else
+          compare(override_value.to_s, value.to_s, operator)
+        end
+      when 'is_date_before', 'is_date_after'
+        override_date = PostHog::Utils.convert_to_datetime(override_value.to_s)
+        parsed_date = relative_date_parse_for_feature_flag_matching(value.to_s)
+
+        parsed_date = PostHog::Utils.convert_to_datetime(value.to_s) if parsed_date.nil?
+
+        raise InconclusiveMatchError, 'Invalid date format' unless parsed_date
+
+        if operator == 'is_date_before'
+          override_date < parsed_date
+        elsif operator == 'is_date_after'
+          override_date > parsed_date
+        end
+      when 'semver_eq', 'semver_neq', 'semver_gt', 'semver_gte', 'semver_lt', 'semver_lte'
+        override_parsed = parse_semver(override_value)
+        flag_parsed = parse_semver(value)
+
+        case operator
+        when 'semver_eq'
+          override_parsed == flag_parsed
+        when 'semver_neq'
+          override_parsed != flag_parsed
+        when 'semver_gt'
+          (override_parsed <=> flag_parsed) == 1
+        when 'semver_gte'
+          (override_parsed <=> flag_parsed) >= 0
+        when 'semver_lt'
+          (override_parsed <=> flag_parsed) == -1
+        when 'semver_lte'
+          (override_parsed <=> flag_parsed) <= 0
+        end
+      when 'semver_tilde'
+        override_parsed = parse_semver(override_value)
+        lower, upper = semver_tilde_bounds(value)
+        (override_parsed <=> lower) >= 0 && (override_parsed <=> upper) == -1
+      when 'semver_caret'
+        override_parsed = parse_semver(override_value)
+        lower, upper = semver_caret_bounds(value)
+        (override_parsed <=> lower) >= 0 && (override_parsed <=> upper) == -1
+      when 'semver_wildcard'
+        override_parsed = parse_semver(override_value)
+        lower, upper = semver_wildcard_bounds(value)
+        (override_parsed <=> lower) >= 0 && (override_parsed <=> upper) == -1
+      else
+        raise InconclusiveMatchError, "Unknown operator: #{operator}"
+      end
+    end
+
+    def self.match_cohort(property, property_values, cohort_properties)
+      # Cohort properties are in the form of property groups like this:
+      # {
+      #   "cohort_id" => {
+      #     "type" => "AND|OR",
+      #     "values" => [{
+      #        "key" => "property_name", "value" => "property_value"
+      #     }]
+      #   }
+      # }
+      cohort_id = extract_value(property, :value).to_s
+      property_group = find_cohort_property(cohort_properties, cohort_id)
+
+      unless property_group
+        raise RequiresServerEvaluation,
+              "cohort #{cohort_id} not found in local cohorts - likely a static cohort that requires server evaluation"
+      end
+
+      match_property_group(property_group, property_values, cohort_properties)
+    end
+
+    def self.match_property_group(property_group, property_values, cohort_properties)
+      return true if property_group.nil? || property_group.empty?
+
+      group_type = extract_value(property_group, :type)
+      properties = extract_value(property_group, :values)
+
+      return true if properties.nil? || properties.empty?
+
+      if nested_property_group?(properties)
+        match_nested_property_group(properties, group_type, property_values, cohort_properties)
+      else
+        match_regular_property_group(properties, group_type, property_values, cohort_properties)
+      end
+    end
+
+    def self.extract_value(hash, key)
+      return nil unless hash.is_a?(Hash)
+
+      hash[key] || hash[key.to_s]
+    end
+
+    def self.find_cohort_property(cohort_properties, cohort_id)
+      return nil unless cohort_properties.is_a?(Hash)
+
+      cohort_properties[cohort_id] || cohort_properties[cohort_id.to_sym]
+    end
+
+    def self.nested_property_group?(properties)
+      return false unless properties&.any?
+
+      first_property = properties[0]
+      return false unless first_property.is_a?(Hash)
+
+      first_property.key?(:values) || first_property.key?('values')
+    end
+
+    def self.match_nested_property_group(properties, group_type, property_values, cohort_properties)
+      case group_type
+      when 'AND'
+        properties.each do |property|
+          return false unless match_property_group(property, property_values, cohort_properties)
+        end
+        true
+      when 'OR'
+        properties.each do |property|
+          return true if match_property_group(property, property_values, cohort_properties)
+        end
+        false
+      else
+        raise InconclusiveMatchError, "Unknown property group type: #{group_type}"
+      end
+    end
+
+    def self.match_regular_property_group(properties, group_type, property_values, cohort_properties)
+      # Validate group type upfront
+      raise InconclusiveMatchError, "Unknown property group type: #{group_type}" unless %w[AND OR].include?(group_type)
+
+      error_matching_locally = false
+
+      properties.each do |prop|
+        PostHog::Utils.symbolize_keys!(prop)
+
+        matches = match_property(prop, property_values, cohort_properties)
+
+        negated = prop[:negation] || false
+        final_result = negated ? !matches : matches
+
+        # Short-circuit based on group type
+        if group_type == 'AND'
+          return false unless final_result
+        elsif final_result # group_type == 'OR'
+          return true
+        end
+      rescue RequiresServerEvaluation
+        # Immediately propagate - this condition requires server-side data
+        raise
+      rescue InconclusiveMatchError => e
+        PostHog::Logging.logger&.debug("Failed to compute property #{prop} locally: #{e}")
+        error_matching_locally = true
+      end
+
+      raise InconclusiveMatchError, "can't match cohort without a given cohort property value" if error_matching_locally
+
+      # If we reach here, return default based on group type
+      group_type == 'AND'
+    end
+
+    # Evaluates a flag dependency property according to the dependency chain algorithm.
+    #
+    # @param property [Hash] Flag property with type="flag" and dependency_chain
+    # @param evaluation_cache [Hash] Cache for storing evaluation results
+    # @param distinct_id [String] The distinct ID being evaluated
+    # @param properties [Hash] Person properties for evaluation
+    # @param cohort_properties [Hash] Cohort properties for evaluation
+    # @return [Boolean] True if all dependencies in the chain evaluate to true, false otherwise
+    def evaluate_flag_dependency(property, evaluation_cache, distinct_id, properties, cohort_properties)
+      if property[:operator] != 'flag_evaluates_to'
+        # Should never happen, but just in case
+        raise InconclusiveMatchError, "Operator #{property[:operator]} not supported for flag dependencies"
+      end
+
+      if @feature_flags_by_key.nil? || evaluation_cache.nil?
+        # Cannot evaluate flag dependencies without required context
+        raise InconclusiveMatchError,
+              "Cannot evaluate flag dependency on '#{property[:key] || 'unknown'}' " \
+              'without feature flags loaded or evaluation_cache'
+      end
+
+      # Check if dependency_chain is present - it should always be provided for flag dependencies
+      unless property.key?(:dependency_chain)
+        # Missing dependency_chain indicates malformed server data
+        raise InconclusiveMatchError,
+              "Flag dependency property for '#{property[:key] || 'unknown'}' " \
+              "is missing required 'dependency_chain' field"
+      end
+
+      dependency_chain = property[:dependency_chain]
+
+      # Handle circular dependency (empty chain means circular)
+      if dependency_chain.empty?
+        PostHog::Logging.logger&.debug("Circular dependency detected for flag: #{property[:key]}")
+        raise InconclusiveMatchError,
+              "Circular dependency detected for flag '#{property[:key] || 'unknown'}'"
+      end
+
+      # Evaluate all dependencies in the chain order
+      dependency_chain.each do |dep_flag_key|
+        unless evaluation_cache.key?(dep_flag_key)
+          # Need to evaluate this dependency first
+          dep_flag = @feature_flags_by_key[dep_flag_key]
+          if dep_flag.nil?
+            # Missing flag dependency - cannot evaluate locally
+            evaluation_cache[dep_flag_key] = nil
+            raise InconclusiveMatchError,
+                  "Cannot evaluate flag dependency '#{dep_flag_key}' - flag not found in local flags"
+          elsif !dep_flag[:active]
+            # Check if the flag is active (same check as in _compute_flag_locally)
+            evaluation_cache[dep_flag_key] = false
+          else
+            # Recursively evaluate the dependency using existing instance method
+            begin
+              dep_result = match_feature_flag_properties(
+                dep_flag,
+                distinct_id,
+                properties,
+                evaluation_cache,
+                cohort_properties
+              )
+              evaluation_cache[dep_flag_key] = dep_result
+            rescue InconclusiveMatchError => e
+              # If we can't evaluate a dependency, store nil and propagate the error
+              evaluation_cache[dep_flag_key] = nil
+              raise InconclusiveMatchError,
+                    "Cannot evaluate flag dependency '#{dep_flag_key}': #{e.message}"
+            end
+          end
+        end
+
+        # Check the cached result
+        cached_result = evaluation_cache[dep_flag_key]
+        if cached_result.nil?
+          # Previously inconclusive - raise error again
+          raise InconclusiveMatchError,
+                "Flag dependency '#{dep_flag_key}' was previously inconclusive"
+        elsif !cached_result
+          # Definitive False result - dependency failed
+          return false
+        end
+      end
+
+      # Get the expected value of the immediate dependency and the actual value
+      expected_value = property[:value]
+      # The flag we want to evaluate is defined by :key which should ALSO be the last key in the dependency chain
+      actual_value = evaluation_cache[property[:key]]
+
+      self.class.matches_dependency_value(expected_value, actual_value)
+    end
+
+    def self.matches_dependency_value(expected_value, actual_value)
+      # Check if the actual flag value matches the expected dependency value.
+      #
+      # - String variant case: check for exact match or boolean true
+      # - Boolean case: must match expected boolean value
+      #
+      # @param expected_value [Object] The expected value from the property
+      # @param actual_value [Object] The actual value returned by the flag evaluation
+      # @return [Boolean] True if the values match according to flag dependency rules
+
+      # String variant case - check for exact match or boolean true
+      if actual_value.is_a?(String) && !actual_value.empty?
+        if expected_value.is_a?(TrueClass) || expected_value.is_a?(FalseClass)
+          # Any variant matches boolean true
+          return expected_value
+        elsif expected_value.is_a?(String)
+          # variants are case-sensitive, hence our comparison is too
+          return actual_value == expected_value
+        else
+          return false
+        end
+
+      # Boolean case - must match expected boolean value
+      elsif actual_value.is_a?(TrueClass) || actual_value.is_a?(FalseClass)
+        return actual_value == expected_value if expected_value.is_a?(TrueClass) || expected_value.is_a?(FalseClass)
+      end
+
+      # Default case
+      false
+    end
+
+    private_class_method :extract_value, :find_cohort_property, :nested_property_group?,
+                         :match_nested_property_group, :match_regular_property_group
+
+    def _compute_flag_locally(flag, distinct_id, groups = {}, person_properties = {}, group_properties = {})
+      raise RequiresServerEvaluation, 'Flag has experience continuity enabled' if flag[:ensure_experience_continuity]
+
+      return false unless flag[:active]
+
+      # Create evaluation cache for flag dependencies
+      evaluation_cache = {}
+
+      flag_filters = flag[:filters] || {}
+
+      aggregation_group_type_index = flag_filters[:aggregation_group_type_index]
+      if aggregation_group_type_index.nil?
+        local_person_properties = person_properties || {}
+        unless local_person_properties.key?(:distinct_id) || local_person_properties.key?('distinct_id')
+          local_person_properties = local_person_properties.merge(distinct_id: distinct_id)
+        end
+
+        return match_feature_flag_properties(flag, distinct_id, local_person_properties, evaluation_cache, @cohorts,
+                                             groups: groups, group_properties: group_properties)
+      end
+
+      group_name = @group_type_mapping[aggregation_group_type_index.to_s.to_sym]
+
+      if group_name.nil?
+        logger.warn(
+          "[FEATURE FLAGS] Unknown group type index #{aggregation_group_type_index} for feature flag #{flag[:key]}"
+        )
+        # failover to `/flags/`
+        raise InconclusiveMatchError, 'Flag has unknown group type index'
+      end
+
+      group_name_symbol = group_name.to_sym
+
+      unless groups.key?(group_name_symbol)
+        # Group flags are never enabled if appropriate `groups` aren't passed in
+        # don't failover to `/flags/`, since response will be the same
+        logger.warn "[FEATURE FLAGS] Can't compute group feature flag: #{flag[:key]} without group names passed in"
+        return false
+      end
+
+      focused_group_properties = group_properties[group_name_symbol]
+      match_feature_flag_properties(flag, groups[group_name_symbol], focused_group_properties, evaluation_cache,
+                                    @cohorts, groups: groups, group_properties: group_properties)
+    end
+
+    def _compute_flag_payload_locally(key, match_value)
+      return nil if @feature_flags_by_key.nil?
+
+      key = key.to_s
+      response = nil
+      if [true, false].include? match_value
+        response = @feature_flags_by_key.dig(key, :filters, :payloads, match_value.to_s.to_sym)
+      elsif match_value.is_a? String
+        response = @feature_flags_by_key.dig(key, :filters, :payloads, match_value.to_sym)
+      end
+      response
+    end
+
+    def match_feature_flag_properties(flag, distinct_id, properties, evaluation_cache, cohort_properties = {},
+                                      groups: {}, group_properties: {})
+      flag_filters = flag[:filters] || {}
+
+      flag_conditions = flag_filters[:groups] || []
+      flag_aggregation = flag_filters[:aggregation_group_type_index]
+      early_exit = flag_filters[:early_exit] == true
+      is_inconclusive = false
+      result = nil
+
+      # NOTE: This NEEDS to be `each` because `each_key` breaks
+      flag_conditions.each do |condition|
+        # Per-condition aggregation overrides only when the condition explicitly
+        # sets its own aggregation_group_type_index (mixed targeting). When absent,
+        # use the properties/bucketing already resolved by the caller.
+        condition_aggregation = condition.fetch(:aggregation_group_type_index, flag_aggregation)
+
+        effective_properties = properties
+        effective_bucketing = distinct_id
+
+        # Mixed-override path: condition-level aggregation differs from flag-level.
+        # This assumes flag-level aggregation is nil for mixed flags.
+        if condition_aggregation != flag_aggregation
+          if condition_aggregation.nil?
+            # Person condition under a mixed flag — caller already passed person props/bucketing.
+          else
+            group_name = @group_type_mapping[condition_aggregation.to_s.to_sym]
+            if group_name.nil? || !groups.key?(group_name.to_sym)
+              logger.debug do
+                "[FEATURE FLAGS] Skipping group condition for flag '#{flag[:key]}': " \
+                  "group type index #{condition_aggregation} not available"
+              end
+              next
+            end
+            unless group_properties.key?(group_name.to_sym)
+              is_inconclusive = true
+              next
+            end
+            effective_properties = group_properties[group_name.to_sym]
+            effective_bucketing = groups[group_name.to_sym]
+          end
+        end
+
+        case condition_match_outcome(flag, effective_bucketing, condition, effective_properties, evaluation_cache,
+                                     cohort_properties)
+        when :match
+          variant_override = condition[:variant]
+          flag_multivariate = flag_filters[:multivariate] || {}
+          flag_variants = flag_multivariate[:variants] || []
+          variant = if flag_variants.map { |variant| variant[:key] }.include?(condition[:variant])
+                      variant_override
+                    else
+                      get_matching_variant(flag, effective_bucketing)
+                    end
+          result = variant || true
+          break
+        when :out_of_rollout_bound
+          break if early_exit
+        end
+      rescue RequiresServerEvaluation
+        # Static cohort or other missing server-side data - must fallback to API
+        raise
+      rescue InconclusiveMatchError
+        # Evaluation error (bad regex, invalid date, missing property, etc.)
+        # Track that we had an inconclusive match, but try other conditions
+        is_inconclusive = true
+      end
+
+      if !result.nil?
+        return result
+      elsif is_inconclusive
+        raise InconclusiveMatchError, "Can't determine if feature flag is enabled or not with given properties"
+      end
+
+      # We can only return False when all conditions are False
+      false
+    end
+
+    def condition_match(flag, distinct_id, condition, properties, evaluation_cache, cohort_properties = {})
+      condition_match_outcome(flag, distinct_id, condition, properties, evaluation_cache,
+                              cohort_properties) == :match
+    end
+
+    # Evaluates a single condition group and returns a tri-state outcome:
+    #   :match                 - property filters matched AND the rollout included the user
+    #   :no_match              - a property filter did NOT match
+    #   :out_of_rollout_bound  - property filters matched (or there were none) but the
+    #                            rollout percentage excluded the user
+    # Distinguishing :no_match from :out_of_rollout_bound lets the caller implement the
+    # early_exit behavior (mirrors the server-side Rust evaluation engine).
+    def condition_match_outcome(flag, distinct_id, condition, properties, evaluation_cache, cohort_properties = {})
+      rollout_percentage = condition[:rollout_percentage]
+
+      unless (condition[:properties] || []).empty?
+        unless condition[:properties].all? do |prop|
+          if prop[:type] == 'flag'
+            evaluate_flag_dependency(prop, evaluation_cache, distinct_id, properties, cohort_properties)
+          else
+            FeatureFlagsPoller.match_property(prop, properties, cohort_properties)
+          end
+        end
+          return :no_match
+        end
+
+        return :match if rollout_percentage.nil?
+      end
+
+      if !rollout_percentage.nil? && (_hash(flag[:key], distinct_id) > (rollout_percentage.to_f / 100))
+        return :out_of_rollout_bound
+      end
+
+      :match
+    end
+
+    # This function takes a distinct_id and a feature flag key and returns a float between 0 and 1.
+    # Given the same distinct_id and key, it'll always return the same float. These floats are
+    # uniformly distributed between 0 and 1, so if we want to show this feature to 20% of traffic
+    # we can do _hash(key, distinct_id) < 0.2
+    def _hash(key, distinct_id, salt = '')
+      hash_key = Digest::SHA1.hexdigest "#{key}.#{distinct_id}#{salt}"
+      (Integer(hash_key[0..14], 16).to_f / 0xfffffffffffffff)
+    end
+
+    def get_matching_variant(flag, distinct_id)
+      hash_value = _hash(flag[:key], distinct_id, 'variant')
+      matching_variant = variant_lookup_table(flag).find do |variant|
+        hash_value >= variant[:value_min] and hash_value < variant[:value_max]
+      end
+      matching_variant.nil? ? nil : matching_variant[:key]
+    end
+
+    def variant_lookup_table(flag)
+      lookup_table = []
+      value_min = 0
+      flag_filters = flag[:filters] || {}
+      variants = flag_filters[:multivariate] || {}
+      multivariates = variants[:variants] || []
+      multivariates.each do |variant|
+        value_max = value_min + (variant[:rollout_percentage].to_f / 100)
+        lookup_table << { value_min: value_min, value_max: value_max, key: variant[:key] }
+        value_min = value_max
+      end
+      lookup_table
+    end
+
+    def _load_feature_flags
+      should_fetch = true
+
+      if @flag_definition_cache_provider
+        begin
+          should_fetch = @flag_definition_cache_provider.should_fetch_flag_definitions?
+        rescue StandardError => e
+          logger.error("[FEATURE FLAGS] Cache provider should_fetch error: #{e}")
+          should_fetch = true
+        end
+      end
+
+      unless should_fetch
+        begin
+          cached_data = @flag_definition_cache_provider.flag_definitions
+          if cached_data
+            logger.debug '[FEATURE FLAGS] Using cached flag definitions from external cache'
+            _apply_flag_definitions(cached_data)
+            return
+          elsif @feature_flags.empty?
+            # Emergency fallback: cache empty and no flags loaded -> fetch from API
+            should_fetch = true
+          end
+        rescue StandardError => e
+          logger.error("[FEATURE FLAGS] Cache provider get error: #{e}")
+          should_fetch = true
+        end
+      end
+
+      _fetch_and_apply_flag_definitions if should_fetch
+    end
+
+    def _fetch_and_apply_flag_definitions
+      begin
+        res = _request_feature_flag_definitions(etag: @flags_etag.value)
+      rescue StandardError => e
+        @on_error.call(-1, e.to_s)
+        return
+      end
+
+      # Handle 304 Not Modified - flags haven't changed, skip processing
+      # Only update ETag if the 304 response includes one
+      if res[:not_modified]
+        @flags_etag.value = res[:etag] if res[:etag]
+        logger.debug '[FEATURE FLAGS] Flags not modified (304), using cached data'
+        return
+      end
+
+      # Handle quota limits with 402 status
+      if res.is_a?(Hash) && res[:status] == 402
+        logger.warn(
+          '[FEATURE FLAGS] Feature flags quota limit exceeded - unsetting all local flags. ' \
+          'Learn more about billing limits at https://posthog.com/docs/billing/limits-alerts'
+        )
+        @feature_flags = Concurrent::Array.new
+        @feature_flags_by_key = {}
+        @group_type_mapping = Concurrent::Hash.new
+        @cohorts = Concurrent::Hash.new
+        @loaded_flags_successfully_once.make_false
+        @quota_limited.make_true
+        return
+      end
+
+      if res.key?(:flags)
+        # Only update ETag on successful responses with flag data
+        @flags_etag.value = res[:etag]
+
+        _apply_flag_definitions(res)
+        _store_in_cache_provider
+      else
+        logger.debug "Failed to load feature flags: #{res}"
+      end
+    end
+
+    def _store_in_cache_provider
+      return unless @flag_definition_cache_provider
+
+      begin
+        data = {
+          flags: @feature_flags.to_a,
+          group_type_mapping: @group_type_mapping.to_h,
+          cohorts: @cohorts.to_h
+        }
+        @flag_definition_cache_provider.on_flag_definitions_received(data)
+      rescue StandardError => e
+        logger.error("[FEATURE FLAGS] Cache provider store error: #{e}")
+      end
+    end
+
+    def _apply_flag_definitions(data)
+      flags = get_by_symbol_or_string_key(data, 'flags') || []
+      group_type_mapping = get_by_symbol_or_string_key(data, 'group_type_mapping') || {}
+      cohorts = get_by_symbol_or_string_key(data, 'cohorts') || {}
+
+      @feature_flags = Concurrent::Array.new(flags.map { |f| deep_symbolize_keys(f) })
+
+      new_by_key = {}
+      @feature_flags.each do |flag|
+        new_by_key[flag[:key]] = flag unless flag[:key].nil?
+      end
+      @feature_flags_by_key = new_by_key
+
+      @group_type_mapping = Concurrent::Hash[deep_symbolize_keys(group_type_mapping)]
+      @cohorts = Concurrent::Hash[deep_symbolize_keys(cohorts)]
+
+      logger.debug "Loaded #{@feature_flags.length} feature flags and #{@cohorts.length} cohorts"
+      @flag_definitions_loaded_at = (Time.now.to_f * 1000).to_i
+      @loaded_flags_successfully_once.make_true if @loaded_flags_successfully_once.false?
+    end
+
+    def _request_feature_flag_definitions(etag: nil)
+      uri = URI("#{@host}/flags/definitions")
+      uri.query = URI.encode_www_form([['token', @project_api_key], %w[send_cohorts true]])
+      req = Net::HTTP::Get.new(uri)
+      req['Authorization'] = "Bearer #{@personal_api_key}"
+      req['If-None-Match'] = etag if etag
+
+      _request(uri, req, nil, include_etag: true)
+    end
+
+    def _request_feature_flag_evaluation(data = {})
+      uri = URI("#{@host}/flags/?v=2")
+      req = Net::HTTP::Post.new(uri)
+      req['Content-Type'] = 'application/json'
+      data['token'] = @project_api_key
+      req.body = data.to_json
+
+      _request(
+        uri,
+        req,
+        @feature_flag_request_timeout_seconds,
+        retry_status_codes: RETRYABLE_FLAGS_REQUEST_STATUS_CODES
+      )
+    end
+
+    def _request_remote_config_payload(flag_key)
+      uri = URI("#{@host}/api/projects/@current/feature_flags/#{flag_key}/remote_config")
+      uri.query = URI.encode_www_form([['token', @project_api_key]])
+      req = Net::HTTP::Get.new(uri)
+      req['Content-Type'] = 'application/json'
+      req['Authorization'] = "Bearer #{@personal_api_key}"
+
+      _request(uri, req, @feature_flag_request_timeout_seconds)
+    end
+
+    # Transient network errors that are safe to retry. Flag requests are
+    # retry-safe (stateless reads and evaluations, no server-side mutation), so
+    # a one-off blip (TCP retransmit, TLS jitter, an edge/proxy hiccup) should
+    # be absorbed by a retry rather than surfaced to the caller.
+    RETRYABLE_REQUEST_ERRORS = [
+      Timeout::Error, # covers Net::OpenTimeout, Net::ReadTimeout, Net::WriteTimeout
+      Errno::ECONNRESET,
+      EOFError
+    ].freeze
+    RETRYABLE_FLAGS_REQUEST_STATUS_CODES = [502, 504].freeze
+
+    def _request(uri, request_object, timeout = nil, include_etag: false, retry_status_codes: [])
+      request_object['User-Agent'] = "posthog-ruby/#{PostHog::VERSION}"
+      request_timeout = timeout || 10
+      backoff_policy = nil
+      attempts = 0
+
+      loop do
+        attempts += 1
+        Net::HTTP.start(
+          uri.hostname,
+          uri.port,
+          use_ssl: uri.scheme == 'https',
+          open_timeout: request_timeout,
+          read_timeout: request_timeout,
+          write_timeout: request_timeout
+        ) do |http|
+          res = http.request(request_object)
+          status_code = res.code.to_i
+          etag = include_etag ? res['ETag'] : nil
+
+          if retry_status_codes.include?(status_code) && attempts <= @feature_flag_request_max_retries
+            backoff_policy ||= BackoffPolicy.new
+            interval = backoff_policy.next_interval.to_f / 1000
+            logger.debug(
+              "Retrying request to #{_mask_tokens_in_url(uri.to_s)} after HTTP #{status_code} (attempt #{attempts})"
+            )
+            sleep(interval)
+            next
+          end
+
+          # Handle 304 Not Modified - return special response indicating no change
+          if status_code == 304
+            logger.debug("#{request_object.method} #{_mask_tokens_in_url(uri.to_s)} returned 304 Not Modified")
+            return { not_modified: true, etag: etag, status: status_code }
+          end
+
+          # Parse response body to hash
+          begin
+            response = JSON.parse(res.body, { symbolize_names: true })
+            # Only add status (and etag if requested) if response is a hash
+            extra_fields = { status: status_code }
+            extra_fields[:etag] = etag if include_etag
+            response = response.merge(extra_fields) if response.is_a?(Hash)
+            return response
+          rescue JSON::ParserError
+            # Handle case when response isn't valid JSON
+            error_response = { error: 'Invalid JSON response', body: res.body, status: status_code }
+            error_response[:etag] = etag if include_etag
+            return error_response
+          end
+        end
+      rescue *RETRYABLE_REQUEST_ERRORS => e
+        if attempts <= @feature_flag_request_max_retries
+          backoff_policy ||= BackoffPolicy.new
+          interval = backoff_policy.next_interval.to_f / 1000
+          logger.debug("Retrying request to #{_mask_tokens_in_url(uri.to_s)} after #{e.class} (attempt #{attempts})")
+          sleep(interval)
+          next
+        end
+        logger.debug("Unable to complete request to #{_mask_tokens_in_url(uri.to_s)}")
+        raise
+      rescue Errno::EINVAL,
+             Net::HTTPBadResponse,
+             Net::HTTPHeaderSyntaxError,
+             Net::ProtocolError
+        logger.debug("Unable to complete request to #{_mask_tokens_in_url(uri.to_s)}")
+        raise
+      end
+    end
+
+    def _mask_tokens_in_url(url)
+      url.gsub(/token=([^&]{10})[^&]*/, 'token=\1...')
+    end
+  end
+end

@@ -1,0 +1,113 @@
+# frozen_string_literal: true
+
+require 'test_helper'
+
+class PostgreSQLTransactionScopingTest < GemTestCase
+  self.use_transactional_tests = false
+
+  setup do
+    @pg_lock_count = lambda do
+      backend_pid = Tag.connection.query_value('SELECT pg_backend_pid()')
+      Tag.connection.query_value("SELECT COUNT(*) FROM pg_locks WHERE locktype = 'advisory' AND pid = #{backend_pid};").to_i
+    end
+  end
+
+  test 'session locks release when transaction fails inside block' do
+    Tag.transaction do
+      assert_equal(0, @pg_lock_count.call)
+
+      exception = assert_raises(ActiveRecord::StatementInvalid) do
+        Tag.with_advisory_lock 'test' do
+          Tag.connection.execute 'SELECT 1/0;'
+        end
+      end
+
+      assert_match(/#{Regexp.escape('division by zero')}/, exception.message)
+      assert_equal(0, @pg_lock_count.call)
+    end
+  end
+
+  test 'raises an error when attempting to use transaction level locks outside a transaction' do
+    exception = assert_raises(ArgumentError) do
+      Tag.with_advisory_lock 'test', transaction: true do
+        raise 'Thou shall not pass into this forbidden realm of code!'
+      end
+    end
+
+    assert_match(/#{Regexp.escape('require an active transaction')}/, exception.message)
+  end
+end
+
+class MySQLTransactionScopingTest < GemTestCase
+  self.use_transactional_tests = false
+
+  test 'raises an error when attempting to use transaction level locks' do
+    MysqlTag.transaction do
+      exception = assert_raises(ArgumentError) do
+        MysqlTag.with_advisory_lock 'test', transaction: true do
+          raise 'Behold! Thou hath trespassed into the sacred MySQL transaction realm!'
+        end
+      end
+
+      assert_match(/#{Regexp.escape('not supported')}/, exception.message)
+    end
+  end
+
+  test 'session locks work within transactions' do
+    lock_acquired = false
+    MysqlTag.transaction do
+      MysqlTag.with_advisory_lock 'test' do
+        lock_acquired = true
+      end
+    end
+    assert lock_acquired
+  end
+
+  test 'raises an error when attempting to use transaction level locks outside a transaction' do
+    exception = assert_raises(ArgumentError) do
+      MysqlTag.with_advisory_lock 'test', transaction: true do
+        raise 'Verily, thou art banished from these hallowed database gates!'
+      end
+    end
+
+    assert_match(/#{Regexp.escape('require an active transaction')}/, exception.message)
+  end
+end
+
+if GemTestCase.trilogy_available?
+  class TrilogyTransactionScopingTest < GemTestCase
+    self.use_transactional_tests = false
+
+    test 'raises an error when attempting to use transaction level locks' do
+      TrilogyTag.transaction do
+        exception = assert_raises(ArgumentError) do
+          TrilogyTag.with_advisory_lock 'test', transaction: true do
+            raise 'Trilogy transaction realm is forbidden!'
+          end
+        end
+
+        assert_match(/#{Regexp.escape('not supported')}/, exception.message)
+      end
+    end
+
+    test 'session locks work within transactions' do
+      lock_acquired = false
+      TrilogyTag.transaction do
+        TrilogyTag.with_advisory_lock 'test' do
+          lock_acquired = true
+        end
+      end
+      assert lock_acquired
+    end
+
+    test 'raises an error when attempting to use transaction level locks outside a transaction' do
+      exception = assert_raises(ArgumentError) do
+        TrilogyTag.with_advisory_lock 'test', transaction: true do
+          raise 'Trilogy gates are closed!'
+        end
+      end
+
+      assert_match(/#{Regexp.escape('require an active transaction')}/, exception.message)
+    end
+  end
+end

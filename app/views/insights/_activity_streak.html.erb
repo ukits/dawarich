@@ -35,7 +35,7 @@
           </div>
           <% if @activity_heatmap.longest_streak_start && @activity_heatmap.longest_streak_end %>
             <div class="text-xs text-base-content/40 mt-1">
-              <%= @activity_heatmap.longest_streak_start.strftime('%b %d') %> - <%= @activity_heatmap.longest_streak_end.strftime('%b %d') %>
+              <%= @activity_heatmap.longest_streak_start.strftime('%Y-%m-%d') %> - <%= @activity_heatmap.longest_streak_end.strftime('%Y-%m-%d') %>
             </div>
           <% end %>
         </div>

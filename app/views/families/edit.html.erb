@@ -56,7 +56,7 @@
               <dt class="text-sm font-medium text-base-content opacity-60">
                 <%= t('families.edit.created_on', default: 'Created on') %>
               </dt>
-              <dd class="text-sm text-base-content"><%= @family.created_at.strftime('%B %d, %Y') %></dd>
+              <dd class="text-sm text-base-content"><%= @family.created_at.strftime('%Y-%m-%d') %></dd>
             </div>
             <div>
               <dt class="text-sm font-medium text-base-content opacity-60">
@@ -70,7 +70,7 @@
               <dt class="text-sm font-medium text-base-content opacity-60">
                 <%= t('families.edit.last_updated', default: 'Last updated') %>
               </dt>
-              <dd class="text-sm text-base-content"><%= @family.updated_at.strftime('%B %d, %Y') %></dd>
+              <dd class="text-sm text-base-content"><%= @family.updated_at.strftime('%Y-%m-%d') %></dd>
             </div>
           </dl>
         </div>

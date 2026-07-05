@@ -1,6 +1,7 @@
 import L from "leaflet"
 import "leaflet.heat"
 import { createAllMapLayers } from "../maps/layers"
+import { formatISOMonthParts } from "utils/date_format"
 import BaseController from "./base_controller"
 
 export default class extends BaseController {
@@ -269,10 +270,7 @@ export default class extends BaseController {
 
   showNoData() {
     if (this.hasLoadingTarget) {
-      const dateLabel = new Date(this.year, this.month - 1).toLocaleDateString(
-        "en-US",
-        { month: "long", year: "numeric" },
-      )
+      const dateLabel = formatISOMonthParts(this.year, this.month - 1)
       const container = document.createElement("div")
       container.className = "alert alert-info"
       container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`

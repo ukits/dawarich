@@ -51,7 +51,7 @@
     </div>
     <div class="journey-leg__summary">
       <% if continuation_date %>
-        <span class="journey-leg__verb">continued from <%= Date.parse(continuation_date).strftime('%b %-d') %>, arrived</span>
+        <span class="journey-leg__verb">continued from <%= Date.parse(continuation_date).strftime('%Y-%m-%d') %>, arrived</span>
       <% else %>
         <% if config[:emoji] %><span class="journey-leg__emoji"><%= config[:emoji] %></span><% end %>
         <span class="journey-leg__verb"><%= config[:verb] %></span>

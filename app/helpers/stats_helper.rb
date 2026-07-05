@@ -53,7 +53,7 @@ module StatsHelper
     distance_unit = stat.user.safe_settings.distance_unit
 
     distance_value = Stat.convert_distance(peak[1], distance_unit).round
-    text = "#{date.strftime('%B %d')} (#{distance_value} #{distance_unit})"
+    text = "#{date.strftime('%Y-%m-%d')} (#{distance_value} #{distance_unit})"
 
     link_to text, preferred_map_path(start_at: date.beginning_of_day, end_at: date.end_of_day), class: 'underline'
   end
@@ -139,8 +139,8 @@ module StatsHelper
 
   def format_week_range(start_date)
     end_date = start_date + 6.days
-    start_str = start_date.strftime('%b %d')
-    end_str = end_date.strftime('%b %d')
+    start_str = start_date.strftime('%Y-%m-%d')
+    end_str = end_date.strftime('%Y-%m-%d')
     "#{start_str} - #{end_str}"
   end
 end

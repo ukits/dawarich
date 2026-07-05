@@ -1,4 +1,4 @@
-<% content_for :title, "#{Date::MONTHNAMES[@month]} #{@year} Monthly Digest" %>
+<% content_for :title, "#{human_month_year(@year, @month)} Monthly Digest" %>
 <%= render 'shared/chartkick_scripts' %>
 
 <div class="w-full my-5">

@@ -29,7 +29,7 @@ module Points
     scope :old, -> { where('archived_at < ?', 1.year.ago) }
 
     def month_display
-      Date.new(year, month, 1).strftime('%B %Y')
+      Date.new(year, month, 1).strftime('%Y-%m')
     end
 
     def filename

@@ -6,7 +6,7 @@ module InsightsHelper
   def monthly_digest_title(digest)
     return 'Monthly Digest' unless digest
 
-    "#{digest.month_name} #{digest.year} Digest"
+    "#{digest.month_name} Digest"
   end
 
   def monthly_digest_distance(digest, user)

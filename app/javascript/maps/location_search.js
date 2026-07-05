@@ -1,4 +1,5 @@
 // Location search functionality for the map
+import { formatISODate, formatISODateTime } from "utils/date_format"
 import { applyThemeToButton } from "./theme_utils"
 
 class LocationSearch {
@@ -473,12 +474,7 @@ class LocationSearch {
   }
 
   formatDateShort(dateString) {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    })
+    return formatISODate(dateString)
   }
 
   bindResultEvents() {
@@ -1269,7 +1265,7 @@ class LocationSearch {
   }
 
   formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString()
+    return formatISODate(dateString)
   }
 
   destroy() {
@@ -1292,14 +1288,7 @@ class LocationSearch {
   }
 
   formatDateTime(dateString) {
-    return (
-      new Date(dateString).toLocaleDateString() +
-      " " +
-      new Date(dateString).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    )
+    return formatISODateTime(dateString)
   }
 }
 

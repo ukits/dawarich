@@ -2,6 +2,8 @@
  * ReplayManager - Core business logic for replay feature
  * Manages point data grouping by day, indexing by minute, and navigation state
  */
+import { formatISODate } from "utils/date_format"
+
 export class ReplayManager {
   constructor(options = {}) {
     this.timezone = options.timezone || "UTC"
@@ -202,11 +204,7 @@ export class ReplayManager {
     const [year, month, dayNum] = day.split("-").map(Number)
     const date = new Date(year, month - 1, dayNum)
 
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+    return formatISODate(date)
   }
 
   /**

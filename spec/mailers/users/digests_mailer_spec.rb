@@ -106,7 +106,7 @@ RSpec.describe Users::DigestsMailer, type: :mailer do
 
     it 'sends to the user with the expected subject' do
       expect(mail.to).to eq [user.email]
-      expect(mail.subject).to include('March 2026')
+      expect(mail.subject).to include('2026-03')
       expect(mail.subject).to include('in review')
     end
 

@@ -18,7 +18,7 @@
   <% end %>
 
   <div class="text-sm text-base-content/50 -mt-4 mb-6">
-    <%= @member_count %> members &middot; Created <%= @family.created_at.strftime('%B %Y') %>
+    <%= @member_count %> members &middot; Created <%= @family.created_at.strftime('%Y-%m') %>
   </div>
 
   <%# Main layout: Map + Sidebar %>
@@ -153,7 +153,7 @@
                     <div class="text-sm font-medium"><%= invitation.email %></div>
                     <div class="text-xs text-base-content/40">
                       Invited <%= time_ago_in_words(invitation.created_at) %> ago
-                      &middot; expires <%= invitation.expires_at.strftime('%b %d') %>
+                      &middot; expires <%= invitation.expires_at.strftime('%Y-%m-%d') %>
                     </div>
                     <div class="text-xs text-base-content/50 font-mono break-all select-all mt-1">
                       <%= public_invitation_url(invitation.token) %>

@@ -4,7 +4,7 @@
   <!-- Month and Year -->
   <div class="flex items-center justify-between mb-4">
     <h3 class="text-lg font-medium text-base-content group-hover:text-primary transition-colors flex items-center gap-2" style="color: <%= month_color(stat) %>;">
-      <%= "#{icon month_icon(stat)} #{Date::MONTHNAMES[stat.month]} #{stat.year}".html_safe %>
+      <%= "#{icon month_icon(stat)} #{human_month_year(stat.year, stat.month)}".html_safe %>
     </h3>
     <div class="opacity-0 group-hover:opacity-100 transition-opacity">
       <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">

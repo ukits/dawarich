@@ -59,7 +59,7 @@ RSpec.describe Stat, type: :model do
 
       let(:user) { create(:user) }
       let(:expected_distance) do
-        (1..12).map { |month| [Date::MONTHNAMES[month], 0] }
+        (1..12).map { |month| [format('%04d-%02d', year, month), 0] }
       end
 
       context 'when there are stats' do

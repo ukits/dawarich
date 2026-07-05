@@ -7,6 +7,7 @@ import { featureToPhoto } from "maps_maplibre/utils/feature_to_photo"
 import { cancelAllPreviews } from "maps_maplibre/utils/layer_gate"
 import { performanceMonitor } from "maps_maplibre/utils/performance_monitor"
 import { SearchManager } from "maps_maplibre/utils/search_manager"
+import { formatISODate } from "utils/date_format"
 import { SettingsManager } from "maps_maplibre/utils/settings_manager"
 import { AreaSelectionManager } from "./maplibre/area_selection_manager"
 import { DataLoader } from "./maplibre/data_loader"
@@ -1513,10 +1514,7 @@ export default class extends Controller {
           (Date.now() - sharingDate.getTime()) / (1000 * 60 * 60 * 24),
         ),
       )
-      const formattedDate = sharingDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      })
+      const formattedDate = formatISODate(sharingDate)
 
       infoEl.textContent = `Sharing since ${formattedDate} (${daysSharing} day${daysSharing !== 1 ? "s" : ""} of history)`
     }

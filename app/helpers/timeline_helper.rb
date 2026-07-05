@@ -2,6 +2,7 @@
 
 module TimelineHelper
   WEEKDAY_HEADER_LABELS = %w[M T W T F S S].freeze
+  KOREAN_WEEKDAY_LABELS = %w[일 월 화 수 목 금 토].freeze
 
   # "YYYY-MM" for the calendar's initial month. Prefers, in order:
   #   1. `params[:date]` (the selected day, e.g. "2025-12-11")
@@ -113,7 +114,12 @@ module TimelineHelper
   end
 
   def day_label(day)
-    Date.parse(day[:date].to_s).strftime('%A, %B %-d')
+    timeline_day_header_label(day[:date])
+  end
+
+  def timeline_day_header_label(date)
+    parsed = Date.parse(date.to_s)
+    "#{parsed.strftime('%Y-%m-%d')} (#{KOREAN_WEEKDAY_LABELS[parsed.wday]})"
   end
 
   def day_total_visits_count(day)
@@ -130,7 +136,7 @@ module TimelineHelper
     {
       prev: (month_date - 1.month).strftime('%Y-%m'),
       next: (month_date + 1.month).strftime('%Y-%m'),
-      title: month_date.strftime('%B %Y')
+      title: month_date.strftime('%Y-%m')
     }
   end
 

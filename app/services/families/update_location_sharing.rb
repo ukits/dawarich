@@ -49,7 +49,7 @@ class Families::UpdateLocationSharing
 
     if enabled? && user.family_sharing_expires_at.present?
       payload[:expires_at] = user.family_sharing_expires_at.iso8601
-      payload[:expires_at_formatted] = user.family_sharing_expires_at.strftime('%b %d at %I:%M %p')
+      payload[:expires_at_formatted] = user.family_sharing_expires_at.strftime('%Y-%m-%d %H:%M')
     end
 
     Result.new(success?: true, payload: payload, status: :ok)

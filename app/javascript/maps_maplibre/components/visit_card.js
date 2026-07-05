@@ -1,6 +1,8 @@
 /**
  * Visit card component for rendering individual visit cards in the side panel
  */
+import { formatISODate, formatISODateTime, formatISOTime } from "utils/date_format"
+
 export class VisitCard {
   /**
    * Create HTML for a visit card
@@ -17,18 +19,8 @@ export class VisitCard {
     // Format date and time
     const startDate = new Date(visit.started_at)
     const endDate = new Date(visit.ended_at)
-    const dateStr = startDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
-    const timeRange = `${startDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    })} - ${endDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`
+    const dateStr = formatISODate(startDate)
+    const timeRange = `${formatISOTime(startDate)} - ${formatISOTime(endDate)}`
 
     // Format duration (duration is in minutes from the backend)
     const hours = Math.floor(visit.duration / 60)

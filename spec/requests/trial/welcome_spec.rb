@@ -24,7 +24,7 @@ RSpec.describe 'GET /trial/welcome', type: :request do
     expect(response).to have_http_status(:found)
     expect(response).to redirect_to(%r{/map/v\d})
     expect(flash[:notice]).to include('Welcome to Dawarich')
-    expect(flash[:notice]).to include(user.active_until.strftime('%B %d, %Y'))
+    expect(flash[:notice]).to include(user.active_until.strftime('%Y-%m-%d %H:%M'))
   end
 
   context 'when active_until is not yet populated (webhook race)' do

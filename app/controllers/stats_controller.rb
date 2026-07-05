@@ -36,7 +36,7 @@ class StatsController < ApplicationController
     else
       Stats::CalculatingJob.perform_later(current_user.id, params[:year], params[:month])
 
-      target = "#{Date::MONTHNAMES[params[:month].to_i]} of #{params[:year]}"
+      target = format('%04d-%02d', params[:year].to_i, params[:month].to_i)
     end
 
     redirect_to stats_path, notice: "Stats for #{target} are being updated", status: :see_other

@@ -4,6 +4,7 @@
  */
 
 import { LocationSearchService } from "../services/location_search_service.js"
+import { formatISODate, formatISODateTime } from "utils/date_format"
 
 export class SearchManager {
   constructor(map, apiKey) {
@@ -708,12 +709,7 @@ export class SearchManager {
    * @returns {string} Formatted date
    */
   formatDateShort(dateString) {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
+    return formatISODate(dateString)
   }
 
   /**
@@ -722,14 +718,7 @@ export class SearchManager {
    * @returns {string} Formatted date and time
    */
   formatDateTime(dateString) {
-    const date = new Date(dateString)
-    return date.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    return formatISODateTime(dateString)
   }
 
   /**

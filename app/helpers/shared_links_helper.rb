@@ -6,13 +6,9 @@ module SharedLinksHelper
     end_date   = Date.parse(end_date.to_s)   unless end_date.is_a?(Date)
 
     if start_date == end_date
-      start_date.strftime('%B %-d, %Y')
-    elsif start_date.year == end_date.year && start_date.month == end_date.month
-      "#{start_date.strftime('%B %-d')}–#{end_date.strftime('%-d, %Y')}"
-    elsif start_date.year == end_date.year
-      "#{start_date.strftime('%B %-d')} – #{end_date.strftime('%B %-d, %Y')}"
+      start_date.strftime('%Y-%m-%d')
     else
-      "#{start_date.strftime('%b %-d, %Y')} – #{end_date.strftime('%b %-d, %Y')}"
+      "#{start_date.strftime('%Y-%m-%d')} – #{end_date.strftime('%Y-%m-%d')}"
     end
   end
 
@@ -30,7 +26,7 @@ module SharedLinksHelper
   def track_share_label(track, unit)
     mode = track.dominant_mode&.titleize.presence || 'Track'
     zone = track.user.timezone_iana.presence || 'UTC'
-    date = track.start_at.in_time_zone(zone).strftime('%-d %b %Y')
+    date = track.start_at.in_time_zone(zone).strftime('%Y-%m-%d')
     distance = track.distance_in_unit(unit).round
     "#{mode} · #{date} · #{distance} #{unit}"
   end

@@ -8,6 +8,7 @@ import { LiveMapHandler } from "../maps/live_map_handler"
 import { LocationSearch } from "../maps/location_search"
 import { createMarkersArray } from "../maps/markers"
 import { clampPointRadius, DEFAULT_POINT_RADIUS } from "../maps/point_size"
+import { formatISODate } from "utils/date_format"
 import { fetchAndDisplayPhotos } from "../maps/photos"
 import { PlacesManager } from "../maps/places"
 import {
@@ -2521,7 +2522,7 @@ export default class extends BaseController {
             <li class="text-sm whitespace-nowrap">
               ${city.city}
               <span class="text-gray-500">
-                (${new Date(city.timestamp * 1000).toLocaleDateString("en-US", { timeZone: timezone })})
+                (${formatISODate(new Date(city.timestamp * 1000), timezone)})
               </span>
             </li>
           `,

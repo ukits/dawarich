@@ -1,5 +1,6 @@
 import L from "leaflet"
 import { createAllMapLayers } from "../maps/layers"
+import { formatISODate, formatISODateTime } from "utils/date_format"
 import BaseController from "./base_controller"
 
 export default class extends BaseController {
@@ -273,26 +274,12 @@ export default class extends BaseController {
 
   buildPopupContent(props) {
     const timezone = this.timezoneValue || "UTC"
-    const startDate = props.earliest_point
-      ? new Date(props.earliest_point).toLocaleDateString("en-US", {
-          timeZone: timezone,
-        })
+    const startDateTime = props.earliest_point
+      ? formatISODateTime(props.earliest_point, timezone)
       : "N/A"
-    const endDate = props.latest_point
-      ? new Date(props.latest_point).toLocaleDateString("en-US", {
-          timeZone: timezone,
-        })
+    const endDateTime = props.latest_point
+      ? formatISODateTime(props.latest_point, timezone)
       : "N/A"
-    const startTime = props.earliest_point
-      ? new Date(props.earliest_point).toLocaleTimeString("en-US", {
-          timeZone: timezone,
-        })
-      : ""
-    const endTime = props.latest_point
-      ? new Date(props.latest_point).toLocaleTimeString("en-US", {
-          timeZone: timezone,
-        })
-      : ""
 
     return `
       <div style="font-size: 12px; line-height: 1.6; max-width: 300px;">
@@ -312,7 +299,7 @@ export default class extends BaseController {
         }
         <div style="margin: 4px 0;">
           <strong>Time Range:</strong><br>
-          <small>${startDate} ${startTime}<br>→ ${endDate} ${endTime}</small>
+          <small>${startDateTime}<br>→ ${endDateTime}</small>
         </div>
         ${
           props.center

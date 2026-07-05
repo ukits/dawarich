@@ -1,5 +1,6 @@
 import Flash from "controllers/flash_controller"
 import L from "leaflet"
+import { formatISODate, formatISODateTime, formatISOTime } from "utils/date_format"
 import { createPolylinesLayer } from "./polylines"
 
 /**
@@ -304,11 +305,7 @@ export class VisitsManager {
 
     visits.forEach((visit) => {
       const startDate = new Date(visit.started_at)
-      const dateStr = startDate.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })
+      const dateStr = formatISODate(startDate)
 
       if (!dateGroups[dateStr]) {
         dateGroups[dateStr] = {
@@ -330,11 +327,7 @@ export class VisitsManager {
 
         // Convert timestamp to date string
         const pointDate = new Date(parseInt(timestamp, 10) * 1000)
-        const dateStr = pointDate.toLocaleDateString(undefined, {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        })
+        const dateStr = formatISODate(pointDate)
 
         if (!dateGroups[dateStr]) {
           dateGroups[dateStr] = {
@@ -941,16 +934,13 @@ export class VisitsManager {
         let timeDisplay
         if (isSameDay) {
           timeDisplay = `
-            ${startDate.toLocaleDateString(undefined, { month: "short", day: "numeric" })},
-            ${startDate.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })} -
-            ${endDate.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })}
+            ${formatISODateTime(startDate)} -
+            ${formatISOTime(endDate)}
           `
         } else {
           timeDisplay = `
-            ${startDate.toLocaleDateString(undefined, { month: "short", day: "numeric" })},
-            ${startDate.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })} -
-            ${endDate.toLocaleDateString(undefined, { month: "short", day: "numeric" })},
-            ${endDate.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })}
+            ${formatISODateTime(startDate)} -
+            ${formatISODateTime(endDate)}
           `
         }
 
@@ -1586,16 +1576,13 @@ export class VisitsManager {
       let dateTimeDisplay
       if (isSameDay) {
         dateTimeDisplay = `
-          ${startDate.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })},
-          ${startDate.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })} -
-          ${endDate.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })}
+          ${formatISODateTime(startDate)} -
+          ${formatISOTime(endDate)}
         `
       } else {
         dateTimeDisplay = `
-          ${startDate.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })},
-          ${startDate.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })} -
-          ${endDate.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })},
-          ${endDate.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })}
+          ${formatISODateTime(startDate)} -
+          ${formatISODateTime(endDate)}
         `
       }
 

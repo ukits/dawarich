@@ -37,7 +37,7 @@ class Users::DigestsMailer < ApplicationMailer
 
     mail(
       to: @user.email,
-      subject: "Your #{Date::MONTHNAMES[@digest.month]} #{@digest.year} in review — Dawarich"
+      subject: "Your #{@digest.month_name} in review — Dawarich"
     )
   end
 

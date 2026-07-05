@@ -79,15 +79,18 @@ export function formatDate(timestamp, timezone) {
     return "Invalid Date"
   }
 
-  let locale
-  if (navigator.languages !== undefined) {
-    locale = navigator.languages[0]
-  } else if (navigator.language) {
-    locale = navigator.language
-  } else {
-    locale = "en-GB"
-  }
-  return date.toLocaleString(locale, { timeZone: timezone })
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone || undefined,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(date)
+
+  const get = (type) => parts.find((p) => p.type === type)?.value
+  return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")}`
 }
 
 export function formatSpeed(speedKmh, unit = "km") {

@@ -66,7 +66,7 @@
 
                     <% if is_in_year && !is_future && cell_color %>
                       <div class="w-3 h-3 rounded-sm cursor-pointer transition-opacity hover:opacity-80 hover:z-50 tooltip tooltip-top <%= cell_color %>"
-                           data-tip="<%= country_name %> — <%= date.strftime('%a, %b %-d') %>">
+                           data-tip="<%= country_name %> — <%= date.strftime('%Y-%m-%d') %>">
                       </div>
                     <% elsif is_in_year && !is_future %>
                       <div class="w-3 h-3 rounded-sm bg-base-300"></div>
@@ -145,8 +145,8 @@
                   <div class="flex items-center gap-2">
                     <%= icon 'calendar', class: 'w-3.5 h-3.5 opacity-40' %>
                     <span>
-                      <%= Date.parse(period[:start_date]).strftime('%b %-d') %> –
-                      <%= Date.parse(period[:end_date]).strftime('%b %-d, %Y') %>
+                      <%= Date.parse(period[:start_date]).strftime('%Y-%m-%d') %> –
+                      <%= Date.parse(period[:end_date]).strftime('%Y-%m-%d') %>
                     </span>
                   </div>
                   <span class="font-mono text-xs bg-base-300 px-2 py-0.5 rounded">

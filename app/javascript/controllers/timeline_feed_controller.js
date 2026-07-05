@@ -1,4 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
+import {
+  formatISODate,
+  formatISODateWithWeekday,
+  formatISOMonthParts,
+} from "utils/date_format"
 
 /**
  * Timeline Feed Controller (Unified Timeline)
@@ -394,12 +399,14 @@ export default class extends Controller {
     }
 
     if (this.hasScopeBadgeTarget) {
-      const d = new Date(`${date}T00:00:00`)
-      this.scopeBadgeTarget.textContent = d.toLocaleDateString(undefined, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      })
+      this.scopeBadgeTarget.textContent = formatISODate(`${date}T00:00:00`)
+    }
+
+    const dayHeaderLabel = this.hasVisitListFrameTarget
+      ? this.visitListFrameTarget.querySelector('[data-testid="day-header-label"]')
+      : null
+    if (dayHeaderLabel) {
+      dayHeaderLabel.textContent = formatISODateWithWeekday(date)
     }
 
     // Keep the top date-range form inputs aligned with the selected day so the
@@ -672,14 +679,7 @@ export default class extends Controller {
     const monthIdx = Number.parseInt(monthStr, 10) - 1
     if (!Number.isFinite(year) || !Number.isFinite(monthIdx)) return
 
-    // Force English locale to match the server-rendered title
-    // (`strftime('%B %Y')`) — otherwise users on a non-English browser see
-    // a brief "Январь 2025" → "January 2025" flicker as the turbo_stream
-    // response replaces the skeleton.
-    title.textContent = new Date(year, monthIdx, 1).toLocaleDateString("en", {
-      month: "long",
-      year: "numeric",
-    })
+    title.textContent = formatISOMonthParts(year, monthIdx)
 
     // 6×7 grid, Monday-aligned — mirrors what MonthSummary builds server-side.
     const monthStart = new Date(year, monthIdx, 1)

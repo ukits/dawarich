@@ -55,7 +55,7 @@ RSpec.describe 'Map::TimelineFeeds', type: :request do
           get map_timeline_feeds_path(start_at: day.iso8601, end_at: (day + 1.day).iso8601)
 
           expect(response).to have_http_status(:success)
-          expect(response.body).to include('Wednesday, January 15')
+          expect(response.body).to include('2025-01-15 (수)')
           expect(response.body).to include('Home')
           expect(response.body).to include('cycled')
           expect(response.body).to include('8.5 km')

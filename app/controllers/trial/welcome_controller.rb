@@ -49,7 +49,7 @@ class Trial::WelcomeController < ApplicationController
 
   def welcome_notice(user)
     if user.active_until.present?
-      "Welcome to Dawarich — your 7-day free trial is active until #{user.active_until.strftime('%B %d, %Y')}."
+      "Welcome to Dawarich — your 7-day free trial is active until #{user.active_until.strftime('%Y-%m-%d %H:%M')}."
     else
       'Welcome to Dawarich — your trial is being activated now.'
     end

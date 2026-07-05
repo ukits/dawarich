@@ -2,7 +2,15 @@
 
 module DatetimeFormattingHelper
   def human_date(date)
-    date.strftime('%e %B %Y')
+    date.strftime('%Y-%m-%d')
+  end
+
+  def human_month(date)
+    date.strftime('%Y-%m')
+  end
+
+  def human_month_year(year, month)
+    format('%04d-%02d', year.to_i, month.to_i)
   end
 
   def human_datetime(datetime, timezone = nil)
@@ -12,7 +20,7 @@ module DatetimeFormattingHelper
 
     content_tag(
       :span,
-      zoned.strftime('%e %b %Y, %H:%M'),
+      zoned.strftime('%Y-%m-%d %H:%M'),
       class: 'tooltip',
       data: { tip: zoned.iso8601 }
     )
@@ -25,7 +33,7 @@ module DatetimeFormattingHelper
 
     content_tag(
       :span,
-      zoned.strftime('%e %b %Y, %H:%M:%S'),
+      zoned.strftime('%Y-%m-%d %H:%M:%S'),
       class: 'tooltip',
       data: { tip: zoned.iso8601 }
     )

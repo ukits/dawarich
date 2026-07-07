@@ -176,6 +176,44 @@ export class SelectedPointsLayer extends BaseLayer {
     return { start, end }
   }
 
+  static coordinateFromFeature(feature) {
+    const coords = feature.geometry?.coordinates
+    if (coords?.length >= 2) {
+      const rawLng = coords[0]
+      const rawLat = coords[1]
+      if (
+        rawLng != null &&
+        rawLng !== "" &&
+        rawLat != null &&
+        rawLat !== ""
+      ) {
+        const lng = Number(rawLng)
+        const lat = Number(rawLat)
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          return { lat, lng }
+        }
+      }
+    }
+
+    const props = feature.properties ?? {}
+    const rawPropLat = props.latitude
+    const rawPropLng = props.longitude
+    if (
+      rawPropLat != null &&
+      rawPropLat !== "" &&
+      rawPropLng != null &&
+      rawPropLng !== ""
+    ) {
+      const lat = Number(rawPropLat)
+      const lng = Number(rawPropLng)
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        return { lat, lng }
+      }
+    }
+
+    return null
+  }
+
   static centroidFromFeatures(features = []) {
     if (!features.length) return null
 
@@ -184,11 +222,11 @@ export class SelectedPointsLayer extends BaseLayer {
     let count = 0
 
     for (const feature of features) {
-      const coords = feature.geometry?.coordinates
-      if (!coords || coords.length < 2) continue
+      const coordinate = SelectedPointsLayer.coordinateFromFeature(feature)
+      if (!coordinate) continue
 
-      sumLng += coords[0]
-      sumLat += coords[1]
+      sumLng += coordinate.lng
+      sumLat += coordinate.lat
       count += 1
     }
 

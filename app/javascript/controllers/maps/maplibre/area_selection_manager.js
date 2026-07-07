@@ -288,11 +288,16 @@ export class AreaSelectionManager {
       return
     }
 
-    this.controller.visitsManager.openVisitCreationModal(
-      group.centroid.lat,
-      group.centroid.lng,
-      { timeRange: group.timeRange },
-    )
+    const { lat, lng } = group.centroid ?? {}
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      Toast.error("Could not determine coordinates for selected points")
+      return
+    }
+
+    this.controller.visitsManager.openVisitCreationModal(lat, lng, {
+      timeRange: group.timeRange,
+      groupKey: group.groupKey,
+    })
   }
 
   /**

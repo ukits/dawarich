@@ -372,7 +372,11 @@ export class VisitsManager {
   /**
    * Open visit creation modal
    */
-  openVisitCreationModal(lat, lng, { timeRange = null } = {}) {
+  openVisitCreationModal(
+    lat,
+    lng,
+    { timeRange = null, groupKey = null } = {},
+  ) {
     const modalElement = document.querySelector(
       '[data-controller="visit-creation-v2"]',
     )
@@ -389,15 +393,46 @@ export class VisitsManager {
       )
 
     if (controller) {
+      const resolvedCoords = this.resolveVisitCreationCoordinates(
+        lat,
+        lng,
+        groupKey,
+      )
+      if (!resolvedCoords) {
+        Toast.error("Could not determine coordinates for visit")
+        return
+      }
+
       const resolvedTimeRange =
         timeRange ??
         this.controller.areaSelectionManager?.getSelectedPointsTimeRange?.()
-      controller.open(lat, lng, this.controller, {
+      controller.open(resolvedCoords.lat, resolvedCoords.lng, this.controller, {
         timeRange: resolvedTimeRange,
       })
     } else {
       Toast.error("Visit creation controller not available")
     }
+  }
+
+  resolveVisitCreationCoordinates(lat, lng, groupKey = null) {
+    const parsedLat = Number(lat)
+    const parsedLng = Number(lng)
+    if (Number.isFinite(parsedLat) && Number.isFinite(parsedLng)) {
+      return { lat: parsedLat, lng: parsedLng }
+    }
+
+    const selectedPointsLayer =
+      this.controller.areaSelectionManager?.selectedPointsLayer
+    if (!selectedPointsLayer) return null
+
+    if (groupKey != null) {
+      const group = selectedPointsLayer
+        .getTrackGroups()
+        .find((entry) => entry.groupKey === groupKey)
+      if (group?.centroid) return group.centroid
+    }
+
+    return selectedPointsLayer.getCentroid()
   }
 
   /**

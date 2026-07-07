@@ -6,23 +6,30 @@
 export function pointsToGeoJSON(points) {
   return {
     type: "FeatureCollection",
-    features: points.map((point) => ({
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [point.longitude, point.latitude],
-      },
-      properties: {
-        id: point.id,
-        timestamp: point.timestamp,
-        track_id: point.track_id ?? null,
-        altitude: point.altitude,
-        battery: point.battery,
-        accuracy: point.accuracy,
-        velocity: point.velocity,
-        country_name: point.country_name,
-      },
-    })),
+    features: points.map((point) => {
+      const latitude = parseFloat(point.latitude)
+      const longitude = parseFloat(point.longitude)
+
+      return {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [longitude, latitude],
+        },
+        properties: {
+          id: point.id,
+          timestamp: point.timestamp,
+          track_id: point.track_id ?? null,
+          latitude,
+          longitude,
+          altitude: point.altitude,
+          battery: point.battery,
+          accuracy: point.accuracy,
+          velocity: point.velocity,
+          country_name: point.country_name,
+        },
+      }
+    }),
   }
 }
 

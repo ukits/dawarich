@@ -28,6 +28,7 @@
         <table class="table">
           <thead>
             <tr>
+              <th>Place ID</th>
               <th>Name</th>
               <th>Visits</th>
               <th>Created at</th>
@@ -38,6 +39,7 @@
           <tbody>
             <% @places.each do |place| %>
               <tr>
+                <td>#<%= place.id %></td>
                 <td><%= place.name %></td>
                 <td><%= place.visits_count %></td>
                 <td><%= human_datetime(place.created_at, current_user.safe_settings.timezone) %></td>

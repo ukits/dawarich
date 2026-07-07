@@ -298,6 +298,11 @@ RSpec.describe Timeline::DayAssembler do
         entry = subject.first[:entries].first
         expect(entry[:point_count]).to eq(3)
       end
+
+      it 'includes place_id on the visit entry' do
+        entry = subject.first[:entries].first
+        expect(entry[:place_id]).to eq(place.id)
+      end
     end
 
     context 'point_count is computed without materializing every Point row' do

@@ -164,6 +164,7 @@ class VisitsController < ApplicationController
     tz = current_user.safe_settings.timezone.presence || 'UTC'
     day_date = Time.use_zone(tz) { @visit.started_at.in_time_zone.to_date.to_s }
     @affected_started_at = [@visit.started_at]
+    Visits::SideEffects.new(@visit).on_destroy
     @visit.destroy!
 
     respond_to do |format|

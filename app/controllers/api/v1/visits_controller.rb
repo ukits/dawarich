@@ -107,6 +107,8 @@ class Api::V1::VisitsController < ApiController
   def destroy
     visit = current_api_user.visits.find(params[:id])
 
+    Visits::SideEffects.new(visit).on_destroy
+
     if visit.destroy
       head :no_content
     else

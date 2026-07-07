@@ -41,6 +41,8 @@ module Visits
       started_ats = visits.pluck(:started_at)
       started_at = Time.current
 
+      visits.each { |visit| Visits::SideEffects.new(visit).on_destroy }
+
       ids.each_slice(POINT_NULLIFY_BATCH) do |chunk|
         Visit.transaction do
           Point.where(visit_id: chunk).update_all(visit_id: nil)

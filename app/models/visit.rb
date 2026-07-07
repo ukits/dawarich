@@ -13,6 +13,7 @@ class Visit < ApplicationRecord
 
   after_commit :cleanup_old_place_if_orphan, on: :update
   after_commit :propagate_adoption_to_dependents, on: %i[create update]
+  after_create_commit :apply_create_side_effects, unless: :demo?
   after_destroy_commit :cleanup_place_if_orphan
   after_commit :bust_timeline_month_summary_cache, unless: :demo?
 
@@ -105,6 +106,13 @@ class Visit < ApplicationRecord
     return unless place_id
 
     Places::DeleteIfOrphanJob.perform_later(place_id)
+  end
+
+  def apply_create_side_effects
+    Visits::SideEffects.new(self).on_create
+  rescue StandardError => e
+    Rails.logger.error("[Visit##{id}] create side effects failed: #{e.class}: #{e.message}")
+    ExceptionReporter.call(e, "Visit create side effects failed for visit #{id}")
   end
 
   # Keeps the Timeline calendar/filter-count cache fresh when visits are

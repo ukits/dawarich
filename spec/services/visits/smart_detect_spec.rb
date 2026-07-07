@@ -102,7 +102,7 @@ RSpec.describe Visits::SmartDetect do
       allow(ExceptionReporter).to receive(:call)
       allow(Rails.logger).to receive(:warn)
       allow(Rails.logger).to receive(:info)
-      # Both SmartDetect and (on the fallback create path) PlaceFinder log the Flipper outage.
+      # SmartDetect logs the Flipper outage when choosing the detector.
       expect(Rails.logger).to receive(:warn).with(/Flipper unavailable/).at_least(:once)
       expect(Rails.logger).to receive(:info).with(/detector=dbscan/).at_least(:once)
 

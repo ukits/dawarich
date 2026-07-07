@@ -46,12 +46,20 @@ RSpec.describe Visits::PlaceFinder do
       expect(described_class.new(user).find_or_create_place(data).name).to eq('Home')
     end
 
-    it 'reuses an existing user place near the center' do
-      existing = create(:place, user: user, latitude: 52.5126, longitude: 13.4012)
+    it 'reuses an existing user place with the same name within the radius' do
+      existing = create(:place, user: user, name: Place::DEFAULT_NAME,
+                                latitude: 52.5126, longitude: 13.4012)
 
       expect { described_class.new(user).find_or_create_place(visit_data) }
         .not_to have_enqueued_job(Places::NameFetchingJob)
       expect(described_class.new(user).find_or_create_place(visit_data)).to eq(existing)
+    end
+
+    it 'creates a new place when a nearby place has a different name' do
+      create(:place, user: user, latitude: 52.5126, longitude: 13.4012)
+
+      expect { described_class.new(user).find_or_create_place(visit_data) }
+        .to change { Place.count }.by(1)
     end
 
     it 'never persists geodata at creation (filled by Places::NameFetchingJob)' do
@@ -71,24 +79,19 @@ RSpec.describe Visits::PlaceFinder do
       expect { described_class.new(user).find_or_create_place(visit_data) }
         .not_to have_enqueued_job(Places::NameFetchingJob)
     end
-  end
-
-  describe '#find_or_create_place with stay_point_detection enabled' do
-    before { allow(Flipper).to receive(:enabled?).with(:stay_point_detection, user).and_return(true) }
 
     def place_at(lat, lon, name:, source:)
       create(:place, user: user, name: name, source: source,
                      latitude: lat, longitude: lon, lonlat: "POINT(#{lon} #{lat})", geodata: {})
     end
 
-    it 'prefers a manual place over a photon place at the same location' do
-      photon = place_at(52.5126, 13.4012, name: 'Photon', source: :photon)
-      manual = place_at(52.5126, 13.4012, name: 'Manual', source: :manual)
+    it 'prefers a manual place over a photon place with the same name within the radius' do
+      place_at(52.5126, 13.4012, name: 'Cafe', source: :photon)
+      manual = place_at(52.5126, 13.4012, name: 'Cafe', source: :manual)
 
-      result = described_class.new(user).find_or_create_place(visit_data)
+      result = described_class.new(user).find_or_create_place(visit_data.merge(suggested_name: 'Cafe'))
 
       expect(result).to eq(manual)
-      expect(result).not_to eq(photon)
     end
 
     it 'prefers an exact name match within the radius' do
@@ -100,11 +103,18 @@ RSpec.describe Visits::PlaceFinder do
       expect(result).to eq(named)
     end
 
-    it 'reuses a nearby place instead of minting a duplicate' do
+    it 'reuses a nearby place with the same name instead of minting a duplicate' do
       place_at(52.5126, 13.4012, name: 'Cafe', source: :photon)
 
       expect { described_class.new(user).find_or_create_place(visit_data.merge(suggested_name: 'Cafe')) }
         .not_to(change { Place.count })
+    end
+
+    it 'creates a new place when only a closer place with a different name exists' do
+      place_at(52.5126, 13.4012, name: 'Other', source: :photon)
+
+      expect { described_class.new(user).find_or_create_place(visit_data.merge(suggested_name: 'Cafe')) }
+        .to change { Place.count }.by(1)
     end
   end
 end

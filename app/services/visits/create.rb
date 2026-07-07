@@ -43,14 +43,19 @@ module Visits
     end
 
     def find_existing_place
-      Place.joins('JOIN visits ON places.id = visits.place_id')
-           .where(visits: { user: user })
-           .where(places: { user_id: user.id })
-           .where(
-             'ST_DWithin(places.lonlat::geography, ' \
-             'ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)',
-             params[:longitude].to_f, params[:latitude].to_f, 100
-           ).first
+      name = params[:name]
+      return nil if name.blank?
+
+      lat = params[:latitude].to_f
+      lon = params[:longitude].to_f
+
+      user.places
+          .where(name: name)
+          .where(
+            'ST_DWithin(lonlat::geography, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)',
+            lon, lat, Visits::PlaceFinder::SIMILARITY_RADIUS
+          )
+          .first
     end
 
     def create_new_place

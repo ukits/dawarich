@@ -52,15 +52,15 @@ RSpec.describe Visits::Create do
       let!(:existing_place) do
         create(:place,
                user: user,
+               name: 'Test Visit',
                latitude: 52.52,
                longitude: 13.405,
                lonlat: 'POINT(13.405 52.52)')
       end
-      let!(:existing_visit) { create(:visit, user: user, place: existing_place) }
 
       subject(:service) { described_class.new(user, valid_params) }
 
-      it 'reuses the existing place' do
+      it 'reuses the existing place with the same name within the radius' do
         expect { service.call }.not_to(change { Place.count })
         expect(service.visit.place).to eq(existing_place)
       end
@@ -68,6 +68,24 @@ RSpec.describe Visits::Create do
       it 'creates a new visit with the existing place' do
         expect { service.call }.to change { user.visits.count }.by(1)
         expect(service.visit.place).to eq(existing_place)
+      end
+    end
+
+    context 'when a nearby place has a different name' do
+      let!(:existing_place) do
+        create(:place,
+               user: user,
+               latitude: 52.52,
+               longitude: 13.405,
+               lonlat: 'POINT(13.405 52.52)')
+      end
+
+      subject(:service) { described_class.new(user, valid_params) }
+
+      it 'creates a new place instead of reusing the nearby one' do
+        expect { service.call }.to change { Place.count }.by(1)
+        expect(service.visit.place).not_to eq(existing_place)
+        expect(service.visit.place.name).to eq('Test Visit')
       end
     end
 
@@ -123,22 +141,22 @@ RSpec.describe Visits::Create do
       end
     end
 
-    context 'distance threshold is exactly 100 meters (no degree-vs-meter drift)' do
+    context 'distance threshold is exactly 50 meters (no degree-vs-meter drift)' do
       let(:base_lat) { 52.52 }
       let(:base_lon) { 13.405 }
 
       let!(:existing_place) do
         create(:place,
                user: user,
+               name: 'Test Visit',
                latitude: base_lat,
                longitude: base_lon,
                lonlat: "POINT(#{base_lon} #{base_lat})")
       end
-      let!(:existing_visit) { create(:visit, user: user, place: existing_place) }
 
       let(:lon_offset_120m) { 0.0018 }
 
-      it 'does NOT match a place 120m away (would have matched under the old 0.001° threshold)' do
+      it 'does NOT match a place 120m away' do
         params_120m_away = valid_params.merge(
           latitude: base_lat,
           longitude: base_lon + lon_offset_120m
@@ -149,7 +167,7 @@ RSpec.describe Visits::Create do
         expect(service.visit.place).not_to eq(existing_place)
       end
 
-      it 'matches a place 50m away' do
+      it 'matches a place 50m away with the same name' do
         params_50m_away = valid_params.merge(
           latitude: base_lat,
           longitude: base_lon + 0.0006

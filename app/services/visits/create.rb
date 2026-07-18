@@ -90,7 +90,21 @@ module Visits
         status: params[:status].presence || :confirmed
       )
 
+      assign_points_to_visit(@visit)
+
       @visit
+    end
+
+    # Associates every point that falls within the visit's time range with the
+    # visit. This mirrors the point set whose velocity gets zeroed out by
+    # Visits::SideEffects#on_create so that visit_id, velocity, and track
+    # exclusion all operate on the same points. Detected visits already set
+    # visit_id in their own services (Visits::Creator / Places::Visits::Create /
+    # Areas::Visits::Create); this fills the gap for manually created visits.
+    def assign_points_to_visit(visit)
+      user.points
+          .where(timestamp: visit.started_at.to_i..visit.ended_at.to_i)
+          .update_all(visit_id: visit.id)
     end
   end
 end

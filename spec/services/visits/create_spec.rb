@@ -46,6 +46,16 @@ RSpec.describe Visits::Create do
         expect(place.longitude).to eq(13.405)
         expect(place.source).to eq('manual')
       end
+
+      it 'assigns visit_id to points inside the visit time range' do
+        inside_point = create(:point, user: user, timestamp: Time.zone.parse('2023-12-01T11:00:00Z').to_i)
+        outside_point = create(:point, user: user, timestamp: Time.zone.parse('2023-12-01T13:00:00Z').to_i)
+
+        service.call
+
+        expect(inside_point.reload.visit_id).to eq(service.visit.id)
+        expect(outside_point.reload.visit_id).to be_nil
+      end
     end
 
     context 'when reusing existing place' do

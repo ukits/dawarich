@@ -7,11 +7,21 @@ class PlacesController < ApplicationController
   before_action :set_place, only: %i[destroy update]
 
   def index
-    @places = current_user.places
-                           .select('places.*, (SELECT COUNT(*) FROM visits WHERE visits.place_id = places.id) AS visits_count')
-                           .order(created_at: :desc)
-                           .page(params[:page])
-                           .per(20)
+    places = current_user.places
+                         .select(
+                           'places.*, ' \
+                           '(SELECT COUNT(*) FROM visits WHERE visits.place_id = places.id) ' \
+                           'AS visits_count, ' \
+                           '(SELECT MAX(visits.started_at) FROM visits WHERE visits.place_id = places.id) ' \
+                           'AS last_visited_at'
+                         )
+
+    places = places.where('places.name ILIKE ?', "%#{params[:name].strip}%") if params[:name].present?
+    places = places.where(source: params[:source]) if params[:source].present?
+
+    @places = places.order(created_at: :desc)
+                    .page(params[:page])
+                    .per(20)
   end
 
   def show
@@ -110,7 +120,27 @@ class PlacesController < ApplicationController
     end
   end
 
+  def bulk_destroy
+    place_ids = params[:place_ids]&.compact&.reject(&:blank?)
+
+    if place_ids.blank?
+      redirect_to places_url(preserved_params),
+                  alert: 'No places selected.',
+                  status: :see_other and return
+    end
+
+    current_user.places.where(id: place_ids).destroy_all
+
+    redirect_to places_url(preserved_params),
+                notice: 'Places were successfully destroyed.',
+                status: :see_other
+  end
+
   private
+
+  def preserved_params
+    params.to_enum.to_h.with_indifferent_access.slice(:name, :source, :page)
+  end
 
   def set_place
     @place = current_user.places.find(params[:id])

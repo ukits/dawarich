@@ -124,6 +124,7 @@ Rails.application.routes.draw do
   resources :places, only: %i[index show destroy create update] do
     collection do
       get 'nearby'
+      delete :bulk_destroy
     end
   end
   resources :exports, only: %i[index create destroy]

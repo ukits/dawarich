@@ -8,8 +8,10 @@
     </div>
   </div>
 
-  <div id="places" class="min-w-full">
-    <% if @places.empty? %>
+  <% has_search = params[:name].present? || params[:source].present? %>
+
+  <% if @places.empty? && !has_search %>
+    <div id="places" class="min-w-full">
       <div class="hero min-h-80 bg-base-200">
         <div class="hero-content text-center">
           <div class="max-w-md">
@@ -20,38 +22,83 @@
           </div>
         </div>
       </div>
-    <% else %>
-      <div class="flex justify-center my-5">
-        <%= paginate @places %>
+    </div>
+  <% else %>
+    <%# Filter form %>
+    <div class="border border-base-300 rounded-xl bg-base-200/50 p-4 mb-5 mt-5">
+      <%= form_with url: places_path, method: :get do |f| %>
+        <div class="flex flex-col gap-3 md:flex-row md:items-end">
+          <div class="flex-1">
+            <%= f.label :name, class: "text-xs font-medium text-base-content/50 uppercase tracking-wider mb-1 block" %>
+            <%= f.text_field :name, value: params[:name], placeholder: "Search by name", class: "input input-bordered input-sm w-full" %>
+          </div>
+          <div class="flex-1">
+            <%= f.label :source, class: "text-xs font-medium text-base-content/50 uppercase tracking-wider mb-1 block" %>
+            <%= f.select :source, options_for_select(Place.sources.keys.map { |s| [s.titleize, s] }, params[:source]), { include_blank: 'All sources' }, class: "select select-bordered select-sm text-sm w-full" %>
+          </div>
+          <%= f.submit "Search", class: "btn btn-primary btn-sm" %>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Toolbar %>
+    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-4">
+      <div class="text-sm text-base-content/50">
+        <%= page_entries_info @places, entry_name: 'place' %>
       </div>
-      <div class="overflow-x-auto">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Place ID</th>
-              <th>Name</th>
-              <th>Visits</th>
-              <th>Created at</th>
-              <th>Coordinates</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @places.each do |place| %>
+    </div>
+
+    <div class="flex justify-center mb-4">
+      <%= paginate @places %>
+    </div>
+
+    <%# Places table %>
+    <div id="places" data-controller='checkbox-select-all'>
+      <%= form_with url: bulk_destroy_places_path(params.permit(:name, :source, :page)), method: :delete, id: :bulk_destroy_form do |f| %>
+        <%= f.submit "Delete Selected", class: "btn btn-error btn-sm mb-3", data: { turbo_confirm: "Are you sure? Deleting places will result in deleting all visits for these places.", checkbox_select_all_target: "deleteButton" }, style: "display: none;" %>
+
+        <div class="border border-base-300 rounded-xl overflow-x-auto">
+          <table class="table table-sm w-full">
+            <thead class="bg-base-200">
               <tr>
-                <td>#<%= place.id %></td>
-                <td><%= place.name %></td>
-                <td><%= place.visits_count %></td>
-                <td><%= human_datetime(place.created_at, current_user.safe_settings.timezone) %></td>
-                <td><%= "#{place.lat}, #{place.lon}" %></td>
-                <td>
-                  <%= link_to 'Delete', place, data: { turbo_confirm: "Are you sure? Deleting a place will result in deleting all visits for this place.", turbo_method: :delete }, class: "px-4 py-2 bg-red-500 text-white rounded-md" %>
-                </td>
+                <th class="px-3 py-2.5 w-10">
+                  <%= check_box_tag 'Select all',
+                    id: :select_all_places,
+                    data: {
+                      checkbox_select_all_target: 'parent',
+                      action: 'change->checkbox-select-all#toggleChildren'
+                    },
+                    class: 'checkbox checkbox-xs'
+                  %>
+                </th>
+                <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-left text-base-content/50">Place ID</th>
+                <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-left text-base-content/50">Name</th>
+                <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-left text-base-content/50">Visits</th>
+                <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-left text-base-content/50">Last Visited</th>
+                <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-left text-base-content/50">Created at</th>
+                <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-left text-base-content/50">Coordinates</th>
+                <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-left text-base-content/50">Source</th>
+                <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-left text-base-content/50">Actions</th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    <% end %>
-  </div>
+            </thead>
+            <tbody>
+              <% if @places.empty? %>
+                <tr>
+                  <td colspan="9" class="px-3 py-6 text-center text-base-content/50">No places found.</td>
+                </tr>
+              <% else %>
+                <% @places.each do |place| %>
+                  <%= render place %>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="flex justify-center mt-4">
+      <%= paginate @places %>
+    </div>
+  <% end %>
 </div>

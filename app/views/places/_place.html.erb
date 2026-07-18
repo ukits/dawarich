@@ -1,0 +1,35 @@
+<tr id="<%= dom_id place %>" class="hover:bg-base-200/50 transition-colors">
+  <td class="px-3 py-2 w-10">
+    <%= check_box_tag "place_ids[]",
+      place.id,
+      nil,
+      {
+        multiple: true,
+        form: :bulk_destroy_form,
+        class: 'checkbox checkbox-xs',
+        data: {
+          checkbox_select_all_target: 'child',
+          action: 'change->checkbox-select-all#toggleParent'
+        }
+      }
+    %>
+  </td>
+  <td class="px-3 py-2 text-sm tabular-nums text-base-content/50">#<%= place.id %></td>
+  <td class="px-3 py-2 text-sm font-medium"><%= place.name %></td>
+  <td class="px-3 py-2 text-sm tabular-nums"><%= place.visits_count %></td>
+  <td class="px-3 py-2 text-sm tabular-nums whitespace-nowrap">
+    <% if place.last_visited_at.present? %>
+      <%= human_datetime(place.last_visited_at, current_user.safe_settings.timezone) %>
+    <% else %>
+      <span class="text-base-content/40">&mdash;</span>
+    <% end %>
+  </td>
+  <td class="px-3 py-2 text-sm tabular-nums whitespace-nowrap"><%= human_datetime(place.created_at, current_user.safe_settings.timezone) %></td>
+  <td class="px-3 py-2 text-sm tabular-nums text-base-content/50 whitespace-nowrap"><%= format('%.6f', place.lat) %>, <%= format('%.6f', place.lon) %></td>
+  <td class="px-3 py-2 text-sm">
+    <span class="badge badge-ghost badge-sm capitalize"><%= place.source %></span>
+  </td>
+  <td class="px-3 py-2">
+    <%= link_to 'Delete', place, data: { turbo_confirm: "Are you sure? Deleting a place will result in deleting all visits for this place.", turbo_method: :delete }, class: "btn btn-error btn-xs" %>
+  </td>
+</tr>

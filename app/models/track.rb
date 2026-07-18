@@ -116,6 +116,12 @@ class Track < ApplicationRecord
                    end
     where_clause += ' AND (anomaly IS NOT TRUE)'
 
+    # Visit points are kept in the window functions below (so LAG can detect the
+    # transition into and out of a visit) but are then dropped from the final
+    # segments via `WHERE visit_id IS NULL`. Forcing a break both on the visit
+    # point itself and on the first point after it guarantees a track always
+    # terminates before a visit and a fresh track starts afterwards, regardless
+    # of the time/distance gap.
     sql = <<~SQL
       WITH points_with_gaps AS (
         SELECT
@@ -123,8 +129,10 @@ class Track < ApplicationRecord
           timestamp,
           lonlat,
           tracker_id,
+          visit_id,
           LAG(lonlat) OVER (PARTITION BY tracker_id ORDER BY timestamp) as prev_lonlat,
           LAG(timestamp) OVER (PARTITION BY tracker_id ORDER BY timestamp) as prev_timestamp,
+          LAG(visit_id) OVER (PARTITION BY tracker_id ORDER BY timestamp) as prev_visit_id,
           ST_Distance(
             lonlat::geography,
             LAG(lonlat) OVER (PARTITION BY tracker_id ORDER BY timestamp)::geography
@@ -137,6 +145,8 @@ class Track < ApplicationRecord
         SELECT *,
           CASE
             WHEN prev_lonlat IS NULL THEN 1
+            WHEN visit_id IS NOT NULL THEN 1
+            WHEN prev_visit_id IS NOT NULL THEN 1
             WHEN time_diff_seconds > $4 THEN 1
             WHEN distance_meters > $5 THEN 1
             ELSE 0
@@ -157,6 +167,7 @@ class Track < ApplicationRecord
         max(timestamp) as end_timestamp,
         sum(COALESCE(distance_meters, 0)) as total_distance_meters
       FROM segments
+      WHERE visit_id IS NULL
       GROUP BY tracker_id, segment_id
       HAVING count(*) >= 2
       ORDER BY tracker_id NULLS FIRST, segment_id

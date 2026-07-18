@@ -46,6 +46,7 @@ class Tracks::BoundaryDetector
   def untracked_points_in_lookback?
     user.points
         .where(track_id: nil)
+        .where(visit_id: nil)
         .where('anomaly IS NOT TRUE')
         .where('timestamp >= ?', ORPHAN_REABSORPTION_LOOKBACK.ago.to_i)
         .where(created_at: ...ORPHAN_REABSORPTION_FRESHNESS_BUFFER.ago)
@@ -95,6 +96,7 @@ class Tracks::BoundaryDetector
     Point.where(user_id: user.id)
          .where('COALESCE(tracker_id, ?) = COALESCE(?, ?)', '', track.tracker_id, '')
          .where(track_id: nil)
+         .where(visit_id: nil)
          .where('anomaly IS NOT TRUE')
          .where(timestamp: track.start_at.to_i..track.end_at.to_i)
          .where(created_at: ...ORPHAN_REABSORPTION_FRESHNESS_BUFFER.ago)
@@ -185,10 +187,27 @@ class Tracks::BoundaryDetector
                   (candidate_start - track_end_time).abs <= time_window ||
                   (track_start_time - candidate_end).abs <= time_window
 
+      # A visit sitting in the gap means these tracks are on opposite sides of a
+      # stay and must not be stitched back together.
+      next if visit_between?(track, candidate)
+
       connected << candidate if tracks_spatially_connected?(track, candidate)
     end
 
     connected
+  end
+
+  # True when at least one visit point exists in the time gap between two tracks.
+  def visit_between?(track_a, track_b)
+    earlier, later = [track_a, track_b].sort_by(&:start_at)
+    gap_start = earlier.end_at.to_i
+    gap_end = later.start_at.to_i
+    return false if gap_end <= gap_start
+
+    user.points
+        .where(timestamp: gap_start..gap_end)
+        .where.not(visit_id: nil)
+        .exists?
   end
 
   # Check if two tracks are spatially connected (endpoints are close)

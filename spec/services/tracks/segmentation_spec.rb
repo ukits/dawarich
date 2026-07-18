@@ -53,5 +53,30 @@ lonlat: 'POINT(1.1 1.1)')
       expect(segments.first).to eq(points.first(2))
       expect(segments.last).to eq(points.last(2))
     end
+
+    it 'excludes visit points and terminates the track before a visit, starting a new one after' do
+      before_visit = [
+        build(:point, timestamp: base_time, latitude: 0, longitude: 0, lonlat: 'POINT(0 0)'),
+        build(:point, timestamp: base_time + 1.minute.to_i, latitude: 0.1, longitude: 0.1, lonlat: 'POINT(0.1 0.1)')
+      ]
+      visit_points = [
+        build(:point, timestamp: base_time + 2.minutes.to_i, visit_id: 42, latitude: 0.2, longitude: 0.2,
+                      lonlat: 'POINT(0.2 0.2)'),
+        build(:point, timestamp: base_time + 3.minutes.to_i, visit_id: 42, latitude: 0.2, longitude: 0.2,
+                      lonlat: 'POINT(0.2 0.2)')
+      ]
+      after_visit = [
+        build(:point, timestamp: base_time + 4.minutes.to_i, latitude: 0.3, longitude: 0.3, lonlat: 'POINT(0.3 0.3)'),
+        build(:point, timestamp: base_time + 5.minutes.to_i, latitude: 0.4, longitude: 0.4, lonlat: 'POINT(0.4 0.4)')
+      ]
+      points = before_visit + visit_points + after_visit
+
+      segments = segmenter.send(:split_points_into_segments_geocoder, points)
+
+      expect(segments.length).to eq(2)
+      expect(segments.first).to eq(before_visit)
+      expect(segments.last).to eq(after_visit)
+      expect(segments.flatten).not_to include(*visit_points)
+    end
   end
 end

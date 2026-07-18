@@ -14,6 +14,9 @@
 # Segmentation criteria:
 # - Time threshold: Gap longer than X minutes indicates a new track
 # - Minimum segment size: Segments must have at least 2 points to form a track
+# - Visit boundaries: Points that belong to a visit (visit_id present) are
+#   excluded from tracks entirely. A track always terminates before a visit and
+#   a new track starts on the first non-visit point after it.
 #
 # ❗️ Frontend Parity (see CLAUDE.md "Route Drawing Implementation")
 # The maps intentionally ignore the distance threshold because haversineDistance()
@@ -52,7 +55,19 @@ module Tracks::Segmentation
     current_segment = []
 
     points.each do |point|
-      if should_start_new_segment?(point, current_segment.last)
+      # Points that belong to a visit must never be part of a track. Finalize
+      # the segment that led up to the visit and drop the visit point itself, so
+      # the track terminates before the visit and a brand-new track starts on
+      # the first non-visit point that follows.
+      if point_in_visit?(point)
+        segments << current_segment if current_segment.size >= 2
+        current_segment = []
+        next
+      end
+
+      if current_segment.empty?
+        current_segment = [point]
+      elsif should_start_new_segment?(point, current_segment.last)
         # Finalize current segment if it has enough points
         segments << current_segment if current_segment.size >= 2
         current_segment = [point]
@@ -65,6 +80,17 @@ module Tracks::Segmentation
     segments << current_segment if current_segment.size >= 2
 
     segments
+  end
+
+  def point_in_visit?(point)
+    visit_id =
+      if point.respond_to?(:visit_id)
+        point.visit_id
+      elsif point.is_a?(Hash)
+        point[:visit_id] || point['visit_id']
+      end
+
+    visit_id.present?
   end
 
   # Alias for backwards compatibility with TimeChunkProcessorJob

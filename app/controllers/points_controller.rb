@@ -7,9 +7,13 @@ class PointsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @points = points
-              .without_raw_data
-              .where(timestamp: start_at..end_at)
+    scope = points
+            .without_raw_data
+            .where(timestamp: start_at..end_at)
+    scope = scope.where(visit_id: params[:visit_id]) if params[:visit_id].present?
+    scope = scope.where(track_id: params[:track_id]) if params[:track_id].present?
+
+    @points = scope
               .order(timestamp: order_by)
               .page(params[:page])
               .per(50)
@@ -84,6 +88,6 @@ class PointsController < ApplicationController
   end
 
   def preserved_params
-    params.to_enum.to_h.with_indifferent_access.slice(:start_at, :end_at, :order_by, :import_id)
+    params.to_enum.to_h.with_indifferent_access.slice(:start_at, :end_at, :order_by, :import_id, :visit_id, :track_id)
   end
 end

@@ -19,6 +19,14 @@
           <%= f.label :import, class: "text-xs font-medium text-base-content/50 uppercase tracking-wider mb-1 block" %>
           <%= f.select :import_id, options_for_select(@imports.map { |i| [i.name, i.id] }, params[:import_id]), { include_blank: 'All imports' }, class: "select select-bordered select-sm text-sm w-full" %>
         </div>
+        <div class="flex-1">
+          <%= f.label :visit_id, "Visit ID", class: "text-xs font-medium text-base-content/50 uppercase tracking-wider mb-1 block" %>
+          <%= f.number_field :visit_id, value: params[:visit_id], class: "input input-bordered input-sm w-full" %>
+        </div>
+        <div class="flex-1">
+          <%= f.label :track_id, "Track ID", class: "text-xs font-medium text-base-content/50 uppercase tracking-wider mb-1 block" %>
+          <%= f.number_field :track_id, value: params[:track_id], class: "input input-bordered input-sm w-full" %>
+        </div>
         <%= f.submit "Search", class: "btn btn-primary btn-sm" %>
       </div>
     <% end %>
@@ -74,14 +82,17 @@
                   class: 'checkbox checkbox-xs'
                 %>
               </th>
+              <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-base-content/50 text-right">ID</th>
               <% if DawarichSettings.reverse_geocoding_enabled? %>
-                <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-left text-base-content/50 w-4/12">Address</th>
+                <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-left text-base-content/50 w-3/12">Address</th>
               <% end %>
+              <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-base-content/50 text-right">Visit ID</th>
+              <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-base-content/50 text-right">Track ID</th>
               <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-base-content/50 text-right w-1/12">Speed</th>
               <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-base-content/50 w-3/12">Coordinates</th>
               <th class="px-3 py-2.5 text-xs uppercase tracking-wider text-base-content/50 w-3/12">
                 <% next_order = params[:order_by] == 'asc' ? 'desc' : 'asc' %>
-                <%= link_to points_path(order_by: next_order, import_id: params[:import_id], start_at: params[:start_at], end_at: params[:end_at]),
+                <%= link_to points_path(order_by: next_order, import_id: params[:import_id], start_at: params[:start_at], end_at: params[:end_at], visit_id: params[:visit_id], track_id: params[:track_id]),
                     class: "inline-flex items-center gap-1 link link-hover font-bold" do %>
                   Recorded at
                   <%= icon(params[:order_by] == 'asc' ? 'chevron-up' : 'chevron-down', class: 'w-4 h-4 inline-block') %>

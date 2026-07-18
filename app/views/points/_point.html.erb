@@ -14,6 +14,7 @@
       }
     %>
   </td>
+  <td class="px-3 py-2 text-sm text-right tabular-nums text-base-content/50 whitespace-nowrap"><%= point.id %></td>
   <% if DawarichSettings.reverse_geocoding_enabled? %>
     <td class="px-3 py-2 text-sm text-left text-base-content/60" style="overflow: visible;">
       <% props = point.geodata.is_a?(Hash) ? point.geodata['properties'] : nil %>
@@ -30,9 +31,14 @@
       <% end %>
     </td>
   <% end %>
+  <td class="px-3 py-2 text-sm text-right tabular-nums text-base-content/50 whitespace-nowrap"><%= point.visit_id %></td>
+  <td class="px-3 py-2 text-sm text-right tabular-nums text-base-content/50 whitespace-nowrap"><%= point.track_id %></td>
   <td class="px-3 py-2 text-sm text-right tabular-nums font-medium whitespace-nowrap <%= speed_text_color(point.velocity) %>">
     <%= point_speed(point.velocity, current_user.safe_settings.distance_unit) %>
   </td>
-  <td class="px-3 py-2 text-sm tabular-nums text-base-content/50 whitespace-nowrap"><%= point.lat %>, <%= point.lon %></td>
+  <td class="px-3 py-2 text-sm tabular-nums text-base-content/50 whitespace-nowrap">
+    <%= format('%.6f', point.lat) %>, <%= format('%.6f', point.lon) %>
+    <span class="text-base-content/40">(Alt: <%= point.altitude.presence || '—' %>)</span>
+  </td>
   <td class="px-3 py-2 text-sm tabular-nums whitespace-nowrap"><%= human_datetime_with_seconds(point.recorded_at, current_user.safe_settings.timezone) %></td>
 </tr>

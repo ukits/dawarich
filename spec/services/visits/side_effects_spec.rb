@@ -58,10 +58,30 @@ RSpec.describe Visits::SideEffects do
              user: user,
              timestamp: (day + 11.hours).to_i,
              velocity: '0.0',
-             raw_data: { 'velocity' => '8.25' })
+             visit_id: visit.id,
+             raw_data: { 'properties' => { 'speed' => 8.25 } })
     end
 
-    it 'restores velocity from raw_data and rebuilds tracks and stats' do
+    before do
+      build_server = instance_double(Tracks::BuildServer, call: true)
+      stats_server = instance_double(Stats::RecalculateServer, call: true)
+      allow(Tracks::BuildServer).to receive(:new).with(user, [day.to_date]).and_return(build_server)
+      allow(Stats::RecalculateServer).to receive(:new).with(user, [day.to_date]).and_return(stats_server)
+    end
+
+    it 'restores velocity from raw_data.properties.speed' do
+      described_class.new(visit).on_destroy
+
+      expect(point.reload.velocity).to eq('8.25')
+    end
+
+    it 'releases the visit_id from the affected points' do
+      described_class.new(visit).on_destroy
+
+      expect(point.reload.visit_id).to be_nil
+    end
+
+    it 'rebuilds tracks and stats for the affected dates' do
       build_server = instance_double(Tracks::BuildServer, call: true)
       stats_server = instance_double(Stats::RecalculateServer, call: true)
       allow(Tracks::BuildServer).to receive(:new).with(user, [day.to_date]).and_return(build_server)
@@ -69,9 +89,25 @@ RSpec.describe Visits::SideEffects do
 
       described_class.new(visit).on_destroy
 
-      expect(point.reload.velocity).to eq('8.25')
       expect(build_server).to have_received(:call)
       expect(stats_server).to have_received(:call)
+    end
+
+    context 'with legacy raw_data.velocity only' do
+      let!(:point) do
+        create(:point,
+               user: user,
+               timestamp: (day + 11.hours).to_i,
+               velocity: '0.0',
+               visit_id: visit.id,
+               raw_data: { 'velocity' => '8.25' })
+      end
+
+      it 'falls back to the top-level velocity value' do
+        described_class.new(visit).on_destroy
+
+        expect(point.reload.velocity).to eq('8.25')
+      end
     end
   end
 end

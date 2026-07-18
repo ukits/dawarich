@@ -24,6 +24,7 @@ module Visits
 
       dates = calendar_dates_for(points)
       restore_velocities(points)
+      release_points_from_visit
       rebuild_tracks_and_stats(dates)
     end
 
@@ -46,11 +47,33 @@ module Visits
 
     def restore_velocities(points)
       points.each do |point|
-        stored_velocity = point.raw_data.is_a?(Hash) ? point.raw_data['velocity'] : nil
-        next if stored_velocity.nil?
+        stored_speed = original_speed_for(point)
+        next if stored_speed.nil?
 
-        point.update_columns(velocity: stored_velocity.to_s)
+        point.update_columns(velocity: stored_speed.to_s)
       end
+    end
+
+    # The original GPS speed lives under raw_data.properties.speed (that's the
+    # value the importers copy into the velocity column). Fall back to a
+    # top-level raw_data.velocity for legacy rows that stored it there.
+    def original_speed_for(point)
+      raw = point.raw_data
+      return nil unless raw.is_a?(Hash)
+
+      properties = raw['properties'] || raw[:properties]
+      speed = properties.is_a?(Hash) ? (properties['speed'] || properties[:speed]) : nil
+      speed = raw['velocity'] if speed.nil?
+
+      speed
+    end
+
+    # Detach the visit's points before rebuilding tracks so the freed points are
+    # eligible for track inclusion again. Runs while the visit still exists, so
+    # this is deterministic regardless of the dependent: :nullify timing on
+    # visit.destroy and of when the async track jobs pick up the work.
+    def release_points_from_visit
+      Point.where(visit_id: visit.id).update_all(visit_id: nil)
     end
 
     def rebuild_tracks_and_stats(dates)

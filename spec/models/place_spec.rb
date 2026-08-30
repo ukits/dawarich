@@ -39,6 +39,22 @@ RSpec.describe Place, type: :model do
     end
   end
 
+  describe '.with_active_visits_count' do
+    it 'counts only active visits' do
+      user = create(:user)
+      place = create(:place, user: user)
+      base = Time.zone.parse('2026-04-01 12:00')
+      create(:visit, user: user, place: place, area: nil,
+             started_at: base, ended_at: base + 30.minutes)
+      create(:visit, user: user, place: place, area: nil, deleted_at: 1.day.ago,
+             started_at: base + 1.hour, ended_at: base + 90.minutes)
+      create(:visit, user: user, place: place, area: nil, status: :declined,
+             started_at: base + 2.hours, ended_at: base + 150.minutes)
+
+      expect(Place.with_active_visits_count.find(place.id).visits_count.to_i).to eq(1)
+    end
+  end
+
   describe 'destroying a place' do
     it 'nullifies place_id on associated visits, does not delete them' do
       user = create(:user)

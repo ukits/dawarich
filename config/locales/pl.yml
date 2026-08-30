@@ -1265,6 +1265,7 @@ pl:
       hello_there: Cześć!
       here_you_ll_find_your_places_created_by_visits_suggestion: Tutaj znajdziesz miejsca utworzone przez mechanizm sugestii wizyt. Na razie jeszcze ich nie ma.
       name: Nazwa
+      visits: Wizyty
       created_at: Utworzono
       coordinates: Współrzędne
       actions: Akcje

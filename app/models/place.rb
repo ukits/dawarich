@@ -37,6 +37,12 @@ class Place < ApplicationRecord
   scope :map_visible, lambda { |user|
     manual.or(linked_to_confirmed_visits(user)).or(tagged)
   }
+  # List pages need a count without N+1; reader surfaces ignore tombstones.
+  scope :with_active_visits_count, lambda {
+    count_sql = Visit.active.where("#{Visit.table_name}.place_id = #{table_name}.id")
+                     .select('COUNT(*)').to_sql
+    select("#{table_name}.*, (#{count_sql}) AS visits_count")
+  }
 
   # Legacy places predate the lonlat column and carry coordinates only in the
   # decimal columns; to_f keeps their JSON serialization numeric — BigDecimal

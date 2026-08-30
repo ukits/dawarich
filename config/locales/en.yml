@@ -1265,6 +1265,7 @@ en:
       hello_there: Hello there!
       here_you_ll_find_your_places_created_by_visits_suggestion: Here you'll find your places, created by Visits suggestion process. But now there are none.
       name: Name
+      visits: Visits
       created_at: Created at
       coordinates: Coordinates
       actions: Actions

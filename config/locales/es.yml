@@ -1307,6 +1307,7 @@ es:
       hello_there: "¡Hola!"
       here_you_ll_find_your_places_created_by_visits_suggestion: Aquí encontrarás tus lugares, creados por el proceso de sugerencia de visitas. Pero ahora no hay ninguno.
       name: Nombre
+      visits: Visitas
       created_at: Creado en
       coordinates: Coordenadas
       actions: Acciones

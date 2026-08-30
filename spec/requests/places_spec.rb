@@ -15,6 +15,24 @@ RSpec.describe '/places', type: :request do
 
       expect(response).to be_successful
     end
+
+    it 'lists places newest first and shows the active visit count' do
+      create(:place, user:, name: 'Alpha Old', created_at: 2.days.ago)
+      newer = create(:place, user:, name: 'Zeta New', created_at: 1.hour.ago)
+      base = Time.zone.parse('2026-04-01 12:00')
+      create(:visit, place: newer, user:, area: nil,
+                     started_at: base, ended_at: base + 30.minutes)
+      create(:visit, place: newer, user:, area: nil,
+                     started_at: base + 1.hour, ended_at: base + 90.minutes)
+      create(:visit, place: newer, user:, area: nil, deleted_at: 1.day.ago,
+                     started_at: base + 2.hours, ended_at: base + 150.minutes)
+
+      get places_url
+
+      expect(response.body.index('Zeta New')).to be < response.body.index('Alpha Old')
+      expect(response.body).to match(%r{Zeta New</td>\s*<td>2</td>}m)
+      expect(response.body).to match(%r{Alpha Old</td>\s*<td>0</td>}m)
+    end
   end
 
   describe 'POST /create' do

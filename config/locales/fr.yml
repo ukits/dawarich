@@ -2028,6 +2028,7 @@ fr:
       here_you_ll_find_your_places_created_by_visits_suggestion: Vous trouverez ici
         les lieux créés grâce aux suggestions de visites. Il n’y en a encore aucun.
       name: Nom
+      visits: Visites
       created_at: Créé le
       coordinates: Coordonnées
       actions: Actions

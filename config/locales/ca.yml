@@ -1265,6 +1265,7 @@ ca:
       hello_there: Hola!
       here_you_ll_find_your_places_created_by_visits_suggestion: Aquí trobaràs els teus llocs, creats pel procés de suggeriment de visites. Però ara mateix no n'hi ha cap.
       name: Nom
+      visits: Visites
       created_at: Creat el
       coordinates: Coordenades
       actions: Accions

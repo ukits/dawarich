@@ -1307,6 +1307,7 @@ de:
       hello_there: Hallo!
       here_you_ll_find_your_places_created_by_visits_suggestion: Hier findest du deine Orte, die durch den Visits-Vorschlagsprozess erstellt wurden. Aber jetzt gibt es keine.
       name: Name
+      visits: Besuche
       created_at: Erstellt am
       coordinates: Koordinaten
       actions: Aktionen

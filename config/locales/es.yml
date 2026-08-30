@@ -986,6 +986,8 @@ es:
         globe_view: Vista del globo
         render_map_as_a_3d_globe_requires_page_reload: Renderizar el mapa como un globo 3D (requiere recargar la página)
         route_opacity: Ocultidad de ruta
+        point_size: Tamaño de punto
+        size_of_location_point_markers_on_the_map: Tamaño de los marcadores de ubicación en el mapa
         layer_colors: Colores de capa
         reset_to_defaults: Restablecer a valores por defecto
         distance_unit: Unidad de distancia

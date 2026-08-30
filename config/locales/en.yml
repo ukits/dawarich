@@ -944,6 +944,8 @@ en:
         globe_view: Globe View
         render_map_as_a_3d_globe_requires_page_reload: Render map as a 3D globe (requires page reload)
         route_opacity: Route Opacity
+        point_size: Point Size
+        size_of_location_point_markers_on_the_map: Size of location point markers on the map
         layer_colors: Layer Colors
         reset_to_defaults: Reset to defaults
         distance_unit: Distance Unit

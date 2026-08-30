@@ -32,6 +32,7 @@ RSpec.describe Users::SafeSettings do
             merge_threshold_minutes: 15,
             live_map_enabled: true,
             route_opacity: 0.6,
+            point_radius: 6,
             route_color: '#0000ff',
             track_color: '#6366F1',
             immich_url: nil,
@@ -115,6 +116,7 @@ RSpec.describe Users::SafeSettings do
             'merge_threshold_minutes' => 20,
             'live_map_enabled' => false,
             'route_opacity' => 80,
+            'point_radius' => 6,
             'route_color' => '#0000ff',
             'track_color' => '#6366F1',
             'immich_url' => 'https://immich.example.com',
@@ -174,6 +176,7 @@ RSpec.describe Users::SafeSettings do
             merge_threshold_minutes: 20,
             live_map_enabled: false,
             route_opacity: 80,
+            point_radius: 6,
             route_color: '#0000ff',
             track_color: '#6366F1',
             immich_url: 'https://immich.example.com',
@@ -308,6 +311,7 @@ RSpec.describe Users::SafeSettings do
         expect(safe_settings.merge_threshold_minutes).to eq(15)
         expect(safe_settings.live_map_enabled).to be true
         expect(safe_settings.route_opacity).to eq(0.6)
+        expect(safe_settings.point_radius).to eq(6)
         expect(safe_settings.immich_url).to be_nil
         expect(safe_settings.immich_api_key).to be_nil
         expect(safe_settings.photoprism_url).to be_nil
@@ -689,6 +693,24 @@ RSpec.describe Users::SafeSettings do
 
     it 'casts string "false"' do
       expect(described_class.new({ 'gps_filtering_enabled' => 'false' }).gps_filtering_enabled?).to be false
+    end
+  end
+
+  describe '#point_radius' do
+    it 'returns 6 when missing' do
+      expect(described_class.new({}).point_radius).to eq(6)
+    end
+
+    it 'clamps below the minimum to 2' do
+      expect(described_class.new({ 'point_radius' => 1 }).point_radius).to eq(2)
+    end
+
+    it 'clamps above the maximum to 12' do
+      expect(described_class.new({ 'point_radius' => 99 }).point_radius).to eq(12)
+    end
+
+    it 'returns the user value within range' do
+      expect(described_class.new({ 'point_radius' => 3 }).point_radius).to eq(3)
     end
   end
 

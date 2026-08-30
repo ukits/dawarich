@@ -1,4 +1,9 @@
 import { getMarkerStrokeColor } from "../utils/marker_theme"
+import {
+  clampPointRadius,
+  DEFAULT_POINT_RADIUS,
+  getPointStrokeWidth,
+} from "../utils/point_size"
 import { BaseLayer } from "./base_layer"
 import { heatmapPaint } from "./heatmap_layer"
 
@@ -23,6 +28,9 @@ export class PointsMvtLayer extends BaseLayer {
     this.endAt = options.endAt || null
     this.apiKey = options.apiKey || null
     this.styleName = options.styleName
+    this.pointRadius = clampPointRadius(
+      options.pointRadius ?? DEFAULT_POINT_RADIUS,
+    )
     this._tileUrl = null
     this._cacheBuster = 0
     // Heatmap rides the same source and same lifecycle, toggled independently
@@ -30,6 +38,19 @@ export class PointsMvtLayer extends BaseLayer {
     this.onTileError = options.onTileError || null
     this._tileErrorHandler = null
     this._tileErrorReported = false
+  }
+
+  setPointRadius(radius) {
+    this.pointRadius = clampPointRadius(radius)
+    if (this._paintHidden) return
+    if (!this.map.getLayer(this.id)) return
+
+    this.map.setPaintProperty(this.id, "circle-radius", this.pointRadius)
+    this.map.setPaintProperty(
+      this.id,
+      "circle-stroke-width",
+      getPointStrokeWidth(this.pointRadius),
+    )
   }
 
   // A failed tile fetch (timeout, throttle, expired session) reaches the page
@@ -70,8 +91,6 @@ export class PointsMvtLayer extends BaseLayer {
   static HEATMAP_LAYER_ID = "points-mvt-heatmap"
 
   static CIRCLE_RADIUS = 6
-
-  static CIRCLE_STROKE_WIDTH = 2
 
   setHeatmapVisible(visible) {
     this.heatmapVisible = visible
@@ -125,12 +144,12 @@ export class PointsMvtLayer extends BaseLayer {
       this.map.setPaintProperty?.(
         layerId,
         "circle-radius",
-        PointsMvtLayer.CIRCLE_RADIUS,
+        this.pointRadius ?? PointsMvtLayer.CIRCLE_RADIUS,
       )
       this.map.setPaintProperty?.(
         layerId,
         "circle-stroke-width",
-        PointsMvtLayer.CIRCLE_STROKE_WIDTH,
+        getPointStrokeWidth(this.pointRadius ?? PointsMvtLayer.CIRCLE_RADIUS),
       )
       this._paintHidden = false
     }
@@ -204,8 +223,8 @@ export class PointsMvtLayer extends BaseLayer {
         "source-layer": "points",
         paint: {
           "circle-color": "#3b82f6",
-          "circle-radius": PointsMvtLayer.CIRCLE_RADIUS,
-          "circle-stroke-width": PointsMvtLayer.CIRCLE_STROKE_WIDTH,
+          "circle-radius": this.pointRadius,
+          "circle-stroke-width": getPointStrokeWidth(this.pointRadius),
           "circle-stroke-color": getMarkerStrokeColor(this.styleName),
         },
       },

@@ -47,6 +47,8 @@ export default class extends Controller {
     "settingsPanel",
     "visitsSearch",
     "routeOpacityRange",
+    "pointRadiusRange",
+    "pointRadiusValue",
     "placesFilters",
     "enableAllPlaceTagsToggle",
     "fogRadiusValue",
@@ -1229,6 +1231,9 @@ export default class extends Controller {
   }
   updateRouteOpacity(event) {
     return this.settingsController.updateRouteOpacity(event)
+  }
+  updatePointRadius(event) {
+    return this.settingsController.updatePointRadius(event)
   }
   updateAdvancedSettings(event) {
     return this.settingsController.updateAdvancedSettings(event)

@@ -1648,6 +1648,8 @@ fr:
         render_map_as_a_3d_globe_requires_page_reload: Afficher la carte sous forme
           de globe 3D (nécessite de recharger la page)
         route_opacity: Opacité des itinéraires
+        point_size: Taille des points
+        size_of_location_point_markers_on_the_map: Taille des marqueurs de points de localisation sur la carte
         layer_colors: Couleurs des couches
         reset_to_defaults: Rétablir les valeurs par défaut
         distance_unit: Unité de distance

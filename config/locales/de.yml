@@ -986,6 +986,8 @@ de:
         globe_view: Globusansicht
         render_map_as_a_3d_globe_requires_page_reload: Karte als 3D-Globus rendern (erfordert Neuladen der Seite)
         route_opacity: Deckkraft der Route
+        point_size: Punktgröße
+        size_of_location_point_markers_on_the_map: Größe der Standortmarkierungen auf der Karte
         layer_colors: Ebenenfarben
         reset_to_defaults: Zurücksetzen auf Standardwerte
         distance_unit: Entfernungseinheit

@@ -1,0 +1,25 @@
+# Upstream 동기화 (장기)
+
+upstream(Freika/dawarich)이 계속 올라갈 때마다 **같은 절차**로 fork 기능을 재검토·이식한다.
+
+```text
+FORK_CHANGES.md          ← 기능 카탈로그 (ID 고정, 상태만 갱신)
+docs/upstream-sync/
+  PROCESS.md             ← 반복 절차 (버전 비의존)
+  cycles/                ← 사이클마다 파일 하나 추가 (이력 축적)
+    2026-08-1.9.2-to-1.14.0.md
+    …
+```
+
+| 지금 열린 사이클 | [1.9.2 → 1.14.0](cycles/2026-08-1.9.2-to-1.14.0.md) |
+|------------------|------------------------------------------------------|
+| 기능 목록 | [FORK_CHANGES.md](../../FORK_CHANGES.md) |
+| 절차 | [PROCESS.md](PROCESS.md) |
+
+## 원칙 (고정)
+
+1. **upstream을 새 작업 브랜치로 먼저 둔다** (`sync/<target-version>`).
+2. fork 커밋을 기계적으로 cherry-pick하지 않는다. **의도(Fxx)를 새 코드베이스에 맞게 이식**한다.
+3. 한 번에 한 기능(또는 명시적으로 묶은 소그룹). 리뷰 → 결정 → (승인 후) 구현 → 로그.
+4. 결정은 사이클 파일에 **남겨 다음 sync에서 재사용**한다 (`dropped`/`superseded` 이유 포함).
+5. Cursor agent transcript는 대화 로그일 뿐 저장소 이력이 아니다. 분석·결정은 **사이클 md로 이관**한다.

@@ -7,6 +7,10 @@ import {
 } from "maps_maplibre/utils/basemap_url"
 import { isGatedPlan } from "maps_maplibre/utils/layer_gate"
 import {
+  applyPointSizeToMapLibre,
+  clampPointRadius,
+} from "maps_maplibre/utils/point_size"
+import {
   bulkPointsRequired,
   LAYER_COLOR_DEFAULTS,
   SettingsManager,
@@ -142,6 +146,15 @@ export class SettingsController {
     if (controller.hasRouteOpacityRangeTarget) {
       controller.routeOpacityRangeTarget.value =
         (this.settings.routeOpacity || 1.0) * 100
+    }
+
+    if (controller.hasPointRadiusRangeTarget) {
+      controller.pointRadiusRangeTarget.value = clampPointRadius(
+        this.settings.pointRadius,
+      )
+      if (controller.hasPointRadiusValueTarget) {
+        controller.pointRadiusValueTarget.textContent = `${controller.pointRadiusRangeTarget.value}px`
+      }
     }
 
     // Sync layer color pickers
@@ -941,6 +954,17 @@ export class SettingsController {
     SettingsManager.updateSetting("routeOpacity", opacity)
   }
 
+  updatePointRadius(event) {
+    const radius = clampPointRadius(parseInt(event.target.value, 10))
+
+    if (this.controller.hasPointRadiusValueTarget) {
+      this.controller.pointRadiusValueTarget.textContent = `${radius}px`
+    }
+
+    applyPointSizeToMapLibre(this.map, radius, this.layerManager)
+    SettingsManager.updateSetting("pointRadius", radius)
+  }
+
   /**
    * Layer colors (routes / tracks): paint applies immediately, the save
    * is debounced because color inputs fire rapidly while dragging.
@@ -1138,6 +1162,7 @@ export class SettingsController {
 
     const settings = {
       routeOpacity: parseFloat(formData.get("routeOpacity")) / 100,
+      pointRadius: clampPointRadius(parseInt(formData.get("pointRadius"), 10)),
       fogOfWarRadius: parseInt(formData.get("fogOfWarRadius"), 10),
       fogOfWarThreshold: parseInt(formData.get("fogOfWarThreshold"), 10),
       metersBetweenRoutes: parseInt(formData.get("metersBetweenRoutes"), 10),
@@ -1189,6 +1214,14 @@ export class SettingsController {
           settings.routeOpacity,
         )
       }
+    }
+
+    if (settings.pointRadius !== undefined) {
+      applyPointSizeToMapLibre(
+        this.map,
+        settings.pointRadius,
+        this.layerManager,
+      )
     }
 
     // Update fog of war settings

@@ -23,6 +23,7 @@ class Users::SafeSettings
     'merge_threshold_minutes' => 15,
     'live_map_enabled' => true,
     'route_opacity' => 0.6,
+    'point_radius' => 6,
     # Layer colors: route fallback matches Map v1's blue, track color matches
     # Tracks::GeojsonSerializer::DEFAULT_COLOR, keep them in sync.
     'route_color' => '#0000ff',
@@ -89,6 +90,7 @@ class Users::SafeSettings
       merge_threshold_minutes: merge_threshold_minutes,
       live_map_enabled: live_map_enabled,
       route_opacity: route_opacity,
+      point_radius: point_radius,
       route_color: route_color,
       track_color: track_color,
       immich_url: immich_url,
@@ -163,6 +165,10 @@ class Users::SafeSettings
 
   def route_opacity
     settings['route_opacity']
+  end
+
+  def point_radius
+    settings['point_radius'].to_i.clamp(2, 12)
   end
 
   def route_color

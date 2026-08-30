@@ -476,6 +476,7 @@ export class LayerManager {
         visible: false,
         apiClient: this.api,
         timezone: this.settings.timezone,
+        pointRadius: this.settings.pointRadius,
       })
       this.layers.anomaliesLayer.add({
         type: "FeatureCollection",
@@ -493,6 +494,7 @@ export class LayerManager {
         apiClient: this.api,
         layerManager: this,
         styleName: this.settings.mapStyle,
+        pointRadius: this.settings.pointRadius,
         // Live cache, not this.settings: that snapshot is replaced wholesale
         // when advanced settings are saved. Lite can't write points.
         editModeEnabled:
@@ -544,6 +546,7 @@ export class LayerManager {
           tiledPointsActive(SettingsManager.getSettings()),
         apiKey: this.apiKey,
         styleName: this.settings.mapStyle,
+        pointRadius: this.settings.pointRadius,
         onTileError: () => Toast.error(translate("map.tiled_rendering.failed")),
         ...this.pointTileRange,
       })

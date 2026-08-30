@@ -944,6 +944,8 @@ pl:
         globe_view: Widok globu
         render_map_as_a_3d_globe_requires_page_reload: Renderuj mapę jako glob 3D (wymaga odświeżenia strony)
         route_opacity: Przezroczystość trasy
+        point_size: Rozmiar punktu
+        size_of_location_point_markers_on_the_map: Rozmiar znaczników lokalizacji na mapie
         layer_colors: Kolory warstw
         reset_to_defaults: Przywróć domyślne
         distance_unit: Jednostka odległości

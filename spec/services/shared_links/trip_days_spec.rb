@@ -81,6 +81,6 @@ RSpec.describe SharedLinks::TripDays do
       described_class.new(august_trip, timezone: 'Etc/UTC', unit: 'km').call
     end
 
-    expect(rows.first).to include(weekday: 'lundi', label: '4 août')
+    expect(rows.first).to include(weekday: 'lundi', label: '2025-08-04')
   end
 end

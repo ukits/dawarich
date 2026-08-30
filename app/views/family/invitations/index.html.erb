@@ -19,11 +19,11 @@
                 <div class="font-medium text-base-content"><%= invitation.email %></div>
                 <div class="text-sm text-base-content opacity-60">
                   <%= t('family_invitations.index.invited_on') %>
-                  <%= l(invitation.created_at.to_date, format: :long) %>
+                  <%= l(invitation.created_at.to_date, format: :iso) %>
                 </div>
                 <div class="text-xs text-base-content opacity-50">
                   <%= t('family_invitations.index.expires_on') %>
-                  <%= l(invitation.expires_at, format: :long_with_time) %>
+                  <%= l(invitation.expires_at, format: :human) %>
                 </div>
               </div>
 

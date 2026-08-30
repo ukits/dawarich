@@ -6,8 +6,7 @@ module InsightsHelper
   def monthly_digest_title(digest)
     return I18n.t('helpers.insights.monthly_digest') unless digest
 
-    month = I18n.l(Date.new(digest.year, digest.month, 1), format: :month_name)
-    I18n.t('helpers.insights.monthly_digest_title', month:, year: digest.year)
+    I18n.t('helpers.insights.monthly_digest_title', month: digest.month_name)
   end
 
   def monthly_digest_distance(digest, user)

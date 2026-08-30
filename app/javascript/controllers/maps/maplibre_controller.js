@@ -10,6 +10,7 @@ import { loadLastView, saveView } from "maps_maplibre/utils/map_view_store"
 import { performanceMonitor } from "maps_maplibre/utils/performance_monitor"
 import { SearchManager } from "maps_maplibre/utils/search_manager"
 import { SettingsManager } from "maps_maplibre/utils/settings_manager"
+import { formatISODate } from "utils/date_format"
 import { AreaSelectionManager } from "./maplibre/area_selection_manager"
 import { DataLoader } from "./maplibre/data_loader"
 import { DateManager } from "./maplibre/date_manager"
@@ -1563,13 +1564,7 @@ export default class extends Controller {
           (Date.now() - sharingDate.getTime()) / (1000 * 60 * 60 * 24),
         ),
       )
-      const formattedDate = sharingDate.toLocaleDateString(
-        document.documentElement.lang || undefined,
-        {
-          month: "short",
-          day: "numeric",
-        },
-      )
+      const formattedDate = formatISODate(sharingDate)
 
       infoEl.textContent = translate("family.sharing_since", {
         date: formattedDate,

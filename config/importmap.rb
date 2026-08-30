@@ -17,6 +17,7 @@ pin_all_from 'app/javascript/controllers', under: 'controllers'
 pin_all_from 'app/javascript/services', under: 'services'
 pin_all_from 'app/javascript/poster_studio', under: 'poster_studio'
 pin_all_from 'app/javascript/video_studio', under: 'video_studio'
+pin_all_from 'app/javascript/utils', under: 'utils'
 
 pin 'chartkick', to: 'chartkick.js'
 pin 'Chart.bundle', to: 'Chart.bundle.js'

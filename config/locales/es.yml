@@ -2014,7 +2014,7 @@ es:
       back_to: "← Volver a "
       day: Día
       distance: Distancia
-      month_year_monthly_digest: "%{month} %{year} Resumen mensual"
+      month_year_monthly_digest: "%{month} Resumen mensual"
       city_count:
         one: "%{count} ciudad"
         other: "%{count} ciudades"
@@ -2356,7 +2356,7 @@ es:
         presence_0: ".presence || [0]"
         you_re_receiving_this_because_monthly_digest_emails_are_on_3: Estás recibiendo este mensaje porque los correos electrónicos de resumen mensual están activados.
         manage_email_preferences_2: 'Gestiona preferencias de correo electrónico:'
-        month_year_in_review: Tu %{month} %{year} en revisión
+        month_year_in_review: Tu %{month} en revisión
         new_country_line: "→ %{country}  (nuevo país)"
         new_city_line: "→ %{city}  (nueva ciudad)"
       year_end_digest:
@@ -2510,7 +2510,7 @@ es:
   date:
     formats:
       month_name: "%B"
-      month_year: "%B de %Y"
+      month_year: "%Y-%m"
       short_month_day: "%-d %b"
       short_month_day_padded: "%d %b"
       medium: "%-d %b %Y"
@@ -2520,8 +2520,8 @@ es:
       short_month_day_weekday: "%-d %b, %A"
       short_weekday_month_day: "%a, %-d %b"
       iso: "%Y-%m-%d"
-      day_month_year: "%-d de %B de %Y"
-      day_month_year_abbreviated: "%-d %b %Y"
+      day_month_year: "%Y-%m-%d"
+      day_month_year_abbreviated: "%Y-%m-%d"
       month_day: "%-d de %B"
       month_day_padded: "%d de %B"
       month_day_year: "%-d de %B de %Y"
@@ -2531,8 +2531,8 @@ es:
     formats:
       hour_minute: "%H:%M"
       long_with_time: "%-d de %B de %Y a las %H:%M"
-      human: "%e %b %Y, %H:%M"
-      human_with_seconds: "%e %b %Y, %H:%M:%S"
+      human: "%Y-%m-%d %H:%M"
+      human_with_seconds: "%Y-%m-%d %H:%M:%S"
       short_with_time: "%d %b a las %H:%M"
   common:
     app_name: Dawarich
@@ -2640,7 +2640,7 @@ es:
       expires_on: Vence el %{date}
     insights:
       monthly_digest: Resumen mensual
-      monthly_digest_title: "%{month} %{year} Resumen"
+      monthly_digest_title: "%{month} Resumen"
       minute_count:
         one: "%{count} min"
         other: "%{count} min"
@@ -3261,7 +3261,7 @@ es:
         year_end:
           subject: Tu %{year} Año en Resumen - Dawarich
         monthly:
-          subject: Tu %{month} %{year} en revisión — Dawarich
+          subject: Tu %{month} en revisión — Dawarich
   models:
     family:
       location_request:

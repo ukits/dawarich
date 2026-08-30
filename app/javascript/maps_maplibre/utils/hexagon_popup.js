@@ -1,4 +1,5 @@
 import { translate } from "i18n"
+import { formatISODateTime } from "utils/date_format"
 
 // MapLibre serializes nested GeoJSON property values to JSON strings on
 // queried features — `center` arrives as "[lng,lat]", not an array.
@@ -15,20 +16,12 @@ function parsedCenter(props) {
 }
 
 export function buildHexagonPopup(props, timezone) {
-  const locale = document.documentElement.lang || undefined
-  const dateOptions = { timeZone: timezone || "UTC" }
-  const startDate = props.earliest_point
-    ? new Date(props.earliest_point).toLocaleDateString(locale, dateOptions)
+  const startDateTime = props.earliest_point
+    ? formatISODateTime(props.earliest_point, timezone)
     : translate("common.not_available")
-  const endDate = props.latest_point
-    ? new Date(props.latest_point).toLocaleDateString(locale, dateOptions)
+  const endDateTime = props.latest_point
+    ? formatISODateTime(props.latest_point, timezone)
     : translate("common.not_available")
-  const startTime = props.earliest_point
-    ? new Date(props.earliest_point).toLocaleTimeString(locale, dateOptions)
-    : ""
-  const endTime = props.latest_point
-    ? new Date(props.latest_point).toLocaleTimeString(locale, dateOptions)
-    : ""
   const center = parsedCenter(props)
 
   return `
@@ -49,7 +42,7 @@ export function buildHexagonPopup(props, timezone) {
       }
       <div style="margin: 4px 0;">
         <strong>${translate("map_info.time_range")}:</strong><br>
-        <small>${startDate} ${startTime}<br>→ ${endDate} ${endTime}</small>
+        <small>${startDateTime} → ${endDateTime}</small>
       </div>
       ${
         center

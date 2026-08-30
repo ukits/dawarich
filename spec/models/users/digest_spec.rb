@@ -513,8 +513,8 @@ RSpec.describe Users::Digest, type: :model do
     end
 
     describe '#month_name' do
-      it 'returns month name for monthly digest' do
-        expect(monthly_digest.month_name).to eq('January')
+      it 'returns month label for monthly digest' do
+        expect(monthly_digest.month_name).to eq('2024-01')
       end
 
       it 'returns nil for yearly digest' do

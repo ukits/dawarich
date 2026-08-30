@@ -168,7 +168,7 @@
                      data-trip-maplibre-day-key-param="<%= day_key %>">
               <span class="inline-block w-3 h-3 rounded-full flex-shrink-0 bg-base-content/30"
                     data-day-dot="<%= day_key %>"></span>
-              <span><%= l(date, format: :short_month_day_weekday) %></span>
+              <span><%= l(date, format: :iso) %></span>
               <% if stats %>
                 <span class="text-base-content/50 text-xs">
                   <%= l(stats[:first_time], format: :hour_minute) %> – <%= l(stats[:last_time], format: :hour_minute) %>

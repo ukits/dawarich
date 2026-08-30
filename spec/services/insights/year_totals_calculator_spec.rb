@@ -114,7 +114,7 @@ RSpec.describe Insights::YearTotalsCalculator do
       it 'finds the biggest month' do
         result = calculator.call
 
-        expect(result.biggest_month[:month]).to eq('February')
+        expect(result.biggest_month[:month]).to eq('2024-02')
         expect(result.biggest_month[:distance]).to eq(200) # 200 km
       end
     end
@@ -230,7 +230,7 @@ RSpec.describe Insights::YearTotalsCalculator do
       it 'ignores the invalid row when naming the biggest month' do
         result = calculator.call
 
-        expect(result.biggest_month).to eq(month: 'June', distance: 100)
+        expect(result.biggest_month).to eq(month: '2024-06', distance: 100)
       end
     end
   end

@@ -37,8 +37,7 @@ class StatsController < ApplicationController
     else
       Stats::CalculatingJob.perform_later(current_user.id, params[:year], params[:month])
 
-      month = I18n.l(Date.new(params[:year].to_i, params[:month].to_i, 1), format: :month_name)
-      target = I18n.t('controllers.stats.month_of_year', month:, year: params[:year])
+      target = format('%04d-%02d', params[:year].to_i, params[:month].to_i)
     end
 
     redirect_to stats_path, notice: I18n.t('controllers.stats.stats_for_target_are_being_updated', target: target),
@@ -83,10 +82,10 @@ status: :see_other
       stats_by_month = stats.index_by(&:month)
 
       year_distances[year] = (1..12).map do |month|
-        month_name = I18n.l(Date.new(year, month, 1), format: :month_name)
+        month_label = format('%04d-%02d', year, month)
         distance = stats_by_month[month]&.distance || 0
 
-        [month_name, distance]
+        [month_label, distance]
       end
     end
 

@@ -20,7 +20,7 @@ module SharedLinks
         {
           date: date,
           weekday: I18n.l(date, format: '%A'),
-          label: I18n.l(date, format: :short_month_day),
+          label: date.strftime('%Y-%m-%d'),
           color: COLORS[index % COLORS.size],
           has_data: row.present?,
           first_time: row && row[:first_time],

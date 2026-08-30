@@ -72,7 +72,7 @@ module Insights
       return nil unless max_stat&.distance&.positive?
 
       {
-        month: I18n.l(Date.new(max_stat.year, max_stat.month, 1), format: :month_name),
+        month: format('%04d-%02d', max_stat.year, max_stat.month),
         distance: Stat.convert_distance(max_stat.distance, distance_unit).round
       }
     end

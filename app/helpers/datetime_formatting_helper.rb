@@ -5,6 +5,14 @@ module DatetimeFormattingHelper
     I18n.l(date.to_date, format: :day_month_year)
   end
 
+  def human_month(date)
+    I18n.l(date.to_date, format: :month_year)
+  end
+
+  def human_month_year(year, month)
+    format('%04d-%02d', year.to_i, month.to_i)
+  end
+
   def human_datetime(datetime, timezone = nil)
     return unless datetime
 

@@ -56,7 +56,7 @@ class Trial::WelcomeController < ApplicationController
     if user.active_until.present?
       I18n.t(
         'controllers.trial.welcome.trial_active_until',
-        date: I18n.l(user.active_until.to_date, format: :long)
+        date: I18n.l(user.active_until, format: :human)
       )
     else
       I18n.t('controllers.trial.welcome.trial_activating')

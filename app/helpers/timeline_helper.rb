@@ -18,6 +18,8 @@ module TimelineHelper
   # day column scrolls more than it communicates.
   JOURNEY_LEG_MAX_EXTRA_PX = 80
 
+  KOREAN_WEEKDAY_LABELS = %w[일 월 화 수 목 금 토].freeze
+
   # "YYYY-MM" for the calendar's initial month. Prefers, in order:
   #   1. `params[:date]` (the selected day, e.g. "2025-12-11")
   #   2. `params[:start_at]` (range start, e.g. "2025-12-11T00:00:00")
@@ -215,7 +217,12 @@ module TimelineHelper
   end
 
   def day_label(day)
-    I18n.l(Date.parse(day[:date].to_s), format: :weekday_month_day)
+    timeline_day_header_label(day[:date])
+  end
+
+  def timeline_day_header_label(date)
+    parsed = Date.parse(date.to_s)
+    "#{parsed.strftime('%Y-%m-%d')} (#{KOREAN_WEEKDAY_LABELS[parsed.wday]})"
   end
 
   def day_total_visits_count(day)
@@ -232,7 +239,7 @@ module TimelineHelper
     {
       prev: (month_date - 1.month).strftime('%Y-%m'),
       next: (month_date + 1.month).strftime('%Y-%m'),
-      title: I18n.l(month_date, format: :month_year)
+      title: month_date.strftime('%Y-%m')
     }
   end
 

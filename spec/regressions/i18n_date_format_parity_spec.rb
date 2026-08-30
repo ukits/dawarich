@@ -20,13 +20,13 @@ RSpec.describe 'I18n date and time format parity' do
       month_day_year: '%B %-d, %Y',
       short_month_day: '%b %-d',
       short_month_day_padded: '%b %d',
-      day_month_year: '%e %B %Y',
-      day_month_year_abbreviated: '%-d %b %Y',
+      day_month_year: '%Y-%m-%d',
+      day_month_year_abbreviated: '%Y-%m-%d',
       day_year: '%-d, %Y',
       iso: '%Y-%m-%d',
       month_name: '%B',
       abbreviated_month_name: '%b',
-      month_year: '%B %Y',
+      month_year: '%Y-%m',
       weekday_month_day: '%A, %B %-d',
       short_month_day_weekday: '%b %-d, %A',
       short_weekday_month_day: '%a, %b %-d'
@@ -40,8 +40,8 @@ RSpec.describe 'I18n date and time format parity' do
   describe 'time formats' do
     {
       hour_minute: '%H:%M',
-      human: '%e %b %Y, %H:%M',
-      human_with_seconds: '%e %b %Y, %H:%M:%S',
+      human: '%Y-%m-%d %H:%M',
+      human_with_seconds: '%Y-%m-%d %H:%M:%S',
       long_with_time: '%B %d, %Y at %I:%M %p',
       short_with_time: '%b %d at %I:%M %p'
     }.each do |format, pattern|

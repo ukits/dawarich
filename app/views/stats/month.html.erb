@@ -1,4 +1,4 @@
-<% content_for :title, t('.month_year_monthly_digest', month: l(Date.new(@year, @month, 1), format: :month_name), year: @year) %>
+<% content_for :title, t('.month_year_monthly_digest', month: human_month_year(@year, @month)) %>
 <%= render 'shared/chartkick_scripts' %>
 
 <div class="w-full my-5">

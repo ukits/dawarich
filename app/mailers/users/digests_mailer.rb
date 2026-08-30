@@ -39,8 +39,7 @@ class Users::DigestsMailer < ApplicationMailer
       to: @user.email,
       subject: I18n.t(
         'mailers.users.digests.monthly.subject',
-        month: I18n.l(Date.new(@digest.year, @digest.month), format: :month_name),
-        year: @digest.year
+        month: @digest.month_name
       )
     )
   end

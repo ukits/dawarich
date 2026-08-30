@@ -8,7 +8,7 @@ RSpec.describe 'Rendered Polish copy' do
     create(:stat, user:, year: 2026, month: 8, distance: 1_000)
 
     I18n.with_locale(:pl) do
-      expect(Stat.year_distance(2026, user)[7].first).to eq('sierpień')
+      expect(Stat.year_distance(2026, user)[7].first).to eq('2026-08')
       expect(I18n.l(Date.new(2026, 8, 5), format: :medium)).to eq('5 sie 2026')
       expect(I18n.l(Time.zone.local(2026, 8, 5, 15, 30), format: :hour_minute)).to eq('15:30')
       expect(I18n.t('datetime.distance_in_words.x_days', count: 3)).to eq('3 dni')

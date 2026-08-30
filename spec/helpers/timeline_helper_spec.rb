@@ -221,8 +221,14 @@ RSpec.describe TimelineHelper, type: :helper do
   end
 
   describe '#day_label' do
-    it 'formats the date as "Weekday, Month Day"' do
-      expect(helper.day_label(date: '2026-01-03')).to eq('Saturday, January 3')
+    it 'formats the date as "YYYY-MM-DD (weekday)"' do
+      expect(helper.day_label(date: '2026-01-03')).to eq('2026-01-03 (토)')
+    end
+  end
+
+  describe '#timeline_day_header_label' do
+    it 'formats a date string with a Korean weekday abbreviation' do
+      expect(helper.timeline_day_header_label('2025-01-15')).to eq('2025-01-15 (수)')
     end
   end
 
@@ -255,7 +261,7 @@ RSpec.describe TimelineHelper, type: :helper do
 
       expect(result[:prev]).to eq('2026-02')
       expect(result[:next]).to eq('2026-04')
-      expect(result[:title]).to eq('March 2026')
+      expect(result[:title]).to eq('2026-03')
     end
 
     it 'handles year boundaries' do

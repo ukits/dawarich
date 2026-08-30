@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { translate } from "i18n"
+import { formatISODate } from "utils/date_format"
 
 export default class extends Controller {
   static targets = ["tooltip", "tooltipDate", "tooltipDistance"]
@@ -77,17 +78,7 @@ export default class extends Controller {
   }
 
   formatDate(dateStr) {
-    const date = new Date(`${dateStr}T00:00:00`)
-    const options = {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }
-    return date.toLocaleDateString(
-      document.documentElement.lang || undefined,
-      options,
-    )
+    return formatISODate(`${dateStr}T00:00:00`)
   }
 
   formatDistance(distanceMeters) {

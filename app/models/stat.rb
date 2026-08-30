@@ -33,10 +33,10 @@ class Stat < ApplicationRecord
     stats_by_month = where(year:, user:).order(:month).index_by(&:month)
 
     (1..12).map do |month|
-      month_name = I18n.l(Date.new(year, month, 1), format: :month_name)
+      month_label = format('%04d-%02d', year, month)
       distance = stats_by_month[month]&.distance || 0
 
-      [month_name, distance]
+      [month_label, distance]
     end
   end
 

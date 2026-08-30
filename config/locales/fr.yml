@@ -120,7 +120,7 @@ fr:
       long: "%-d %B %Y"
       short: "%-d %b"
       month_name: "%B"
-      month_year: "%B %Y"
+      month_year: "%Y-%m"
       short_month_day: "%-d %b"
       short_month_day_padded: "%d %b"
       medium: "%-d %b %Y"
@@ -129,8 +129,8 @@ fr:
       short_month_day_weekday: "%-d %b, %A"
       short_weekday_month_day: "%a %-d %b"
       iso: "%Y-%m-%d"
-      day_month_year: "%e %B %Y"
-      day_month_year_abbreviated: "%-d %b %Y"
+      day_month_year: "%Y-%m-%d"
+      day_month_year_abbreviated: "%Y-%m-%d"
       month_day: "%-d %B"
       month_day_padded: "%d %B"
       month_day_year: "%-d %B %Y"
@@ -289,7 +289,7 @@ fr:
       expires_on: Expire le %{date}
     insights:
       monthly_digest: Récapitulatif mensuel
-      monthly_digest_title: Récapitulatif du %{month} %{year}
+      monthly_digest_title: Récapitulatif du %{month}
       minute_count:
         one: "%{count} min"
         other: "%{count} min"
@@ -437,8 +437,8 @@ fr:
       short: "%d %b %Hh%M"
       hour_minute: "%H:%M"
       long_with_time: "%-d %B %Y à %H:%M"
-      human: "%e %b %Y, %H:%M"
-      human_with_seconds: "%e %b %Y, %H:%M:%S"
+      human: "%Y-%m-%d %H:%M"
+      human_with_seconds: "%Y-%m-%d %H:%M:%S"
       short_with_time: "%d %b à %H:%M"
     pm: pm
   auth:
@@ -2879,7 +2879,7 @@ fr:
       back_to: Retour à
       day: Jour
       distance: Distance
-      month_year_monthly_digest: Récapitulatif mensuel %{month} %{year}
+      month_year_monthly_digest: Récapitulatif mensuel %{month}
       city_count:
         one: "%{count} ville"
         other: "%{count} villes"
@@ -3256,7 +3256,7 @@ fr:
         you_re_receiving_this_because_monthly_digest_emails_are_on_3: Vous recevez
           ce message car les e-mails de résumé mensuels sont activés pour votre compte.
         manage_email_preferences_2: 'Gérer vos préférences d''e-mail :'
-        month_year_in_review: Bilan mensuel — %{month} %{year}
+        month_year_in_review: Bilan mensuel — %{month}
         new_country_line: "→ %{country}  (nouveau pays)"
         new_city_line: "→ %{city}  (nouvelle ville)"
       year_end_digest:
@@ -4307,7 +4307,7 @@ fr:
         year_end:
           subject: Bilan annuel %{year} — Dawarich
         monthly:
-          subject: Bilan mensuel — %{month} %{year} — Dawarich
+          subject: Bilan mensuel — %{month} — Dawarich
   models:
     family:
       location_request:

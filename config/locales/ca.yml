@@ -2009,7 +2009,7 @@ ca:
       back_to: "← Torna a"
       day: Dia
       distance: Distància
-      month_year_monthly_digest: "Resum mensual de %{month} %{year}"
+      month_year_monthly_digest: "Resum mensual de %{month}"
       city_count:
         one: "%{count} ciutat"
         other: "%{count} ciutats"
@@ -2351,7 +2351,7 @@ ca:
         presence_0: ".presence || [0]"
         you_re_receiving_this_because_monthly_digest_emails_are_on_3: Reps això perquè els correus de resum mensual estan activats.
         manage_email_preferences_2: 'Gestiona les preferències de correu electrònic:'
-        month_year_in_review: El teu %{month} %{year} en retrospectiva
+        month_year_in_review: El teu %{month} en retrospectiva
         new_country_line: "→ %{country}  (país nou)"
         new_city_line: "→ %{city}  (ciutat nova)"
       year_end_digest:
@@ -2505,7 +2505,7 @@ ca:
   date:
     formats:
       month_name: "%B"
-      month_year: "%B del %Y"
+      month_year: "%Y-%m"
       short_month_day: "%-d %b"
       short_month_day_padded: "%d %b"
       medium: "%-d %b %Y"
@@ -2515,8 +2515,8 @@ ca:
       short_month_day_weekday: "%-d %b, %A"
       short_weekday_month_day: "%a, %-d %b"
       iso: "%Y-%m-%d"
-      day_month_year: "%-d de %B de %Y"
-      day_month_year_abbreviated: "%-d %b %Y"
+      day_month_year: "%Y-%m-%d"
+      day_month_year_abbreviated: "%Y-%m-%d"
       month_day: "%-d de %B"
       month_day_padded: "%d de %B"
       month_day_year: "%-d de %B de %Y"
@@ -2526,8 +2526,8 @@ ca:
     formats:
       hour_minute: "%H:%M"
       long_with_time: "%-d de %B de %Y a les %H:%M"
-      human: "%e %b %Y, %H:%M"
-      human_with_seconds: "%e %b %Y, %H:%M:%S"
+      human: "%Y-%m-%d %H:%M"
+      human_with_seconds: "%Y-%m-%d %H:%M:%S"
       short_with_time: "%d %b a les %H:%M"
   common:
     app_name: Dawarich
@@ -2635,7 +2635,7 @@ ca:
       expires_on: Caduca el %{date}
     insights:
       monthly_digest: Resum mensual
-      monthly_digest_title: "Resum de %{month} %{year}"
+      monthly_digest_title: "Resum de %{month}"
       minute_count:
         one: "%{count} min"
         other: "%{count} min"
@@ -3254,7 +3254,7 @@ ca:
         year_end:
           subject: El teu any %{year} en retrospectiva - Dawarich
         monthly:
-          subject: El teu %{month} %{year} en retrospectiva — Dawarich
+          subject: El teu %{month} en retrospectiva — Dawarich
   models:
     family:
       location_request:

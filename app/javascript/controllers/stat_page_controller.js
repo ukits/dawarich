@@ -2,6 +2,7 @@ import { translate } from "i18n"
 import maplibregl from "maplibre-gl"
 import { getCurrentTheme } from "maps_maplibre/utils/popup_theme"
 import { getMapStyle } from "maps_maplibre/utils/style_manager"
+import { formatISOMonthParts } from "utils/date_format"
 import BaseController from "./base_controller"
 
 const HEATMAP_PAINT = {
@@ -271,10 +272,7 @@ export default class extends BaseController {
     if (!this.hasLoadingTarget) return
 
     this.messageShown = true
-    const dateLabel = new Date(this.year, this.month - 1).toLocaleDateString(
-      document.documentElement.lang || undefined,
-      { month: "long", year: "numeric" },
-    )
+    const dateLabel = formatISOMonthParts(this.year, this.month - 1)
     const container = document.createElement("div")
     container.className = "alert alert-info"
     const span = document.createElement("span")

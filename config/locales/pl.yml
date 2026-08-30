@@ -2009,7 +2009,7 @@ pl:
       back_to: "← Powrót do"
       day: Dzień
       distance: Dystans
-      month_year_monthly_digest: "%{month} %{year} - podsumowanie miesięczne"
+      month_year_monthly_digest: "%{month} - podsumowanie miesięczne"
       city_count:
         one: "%{count} miasto"
         other: "%{count} miast"
@@ -2351,7 +2351,7 @@ pl:
         presence_0: ".presence || [0]"
         you_re_receiving_this_because_monthly_digest_emails_are_on_3: Otrzymujesz tę wiadomość, ponieważ miesięczne podsumowania e-mail są włączone.
         manage_email_preferences_2: 'Zarządzaj preferencjami e-mail:'
-        month_year_in_review: Podsumowanie %{month} %{year}
+        month_year_in_review: Podsumowanie %{month}
         new_country_line: "→ %{country}  (nowy kraj)"
         new_city_line: "→ %{city}  (nowe miasto)"
       year_end_digest:
@@ -2505,7 +2505,7 @@ pl:
   date:
     formats:
       month_name: "%B"
-      month_year: "%B %Y"
+      month_year: "%Y-%m"
       short_month_day: "%-d %b"
       short_month_day_padded: "%d %b"
       medium: "%-d %b %Y"
@@ -2515,8 +2515,8 @@ pl:
       short_month_day_weekday: "%-d %b, %A"
       short_weekday_month_day: "%a, %-d %b"
       iso: "%Y-%m-%d"
-      day_month_year: "%-d %b %Y"
-      day_month_year_abbreviated: "%-d %b %Y"
+      day_month_year: "%Y-%m-%d"
+      day_month_year_abbreviated: "%Y-%m-%d"
       month_day: "%-d %b"
       month_day_padded: "%d %b"
       month_day_year: "%-d %b %Y"
@@ -2576,8 +2576,8 @@ pl:
     formats:
       hour_minute: "%H:%M"
       long_with_time: "%-d %b %Y o %H:%M"
-      human: "%-d %b %Y, %H:%M"
-      human_with_seconds: "%-d %b %Y, %H:%M:%S"
+      human: "%Y-%m-%d %H:%M"
+      human_with_seconds: "%Y-%m-%d %H:%M:%S"
       short_with_time: "%-d %b o %H:%M"
       default: "%a, %-d %b %Y, %H:%M:%S %z"
       short: "%-d %b, %H:%M"
@@ -2690,7 +2690,7 @@ pl:
       expires_on: Wygasa %{date}
     insights:
       monthly_digest: Podsumowanie miesięczne
-      monthly_digest_title: Podsumowanie %{month} %{year}
+      monthly_digest_title: Podsumowanie %{month}
       minute_count:
         one: "%{count} min"
         other: "%{count} min"
@@ -3309,7 +3309,7 @@ pl:
         year_end:
           subject: Twoje podsumowanie roku %{year} - Dawarich
         monthly:
-          subject: Twoje podsumowanie %{month} %{year} - Dawarich
+          subject: Twoje podsumowanie %{month} - Dawarich
   models:
     family:
       location_request:

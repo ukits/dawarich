@@ -49,7 +49,7 @@ class Families::UpdateLocationSharing
 
     if enabled? && user.family_sharing_expires_at.present?
       payload[:expires_at] = user.family_sharing_expires_at.iso8601
-      payload[:expires_at_formatted] = I18n.l(user.family_sharing_expires_at, format: :short_with_time)
+      payload[:expires_at_formatted] = I18n.l(user.family_sharing_expires_at, format: :human)
     end
 
     Result.new(success?: true, payload: payload, status: :ok)

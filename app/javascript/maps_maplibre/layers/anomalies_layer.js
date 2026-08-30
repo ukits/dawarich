@@ -1,4 +1,5 @@
 import { translate } from "i18n"
+import { formatISODateTime } from "utils/date_format"
 import { escapeHtml } from "../utils/geojson_transformers"
 import {
   clampPointRadius,
@@ -136,16 +137,7 @@ export class AnomaliesLayer extends BaseLayer {
       date = new Date(timestamp)
     }
 
-    return date.toLocaleString("en-GB", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-      timeZone: timezone,
-    })
+    return formatISODateTime(date, timezone, { seconds: true })
   }
 
   /**

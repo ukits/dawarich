@@ -71,7 +71,7 @@ RSpec.describe Insights::YearComparisonCalculator do
       it 'finds previous year biggest month' do
         result = calculator.call
 
-        expect(result.prev_biggest_month[:month]).to eq('January')
+        expect(result.prev_biggest_month[:month]).to eq('2023-01')
         expect(result.prev_biggest_month[:distance]).to eq(150)
       end
 

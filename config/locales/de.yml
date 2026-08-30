@@ -2014,7 +2014,7 @@ de:
       back_to: "← Zurück zu"
       day: Tag
       distance: Entfernung
-      month_year_monthly_digest: "%{month} %{year} Monatlicher Überblick"
+      month_year_monthly_digest: "%{month} Monatlicher Überblick"
       city_count:
         one: "%{count} Stadt"
         other: "%{count} Städte"
@@ -2356,7 +2356,7 @@ de:
         presence_0: ".presence || [0]"
         you_re_receiving_this_because_monthly_digest_emails_are_on_3: Du erhältst diese E-Mail, weil monatliche Zusammenfassungen aktiviert sind.
         manage_email_preferences_2: 'E-Mail-Einstellungen verwalten:'
-        month_year_in_review: Dein %{month} %{year} im Rückblick
+        month_year_in_review: Dein %{month} im Rückblick
         new_country_line: "→ %{country}  (neues Land)"
         new_city_line: "→ %{city}  (neue Stadt)"
       year_end_digest:
@@ -2510,7 +2510,7 @@ de:
   date:
     formats:
       month_name: "%B"
-      month_year: "%B %Y"
+      month_year: "%Y-%m"
       short_month_day: "%-d. %b"
       short_month_day_padded: "%d. %b"
       medium: "%-d. %b %Y"
@@ -2520,8 +2520,8 @@ de:
       short_month_day_weekday: "%-d. %b, %A"
       short_weekday_month_day: "%a, %-d. %b"
       iso: "%Y-%m-%d"
-      day_month_year: "%-d. %B %Y"
-      day_month_year_abbreviated: "%-d. %b %Y"
+      day_month_year: "%Y-%m-%d"
+      day_month_year_abbreviated: "%Y-%m-%d"
       month_day: "%-d. %B"
       month_day_padded: "%d. %B"
       month_day_year: "%-d. %B %Y"
@@ -2581,8 +2581,8 @@ de:
     formats:
       hour_minute: "%H:%M"
       long_with_time: "%-d. %B %Y um %H:%M Uhr"
-      human: "%-d. %b %Y, %H:%M"
-      human_with_seconds: "%-d. %b %Y, %H:%M:%S"
+      human: "%Y-%m-%d %H:%M"
+      human_with_seconds: "%Y-%m-%d %H:%M:%S"
       short_with_time: "%-d. %b um %H:%M Uhr"
       default: "%A, %-d. %B %Y, %H:%M Uhr"
       short: "%-d. %b, %H:%M Uhr"
@@ -2695,7 +2695,7 @@ de:
       expires_on: Verfällt am %{date}
     insights:
       monthly_digest: Monatsrückblick
-      monthly_digest_title: "%{month} %{year} im Rückblick"
+      monthly_digest_title: "%{month} im Rückblick"
       minute_count:
         one: "%{count} min"
         other: "%{count} min"
@@ -3316,7 +3316,7 @@ de:
         year_end:
           subject: Dein %{year} Jahresrückblick – Dawarich
         monthly:
-          subject: Dein %{month} %{year} im Rückblick — Dawarich
+          subject: Dein %{month} im Rückblick — Dawarich
   models:
     family:
       location_request:

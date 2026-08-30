@@ -19,7 +19,7 @@ RSpec.describe 'Rendered French copy' do
                        I18n.t('families.show.ago')].join(' ')
 
       expect(relative_time).to eq('environ 2 heures auparavant')
-      expect(Stat.year_distance(2026, user)[7].first).to eq('août')
+      expect(Stat.year_distance(2026, user)[7].first).to eq('2026-08')
     end
   end
 

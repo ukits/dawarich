@@ -2009,7 +2009,7 @@ en:
       back_to: "← Back to"
       day: Day
       distance: Distance
-      month_year_monthly_digest: "%{month} %{year} Monthly Digest"
+      month_year_monthly_digest: "%{month} Monthly Digest"
       city_count:
         one: "%{count} city"
         other: "%{count} cities"
@@ -2351,7 +2351,7 @@ en:
         presence_0: ".presence || [0]"
         you_re_receiving_this_because_monthly_digest_emails_are_on_3: You're receiving this because monthly digest emails are on.
         manage_email_preferences_2: 'Manage email preferences:'
-        month_year_in_review: Your %{month} %{year} in review
+        month_year_in_review: Your %{month} in review
         new_country_line: "→ %{country}  (new country)"
         new_city_line: "→ %{city}  (new city)"
       year_end_digest:
@@ -2505,7 +2505,7 @@ en:
   date:
     formats:
       month_name: "%B"
-      month_year: "%B %Y"
+      month_year: "%Y-%m"
       short_month_day: "%b %-d"
       short_month_day_padded: "%b %d"
       medium: "%b %-d, %Y"
@@ -2515,8 +2515,8 @@ en:
       short_month_day_weekday: "%b %-d, %A"
       short_weekday_month_day: "%a, %b %-d"
       iso: "%Y-%m-%d"
-      day_month_year: "%e %B %Y"
-      day_month_year_abbreviated: "%-d %b %Y"
+      day_month_year: "%Y-%m-%d"
+      day_month_year_abbreviated: "%Y-%m-%d"
       month_day: "%B %-d"
       month_day_padded: "%B %d"
       month_day_year: "%B %-d, %Y"
@@ -2526,8 +2526,8 @@ en:
     formats:
       hour_minute: "%H:%M"
       long_with_time: "%B %d, %Y at %I:%M %p"
-      human: "%e %b %Y, %H:%M"
-      human_with_seconds: "%e %b %Y, %H:%M:%S"
+      human: "%Y-%m-%d %H:%M"
+      human_with_seconds: "%Y-%m-%d %H:%M:%S"
       short_with_time: "%b %d at %I:%M %p"
   common:
     app_name: Dawarich
@@ -2623,7 +2623,7 @@ en:
       expires_on: Expires on %{date}
     insights:
       monthly_digest: Monthly Digest
-      monthly_digest_title: "%{month} %{year} Digest"
+      monthly_digest_title: "%{month} Digest"
       minute_count:
         one: "%{count} min"
         other: "%{count} min"
@@ -3242,7 +3242,7 @@ en:
         year_end:
           subject: Your %{year} Year in Review - Dawarich
         monthly:
-          subject: Your %{month} %{year} in review — Dawarich
+          subject: Your %{month} in review — Dawarich
   models:
     family:
       location_request:

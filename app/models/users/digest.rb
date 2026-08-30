@@ -208,7 +208,7 @@ class Users::Digest < ApplicationRecord
   def month_name
     return nil unless month
 
-    I18n.l(Date.new(year, month), format: :month_name)
+    format('%04d-%02d', year, month)
   end
 
   def untracked_days

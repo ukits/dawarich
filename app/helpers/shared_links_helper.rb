@@ -6,25 +6,9 @@ module SharedLinksHelper
     end_date   = Date.parse(end_date.to_s)   unless end_date.is_a?(Date)
 
     if start_date == end_date
-      I18n.l(start_date, format: :month_day_year)
-    elsif start_date.year == end_date.year && start_date.month == end_date.month
-      I18n.t(
-        'helpers.shared_links.date_ranges.same_month',
-        start_date: I18n.l(start_date, format: :month_day),
-        end_date: I18n.l(end_date, format: :day_year)
-      )
-    elsif start_date.year == end_date.year
-      I18n.t(
-        'helpers.shared_links.date_ranges.same_year',
-        start_date: I18n.l(start_date, format: :month_day),
-        end_date: I18n.l(end_date, format: :month_day_year)
-      )
+      start_date.strftime('%Y-%m-%d')
     else
-      I18n.t(
-        'helpers.shared_links.date_ranges.different_years',
-        start_date: I18n.l(start_date, format: :medium),
-        end_date: I18n.l(end_date, format: :medium)
-      )
+      "#{start_date.strftime('%Y-%m-%d')} – #{end_date.strftime('%Y-%m-%d')}"
     end
   end
 
@@ -43,7 +27,7 @@ module SharedLinksHelper
     mode = track.dominant_mode.presence
     mode = mode ? I18n.t("transportation_modes.#{mode}") : I18n.t('helpers.shared_links.track')
     zone = track.user.timezone_iana.presence || 'UTC'
-    date = I18n.l(track.start_at.in_time_zone(zone).to_date, format: :day_month_year_abbreviated)
+    date = track.start_at.in_time_zone(zone).strftime('%Y-%m-%d')
     distance = track.distance_in_unit(unit).round
     I18n.t('helpers.shared_links.track_label', mode:, date:, distance:, unit:)
   end

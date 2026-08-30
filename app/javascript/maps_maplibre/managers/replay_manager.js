@@ -1,4 +1,5 @@
 import { translate } from "i18n"
+import { formatISODate } from "utils/date_format"
 
 /**
  * ReplayManager - Core business logic for replay feature
@@ -204,11 +205,7 @@ export class ReplayManager {
     const [year, month, dayNum] = day.split("-").map(Number)
     const date = new Date(year, month - 1, dayNum)
 
-    return date.toLocaleDateString(document.documentElement.lang || undefined, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+    return formatISODate(date)
   }
 
   /**

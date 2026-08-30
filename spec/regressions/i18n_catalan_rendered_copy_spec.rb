@@ -8,7 +8,7 @@ RSpec.describe 'Rendered Catalan copy' do
     create(:stat, user:, year: 2026, month: 1, distance: 1_000)
 
     I18n.with_locale(:ca) do
-      expect(Stat.year_distance(2026, user)[0].first).to eq('gener')
+      expect(Stat.year_distance(2026, user)[0].first).to eq('2026-01')
       expect(I18n.l(Date.new(2026, 1, 5), format: :medium)).to eq('5 gen. 2026')
       expect(I18n.l(Time.zone.local(2026, 1, 5, 15, 30), format: :hour_minute)).to eq('15:30')
       expect(I18n.t('datetime.distance_in_words.x_days', count: 3)).to eq('3 dies')

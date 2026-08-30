@@ -20,6 +20,26 @@ RSpec.describe 'Tracks::Segments', type: :request do
       expect(response.body).to include("segment-row-#{segment.id}")
     end
 
+    it 'renders the segment start and end times from start_at and end_at' do
+      base = Time.zone.parse('2026-07-05 10:00:00')
+      segment.update!(start_at: base, end_at: base + 10.minutes)
+
+      get track_segments_path(track)
+
+      expect(response.body).to include('10:00 - 10:10')
+    end
+
+    it 'renders start and end times from point indexes when the segment is not time-anchored' do
+      base = Time.zone.parse('2026-07-05 14:00:00')
+      11.times do |i|
+        create(:point, user: user, track: track, timestamp: base.to_i + (i * 60))
+      end
+
+      get track_segments_path(track)
+
+      expect(response.body).to include('14:00 - 14:10')
+    end
+
     it 'returns 404 when accessing another user track' do
       other_track = create(:track, user: create(:user))
       get track_segments_path(other_track)

@@ -60,7 +60,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 | F04 | Timeline 달력 padding | 달력 여백 | `ported` | timeline calendar styles | `b2fedf0` |
 | F05 | 시간 표시 `YYYY-MM-DD hh:mm:ss` | 일시 포맷 통일 | `adapted` | `date_format`, datetime helpers | `38443a4` `2ec38e1` |
 | F06 | 달력 일요일 시작 | week start = Sunday | `ported` | timeline calendar | `050850e` |
-| F07 | Route 구간 시작·끝 시간 | 구간 열에 시각 표시 | `pending` | tracks/segments views·helpers | `108ac89` |
+| F07 | Route 구간 시작·끝 시간 | 구간 열에 시각 표시 | `adapted` | tracks/segments views·helpers | `108ac89` |
 
 ### Places
 

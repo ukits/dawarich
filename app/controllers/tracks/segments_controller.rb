@@ -8,6 +8,8 @@ class Tracks::SegmentsController < ApplicationController
 
   def index
     @segments = @track.track_segments.order(:start_at, :start_index)
+    needs_index_times = @segments.any? { |segment| segment.start_at.blank? || segment.end_at.blank? }
+    @track.ordered_point_timestamps if needs_index_times
     render layout: false
   end
 

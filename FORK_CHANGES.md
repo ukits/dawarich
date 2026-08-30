@@ -1,112 +1,129 @@
-# Fork 변경 이력 (Fork Changes)
+# Fork 변경 카탈로그 (FORK_CHANGES)
 
-이 문서는 upstream(원본) Dawarich를 **fork 해온 이후 직접 수정한 사항**을 추적하기 위한 문서입니다.
-새로운 커밋을 추가할 때마다 이 문서도 함께 갱신하는 것을 권장합니다.
+이 문서는 **ukits/dawarich가 upstream(Freika/dawarich) 대비 유지하는 기능·정책**의 장기 카탈로그다.
 
-## 기준 정보
+- **의도(무엇을/왜)** 가 1급 정보다. 커밋 해시는 참고용이며, upstream 동기화 때마다 cherry-pick 대상이 아니다.
+- upstream이 올라갈 때마다 [docs/upstream-sync/PROCESS.md](docs/upstream-sync/PROCESS.md)에 따라 이 목록을 **기능 단위로 재검토**하고, 결과는 **사이클 로그에 누적**한다.
+- 시간순 서술·사용자 관점 릴리즈 노트는 [HISTORY.md](HISTORY.md)를 본다.
 
-- **Fork 기준 커밋**: `7b877f9` (`clone: from github.com:ukits/dawarich.git`)
-- **현재 HEAD**: `e9111da` (`master`)
-- **작성자**: BYUN, SungUk
-- **총 변경 커밋 수**: 25개
-
-> 참고: 아래 파일 경로는 커밋 메시지와 현재 코드베이스를 대조해 정리한 것입니다.
-> 정확한 diff는 `git log 7b877f9..HEAD --stat` 또는 `git show <hash>` 로 확인하세요.
-
----
-
-## 1. 개발 환경 · 빌드 세팅
-
-fork 직후 로컬/컨테이너 개발 환경을 맞추기 위한 초기 세팅 작업입니다.
-
-| 커밋 | 내용 |
+| 문서 | 역할 |
 |------|------|
-| `7b917e0` | devcontainer 세팅 |
-| `ac63a44` | Ruby 버전 및 패키지 맞춤 |
-| `69e360c` | vendor 패키지 업데이트 |
-| `7318732` | vendor 패키지 업데이트 |
-| `ced265a` | yarn 패키지 업데이트 |
+| **이 파일** | 살아있는 기능 목록 (ID 고정, 상태·이력 갱신) |
+| [PROCESS.md](docs/upstream-sync/PROCESS.md) | 반복 사용 동기화 절차 |
+| [cycles/](docs/upstream-sync/cycles/) | 사이클별 분석·결정·진행 로그 (이력 축적) |
+| [HISTORY.md](HISTORY.md) | 날짜별 서술형 변경 히스토리 |
 
 ---
 
-## 2. 지도 · Timeline UI 개선
+## 메타
 
-지도 및 Timeline 화면의 표시/레이아웃 관련 개선입니다.
+| 항목 | 값 |
+|------|-----|
+| 최초 fork 기준 | `7b877f9` — upstream **1.9.2** (2026-06-25) |
+| 작성자 | BYUN, SungUk |
+| 현재 활성 브랜치(fork 기능 소스) | `master` |
+| 열린 동기화 사이클 | [2026-08 · 1.9.2 → 1.14.0](docs/upstream-sync/cycles/2026-08-1.9.2-to-1.14.0.md) |
 
-| 커밋 | 내용 |
+### 상태 값
+
+| 상태 | 의미 |
 |------|------|
-| `07b4fbd` | 지도에 표시되는 Point 크기를 설정에서 조절할 수 있도록 추가 |
-| `7fe3789` | 1024px 이상 너비에서도 Timeline 창이 2열이 아닌 1열로 보이도록 레이아웃 수정 |
-| `b2fedf0` | Timeline 달력에 padding 부여 |
-| `38443a4` | 시간 표시를 `YYYY-MM-DD hh:mm:ss` 형태로 변경 |
-| `2ec38e1` | `38443a4` 시간 표시 변경 시 발생한 frontend 에러 보정 |
-| `050850e` | Timeline 달력의 요일이 **일요일부터** 시작하도록 수정 |
-| `108ac89` | 경로(Route)의 구간 열에 시작 시간 · 끝 시간 표시 |
+| `live` | 현재 fork 메인라인에 존재·유지 중 |
+| `pending` | 열린 sync 사이클에서 재검토·재이식 대기 |
+| `adapted` | 최신 upstream 위에 **변형**해 이식 완료 |
+| `ported` | 최신 upstream 위에 의도 그대로 이식 완료 |
+| `dropped` | 의식적으로 포기 |
+| `superseded` | upstream이 동등/대체 기능을 제공해 fork 패치 불필요 |
+
+새 fork 기능을 넣을 때: 아래 표에 **새 ID** 행을 추가하고 `live`로 둔다.  
+sync 사이클을 열면 해당 기능들을 `pending`으로 두고, 끝나면 `ported`/`adapted`/`dropped`/`superseded`로 갱신한다.
 
 ---
 
-## 3. Places(장소) 관리 개선
+## 기능 목록
 
-장소 목록과 편집 UI의 사용성 개선입니다.
+ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`superseded`로 둔다.
 
-| 커밋 | 내용 |
-|------|------|
-| `1f5d8ae` | Places 목록을 시간 역순으로 정렬하고 visits 개수 표시 |
-| `d93f8dd` | Edit Place 레이어에 삭제 버튼 추가 |
-| `7492f10` | 장소 목록에 일괄 삭제 · 검색 필터 · 마지막 방문 열 추가 |
+### 개발 환경
 
-관련 서비스: `app/services/visits/bulk_destroy.rb` (일괄 삭제, 최대 500건 / 50건 배치 처리)
+| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
+|----|------|------|------|------------------|-----------------|
+| F01 | Dev Container · Ruby · vendor | 로컬/컨테이너에서 빌드·실행 가능하게 | `pending` | `.devcontainer/`, `.ruby-version`, `vendor/` | `7b917e0` `ac63a44` `69e360c` `7318732` `ced265a` |
+
+### 지도 · Timeline · Route UI
+
+| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
+|----|------|------|------|------------------|-----------------|
+| F02 | Point 크기 설정 | 지도 포인트 반경을 설정으로 조절 | `pending` | `maps/point_size`, settings, points_layer | `07b4fbd` |
+| F03 | Timeline 1열 레이아웃 | ≥1024px에서도 Timeline 1열 | `pending` | timeline CSS / panel | `7fe3789` |
+| F04 | Timeline 달력 padding | 달력 여백 | `pending` | timeline calendar styles | `b2fedf0` |
+| F05 | 시간 표시 `YYYY-MM-DD hh:mm:ss` | 일시 포맷 통일 | `pending` | `date_format`, datetime helpers | `38443a4` `2ec38e1` |
+| F06 | 달력 일요일 시작 | week start = Sunday | `pending` | timeline calendar | `050850e` |
+| F07 | Route 구간 시작·끝 시간 | 구간 열에 시각 표시 | `pending` | tracks/segments views·helpers | `108ac89` |
+
+### Places
+
+| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
+|----|------|------|------|------------------|-----------------|
+| F08 | Places 정렬·visits 수 | 최신순 + 방문 횟수 | `pending` | `places#index`, `_place` | `1f5d8ae` |
+| F09 | Edit Place 삭제 버튼 | 편집 UI에서 삭제 | `pending` | places_manager / place drawer | `d93f8dd` |
+| F10 | Places 일괄삭제·검색·Last Visited | 목록 관리 강화 | `pending` | places index/controller, bulk destroy | `7492f10` |
+
+### Points · Tools (선택 UI)
+
+| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
+|----|------|------|------|------------------|-----------------|
+| F11 | Tools Delete에 선택 기간 표시 | 삭제 전 구간 확인 | `pending` | selected_points_layer, tools UI | `56adc8e` |
+| F12 | Points 목록 컬럼·필터 | ID / Visit·Track / 고도 / 필터 | `pending` | `points#index`, `_point` | `e9111da` |
+
+### Visits · Track (핵심 도메인)
+
+| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
+|----|------|------|------|------------------|-----------------|
+| F13 | Track별 Visit 추천 카드 | 선택 Points를 Track 단위로 분리 추천 | `pending` | visit_card, area selection, create flow | `3c60668` |
+| F14 | Select Area 좌표 0 버그 수정 | 선택 영역 Visit 생성 시 lat/lon 정상 | `pending` | area selection / visit create params | `2428b3e` |
+| F15 | Visit Card Place ID 표시 | 카드에 place id | `pending` | `visit_card.js` | `b62179f` |
+| F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `pending` | `visits/create.rb`, `place_finder.rb` | `66fc9bb` |
+| F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `pending` | `visits/create.rb` | `5b9eb1c` |
+| F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `pending` | `visits/side_effects.rb`, Visit callbacks | `70e7bb0` `841bf68` |
+| F19 | Track에서 Visit Point 제외 | visit_id Point는 트랙 제외·경계 분리 | `pending` | `tracks/segmentation.rb`, BoundaryDetector 등 | `17c7422` |
+
+### 도메인 메모 (F16–F19)
+
+수동 Visit과 Track이 한 세트로 동작하도록 묶인 정책이다. sync 시 **의존 순서**를 지킨다: `F16 → F17 → F18 → F19`, UI 의존 `F13`은 Create 계약(F16/F17) 이후.
+
+핵심 파일(1.9.2 fork 기준):
+
+- `app/services/visits/create.rb`
+- `app/services/visits/side_effects.rb`
+- `app/services/visits/place_finder.rb`
+- `app/services/visits/bulk_destroy.rb` (F10과 연동)
+- `app/services/tracks/segmentation.rb`
 
 ---
 
-## 4. Points 관리 개선
+## 카탈로그 갱신 규칙
 
-포인트 선택/목록 관련 기능 개선입니다.
+### fork에 새 기능을 넣을 때
 
-| 커밋 | 내용 |
-|------|------|
-| `56adc8e` | Tools 레이어에서 Points 선택 시, Delete 버튼에 선택된 Points의 기간 표시 |
-| `e9111da` | Points 목록에 ID · Visit/Track · 고도 표시 및 필터 추가 |
+1. 새 ID 행 추가 (`F20`…), 상태 `live`
+2. [HISTORY.md](HISTORY.md)에 날짜 섹션 한 블록
+3. 커밋 메시지에 `Fxx`를 넣으면 추적이 쉽다
 
----
+### upstream sync 사이클을 열 때
 
-## 5. Visits(방문) 생성 · 관리 로직 (핵심 변경)
+1. [PROCESS.md](docs/upstream-sync/PROCESS.md)의 「사이클 시작」
+2. `docs/upstream-sync/cycles/<주기>.md` 파일 생성
+3. 이 카탈로그에서 유지할 기능을 `pending`으로 표시
+4. 기능 단위로 리뷰 → 사이클 로그에 결정 기록 → 상태 갱신
 
-이 fork에서 가장 크게 손댄 영역으로, **수동 방문 생성/삭제와 Track 계산 연동** 로직입니다.
+### 기능을 버릴 때
 
-| 커밋 | 내용 |
-|------|------|
-| `3c60668` | Tools 레이어에서 Points 선택 시, 새 Visit 추천 카드를 Track 별로 분리해 추천 |
-| `2428b3e` | Select Area로 선택된 Points 기반 Visit 생성 시 위도/경도가 0으로 기입되던 버그 해결 |
-| `b62179f` | Visit Card에 Place ID 표시 |
-| `70e7bb0` | Visit 생성 시 포함 Point의 velocity를 `0.0`으로 만들어 Track 계산에서 의도적으로 제외 |
-| `66fc9bb` | Visit 생성 시 좌표상 가장 가까운 Place를 자동 선택하지 않고, 범위 내 **이름이 같은** Place가 있으면 사용하고 없으면 새 Place 생성 |
-| `5b9eb1c` | 수동 방문 생성 시 포함 포인트에 `visit_id` 할당 |
-| `841bf68` | 방문 삭제 시 velocity 복원 및 `visit_id` 해제 |
-| `17c7422` | Track에서 방문 포인트 제외 및 방문 경계에서 Track 분리 |
-
-### 주요 관련 파일 및 동작 요약
-
-- **`app/services/visits/create.rb`** — 수동 방문 생성
-  - 범위 내(`SIMILARITY_RADIUS = 50m`) **이름이 같은** Place를 우선 사용, 없으면 `source: :manual` Place를 새로 생성 (`66fc9bb`)
-  - 방문 시간 범위에 속하는 모든 Point에 `visit_id` 할당 (`5b9eb1c`)
-- **`app/services/visits/side_effects.rb`** — 생성/삭제 부수효과
-  - `on_create`: 방문 시간 범위 Point의 velocity를 `0.0`으로 만들고 Track/Stats 재계산 (`70e7bb0`, `17c7422`)
-  - `on_destroy`: `raw_data.properties.speed` 기반으로 velocity 복원, `visit_id` 해제 후 Track/Stats 재계산 (`841bf68`)
-- **`app/services/visits/place_finder.rb`** — 감지된 방문의 Place 매칭
-  - 이름이 같은 후보 중 `manual` Place 우선, 그다음 거리순으로 선택
-- **`app/services/visits/bulk_destroy.rb`** — 방문 일괄 삭제
-
----
-
-## 변경 이력 갱신 방법
-
-새 작업을 커밋한 뒤 아래 명령으로 최신 이력을 확인하고 표에 한 줄씩 추가하세요.
+- 행 삭제 금지. 상태 `dropped` 또는 `superseded`, 사이클 로그에 이유 남김.
 
 ```bash
-# fork 기준점 이후 모든 커밋 요약
-git log --oneline 7b877f9..HEAD
+# 참고: 최초 fork 이후 커밋 (히스토리 조사용)
+git log --oneline 7b877f9..master
 
-# 특정 커밋의 상세 변경 파일 목록
 git show --stat <commit-hash>
 ```

@@ -24,3 +24,15 @@ Write short, imperative commit subjects (`Add globe_projection setting`) and inc
 
 ## Security & Configuration Tips
 Start from `.env.example` or `.env.template` and store secrets in encrypted Rails credentials; never commit files from `gps-env/` or real trace data. Rotate API keys, scrub sensitive coordinates in fixtures, and use the synthetic traces in `db/seeds.rb` when demonstrating imports.
+
+## Fork · Upstream Sync (ukits/dawarich)
+
+This tree is a **fork** of Freika/dawarich with local features tracked in `FORK_CHANGES.md`.
+
+When the user asks to pull / merge / sync / upgrade **upstream** (Freika/dawarich), or to re-apply fork changes onto a newer Dawarich version:
+
+1. **Do not invent a new merge strategy.** Follow `docs/upstream-sync/PROCESS.md`.
+2. Read `FORK_CHANGES.md` (feature catalog `Fxx`) and the open cycle under `docs/upstream-sync/cycles/` (or create a new cycle file from the template in PROCESS).
+3. Work on `sync/<target-version>` from upstream (`bash bin/setup_upstream_sync.sh <version>`), not a blind merge into `master`.
+4. Re-apply **one feature at a time** (intent re-implementation, not mechanical cherry-pick). Log decisions in the cycle file; update feature status in `FORK_CHANGES.md`.
+5. Overview: `docs/upstream-sync/README.md`.

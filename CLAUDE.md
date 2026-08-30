@@ -390,6 +390,7 @@ Even in these cases, wrap the integration in a Stimulus controller and connect i
    - Support UUID-based access in API endpoints when appropriate
    - Respect expiration settings and disable sharing when expired
    - Only expose minimal necessary data in public sharing contexts
+9. **Fork / upstream sync (ukits)**: This repo is a fork with local features in `FORK_CHANGES.md`. To sync Freika/dawarich, follow `docs/upstream-sync/PROCESS.md` — use `sync/<version>` via `bin/setup_upstream_sync.sh`, re-apply catalog features one at a time, log in `docs/upstream-sync/cycles/`. Do not invent an ad-hoc merge strategy.
 
 ### Route Drawing Implementation (Critical)
 

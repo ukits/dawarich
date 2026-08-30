@@ -2,7 +2,12 @@
 
 이 문서는 **ukits/dawarich** fork에서 upstream 대비 무엇이, 언제, 왜 바뀌었는지를 **시간순 릴리즈 노트** 형식으로 정리한 것입니다.
 
-기술적인 파일·커밋 대조표는 [FORK_CHANGES.md](./FORK_CHANGES.md)를 참고하세요.
+| 관련 문서 | 역할 |
+|-----------|------|
+| [FORK_CHANGES.md](./FORK_CHANGES.md) | 기능 ID 카탈로그 (장기, 상태 갱신) |
+| [docs/upstream-sync/](./docs/upstream-sync/) | upstream 동기화 **반복 절차** + **사이클별 이력** |
+
+upstream을 올릴 때마다 새 사이클 파일을 `docs/upstream-sync/cycles/`에 추가하고, 이 HISTORY에도 동기화 완료 시 섹션을 한 블록 덧붙인다.
 
 ---
 

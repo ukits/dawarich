@@ -10,6 +10,12 @@ ENV RAILS_PORT=3000
 
 # Install dependencies for application
 RUN apk -U add --no-cache \
+    cmake make gcc g++ musl-dev \
+    libstdc++ \
+    util-linux \
+    icu-libs \
+    tar \
+    bash \
     build-base \
     git \
     postgresql-dev \

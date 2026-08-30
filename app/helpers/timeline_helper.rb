@@ -244,7 +244,7 @@ module TimelineHelper
   end
 
   def calendar_weekday_labels
-    I18n.t('calendar.weekday_initials')
+    KOREAN_WEEKDAY_LABELS
   end
 
   def calendar_day_number(cell)

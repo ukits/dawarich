@@ -1,10 +1,10 @@
-/* Timeline Feed — left rail (calendar + filters + tags + day summary).
+/* Timeline Feed — rail (calendar + filters + tags) stacked above the visit list.
    Paired with .timeline-tab-content grid in maps_maplibre_timeline_feed.css. */
 
 .timeline-rail {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
   min-width: 0;
   min-height: 0;
   max-height: 100%;

@@ -3932,6 +3932,7 @@ en:
       recent: Recent Visits
       name: Visit Name
       place_id: Place #%{id}
+      track_id: Track #%{id}
       no_data_loaded: No visits data loaded
       none_found: No visits found
       none_found_for: No visits found for "%{query}"

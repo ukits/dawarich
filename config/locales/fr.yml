@@ -5200,6 +5200,7 @@ fr:
       recent: Visites récentes
       name: Nom de la visite
       place_id: Lieu #%{id}
+      track_id: Track #%{id}
       no_data_loaded: Aucune donnée de visite chargée
       none_found: Aucune visite trouvée
       none_found_for: Aucune visite trouvée pour « %{query} »

@@ -3941,6 +3941,7 @@ ca:
       recent: Visites recents
       name: Nom de la visita
       place_id: Lloc #%{id}
+      track_id: Track #%{id}
       no_data_loaded: No hi ha dades de visites carregades
       none_found: No s'ha trobat cap visita
       none_found_for: "No s'ha trobat cap visita per a \"%{query}\""

@@ -3996,6 +3996,7 @@ pl:
       recent: Ostatnie wizyty
       name: Nazwa wizyty
       place_id: Miejsce #%{id}
+      track_id: Track #%{id}
       no_data_loaded: Nie załadowano danych wizyt
       none_found: Nie znaleziono wizyt
       none_found_for: Nie znaleziono wizyt dla „%{query}”

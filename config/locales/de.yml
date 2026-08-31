@@ -3993,6 +3993,7 @@ de:
       recent: Letzte Aufenthalte
       name: Aufenthaltsname
       place_id: Ort #%{id}
+      track_id: Track #%{id}
       no_data_loaded: Keine Aufenthaltsdaten geladen
       none_found: Keine Aufenthalte gefunden
       none_found_for: Keine Aufenthalte gefunden für "%{query}"

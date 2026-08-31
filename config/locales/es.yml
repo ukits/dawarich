@@ -3938,6 +3938,7 @@ es:
       recent: Visitas recientes
       name: Nombre de la visita
       place_id: Lugar #%{id}
+      track_id: Track #%{id}
       no_data_loaded: No se ha cargado ninguna información de visitas
       none_found: No se encontraron visitas
       none_found_for: No se encontraron visitas para "%{query}"

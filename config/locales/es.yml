@@ -1827,6 +1827,7 @@ es:
       nearby_places: Lugares cercanos
       open_modal_to_load_nearby_suggestions: Abre el cuadro de diálogo para cargar sugerencias cercanas
       cancel: Cancelar
+      delete_place: Eliminar lugar
       enter_place_name: Introduce el nombre del lugar...
       add_a_personal_note_about_this_place: Agrega una nota personal sobre este lugar...
       create_place: Crear lugar
@@ -3870,7 +3871,7 @@ es:
     places:
       create_new: Crear nuevo lugar
       edit: Editar lugar
-      confirm_delete: "¿Seguro que quieres eliminar este lugar?"
+      confirm_delete: "¿Estás seguro? Eliminar un lugar resultará en eliminar todas las visitas para este lugar."
       search_placeholder: Buscar un lugar…
       confirm_move_visit: "Este lugar está a unos %{distance} m del lugar visitado. ¿Mover la visita aquí?"
       create_here: + Crea "%{name}" aquí

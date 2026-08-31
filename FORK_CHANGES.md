@@ -67,7 +67,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 | ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
 |----|------|------|------|------------------|-----------------|
 | F08 | Places 정렬·visits 수 | 최신순 + 방문 횟수 | `adapted` | `places#index`, `_place` | `1f5d8ae` |
-| F09 | Edit Place 삭제 버튼 | 편집 UI에서 삭제 | `pending` | places_manager / place drawer | `d93f8dd` |
+| F09 | Edit Place 삭제 버튼 | 편집 UI에서 삭제 | `adapted` | places_manager / place drawer | `d93f8dd` |
 | F10 | Places 일괄삭제·검색·Last Visited | 목록 관리 강화 | `pending` | places index/controller, bulk destroy | `7492f10` |
 
 ### Points · Tools (선택 UI)

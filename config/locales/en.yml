@@ -1824,6 +1824,7 @@ en:
       nearby_places: Nearby Places
       open_modal_to_load_nearby_suggestions: Open modal to load nearby suggestions
       cancel: Cancel
+      delete_place: Delete Place
       enter_place_name: Enter place name...
       add_a_personal_note_about_this_place: Add a personal note about this place...
       create_place: Create Place
@@ -3864,7 +3865,7 @@ en:
     places:
       create_new: Create New Place
       edit: Edit Place
-      confirm_delete: Are you sure you want to delete this place?
+      confirm_delete: Are you sure? Deleting a place will result in deleting all visits for this place.
       search_placeholder: Search for a place…
       confirm_move_visit: This place is ~%{distance} m from the visit. Move the visit here?
       create_here: + Create "%{name}" here

@@ -75,6 +75,12 @@
 
         <div class="modal-action">
           <button type="button" class="btn btn-ghost" data-action="click->place-creation#close"><%= t('.cancel') %></button>
+          <button type="button"
+                  class="btn btn-error hidden"
+                  data-place-creation-target="deleteButton"
+                  data-action="click->place-creation#deletePlace">
+            <%= t('.delete_place') %>
+          </button>
           <%= f.submit t('.create_place'), class: "btn btn-primary",
               data: { place_creation_target: "submitButton", disable_with: t('.saving') } %>
         </div>

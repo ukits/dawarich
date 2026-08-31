@@ -200,6 +200,14 @@ RSpec.describe '/places', type: :request do
 
       expect(response).to redirect_to(places_url)
     end
+
+    it 'returns turbo_stream flash when requested from the map edit modal' do
+      delete place_url(place), headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq('text/vnd.turbo-stream.html')
+      expect(response.body).to include('flash-messages')
+    end
   end
 
   describe 'GET /show' do

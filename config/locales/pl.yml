@@ -1824,6 +1824,7 @@ pl:
       nearby_places: Miejsca w pobliżu
       open_modal_to_load_nearby_suggestions: Otwórz okno, aby wczytać pobliskie sugestie
       cancel: Anuluj
+      delete_place: Usuń miejsce
       enter_place_name: Wpisz nazwę miejsca...
       add_a_personal_note_about_this_place: Dodaj osobistą notatkę o tym miejscu...
       create_place: Utwórz miejsce
@@ -3928,7 +3929,7 @@ pl:
     places:
       create_new: Utwórz nowe miejsce
       edit: Edytuj miejsce
-      confirm_delete: Czy na pewno chcesz usunąć to miejsce?
+      confirm_delete: Czy na pewno chcesz kontynuować? Usunięcie miejsca spowoduje usunięcie wszystkich powiązanych z nim wizyt.
       search_placeholder: Szukaj miejsca…
       confirm_move_visit: To miejsce jest ~%{distance} m od wizyty. Przenieść wizytę tutaj?
       create_here: "+ Utwórz tutaj „%{name}”"

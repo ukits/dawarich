@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { translate } from "i18n"
+import Flash from "controllers/flash_controller"
 
 export default class extends Controller {
   static targets = [
@@ -13,6 +14,7 @@ export default class extends Controller {
     "tagCheckboxes",
     "modalTitle",
     "submitButton",
+    "deleteButton",
     "placeIdInput",
   ]
 
@@ -68,6 +70,7 @@ export default class extends Controller {
       this.modalTitleTarget.textContent = translate("places.create_new")
     if (this.hasSubmitButtonTarget)
       this.submitButtonTarget.value = translate("places.create")
+    this.setDeleteButtonVisible(false)
 
     this.modalTarget.classList.add("modal-open")
     this.nameInputTarget.focus()
@@ -94,6 +97,7 @@ export default class extends Controller {
       this.modalTitleTarget.textContent = translate("places.edit")
     if (this.hasSubmitButtonTarget)
       this.submitButtonTarget.value = translate("places.update")
+    this.setDeleteButtonVisible(true)
 
     // Check appropriate tag checkboxes
     const tagCheckboxes = this.formTarget.querySelectorAll(
@@ -117,6 +121,7 @@ export default class extends Controller {
     this.modalTarget.classList.remove("modal-open")
     this.formTarget.reset()
     this.editingPlaceId = null
+    this.setDeleteButtonVisible(false)
 
     // Reset nearby frame
     if (this.hasNearbyFrameTarget) {
@@ -137,6 +142,34 @@ export default class extends Controller {
     this.nameInputTarget.value = el.dataset.placeName
     this.latitudeInputTarget.value = el.dataset.placeLatitude
     this.longitudeInputTarget.value = el.dataset.placeLongitude
+  }
+
+  async deletePlace() {
+    if (!this.editingPlaceId) return
+    if (!confirm(translate("places.confirm_delete"))) return
+
+    const placeId = this.editingPlaceId
+
+    try {
+      const response = await fetch(`/places/${placeId}`, {
+        method: "DELETE",
+        headers: {
+          "X-CSRF-Token":
+            document.querySelector('meta[name="csrf-token"]')?.content || "",
+          Accept: "text/vnd.turbo-stream.html",
+        },
+      })
+
+      if (!response.ok) throw new Error("Failed to delete place")
+
+      this.close()
+      document.dispatchEvent(
+        new CustomEvent("place:deleted", { detail: { placeId } }),
+      )
+      Flash.show("success", translate("messages.place_deleted_successfully"))
+    } catch (_error) {
+      Flash.show("error", translate("messages.failed_to_delete_place"))
+    }
   }
 
   onSubmitEnd(event) {
@@ -178,5 +211,11 @@ export default class extends Controller {
   removeMethodOverride() {
     const input = this.formTarget.querySelector('input[name="_method"]')
     if (input) input.remove()
+  }
+
+  setDeleteButtonVisible(visible) {
+    if (!this.hasDeleteButtonTarget) return
+
+    this.deleteButtonTarget.classList.toggle("hidden", !visible)
   }
 }

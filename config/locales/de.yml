@@ -1827,6 +1827,7 @@ de:
       nearby_places: Nahegelegene Orte
       open_modal_to_load_nearby_suggestions: Dialog öffnen, um Vorschläge in der Nähe zu laden
       cancel: Abbrechen
+      delete_place: Ort löschen
       enter_place_name: Ortsname eingeben...
       add_a_personal_note_about_this_place: Füge eine persönliche Notiz über diesen Ort hinzu...
       create_place: Ort erstellen
@@ -3925,7 +3926,7 @@ de:
     places:
       create_new: Neuer Ort erstellen
       edit: Ort bearbeiten
-      confirm_delete: Möchtest du diesen Ort wirklich löschen?
+      confirm_delete: Bist du sicher? Das Löschen eines Ortes wird dazu führen, dass alle Aufenthalte für diesen Ort gelöscht werden.
       search_placeholder: Suche nach einem Ort…
       confirm_move_visit: Dieser Ort ist ~%{distance} m vom Aufenthalt entfernt. Den Aufenthalt hier verschieben?
       create_here: "+ Ort „%{name}“ hier erstellen"

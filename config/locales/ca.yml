@@ -1824,6 +1824,7 @@ ca:
       nearby_places: Llocs propers
       open_modal_to_load_nearby_suggestions: Obre el diàleg per carregar suggeriments propers
       cancel: Cancel·la
+      delete_place: Suprimeix el lloc
       enter_place_name: Introdueix el nom del lloc...
       add_a_personal_note_about_this_place: Afegeix una nota personal sobre aquest lloc...
       create_place: Crea el lloc
@@ -3873,7 +3874,7 @@ ca:
     places:
       create_new: Crea un lloc nou
       edit: Edita el lloc
-      confirm_delete: Estàs segur que vols suprimir aquest lloc?
+      confirm_delete: Estàs segur? Suprimir un lloc eliminarà totes les visites d'aquest lloc.
       search_placeholder: Cerca un lloc…
       confirm_move_visit: "Aquest lloc és a ~%{distance} m de la visita. Vols moure la visita aquí?"
       create_here: "+ Crea \"%{name}\" aquí"

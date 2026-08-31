@@ -2663,6 +2663,7 @@ fr:
       open_modal_to_load_nearby_suggestions: Ouvrez la fenêtre contextuelle pour charger
         les suggestions proches
       cancel: Annuler
+      delete_place: Supprimer le lieu
       enter_place_name: Entrer le nom du lieu...
       add_a_personal_note_about_this_place: Ajoutez une note personnelle sur ce lieu...
       create_place: Créer un lieu
@@ -5126,7 +5127,7 @@ fr:
     places:
       create_new: Créer un nouveau lieu
       edit: Modifier le lieu
-      confirm_delete: Êtes-vous sûr de vouloir supprimer ce lieu ?
+      confirm_delete: Êtes-vous sûr ? La suppression d'un lieu entraînera la suppression de toutes les visites pour ce lieu.
       search_placeholder: Recherchez un lieu…
       confirm_move_visit: Ce lieu est à ~%{distance} m du point de visite. Voulez-vous
         déplacer le point de visite ici ?

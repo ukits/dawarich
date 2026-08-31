@@ -106,7 +106,18 @@ module Visits
         status: params[:status].presence || :confirmed
       )
 
+      assign_points_to_visit(@visit)
+
       @visit
+    end
+
+    # Associates every point that falls within the visit's time range with the
+    # visit. Detected visits set visit_id in their own services; this fills the
+    # gap for manually created visits (F17). F18 SideEffects will use the same set.
+    def assign_points_to_visit(visit)
+      user.points
+          .where(timestamp: visit.started_at.to_i..visit.ended_at.to_i)
+          .update_all(visit_id: visit.id)
     end
   end
 end

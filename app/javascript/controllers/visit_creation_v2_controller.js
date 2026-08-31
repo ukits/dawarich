@@ -143,13 +143,21 @@ export default class extends Controller {
 
     const formData = new FormData(this.formTarget)
 
+    const latitude = parseFloat(formData.get("latitude"))
+    const longitude = parseFloat(formData.get("longitude"))
+
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      this.showToast(translate("messages.visit_coordinates_missing"), "error")
+      return
+    }
+
     const visitData = {
       visit: {
         name: formData.get("name"),
         started_at: this.localToUTC(formData.get("started_at")),
         ended_at: this.localToUTC(formData.get("ended_at")),
-        latitude: parseFloat(formData.get("latitude")),
-        longitude: parseFloat(formData.get("longitude")),
+        latitude,
+        longitude,
         status: "confirmed",
       },
     }

@@ -104,12 +104,24 @@ export class SelectedPointsLayer extends BaseLayer {
    * @returns {{ start: Date, end: Date }|null}
    */
   getTimeRange() {
-    if (!this.data?.features?.length) return null
+    return SelectedPointsLayer.timeRangeFromFeatures(this.data?.features)
+  }
+
+  /**
+   * Average coordinates of selected points (for visit placement)
+   * @returns {{ lat: number, lng: number }|null}
+   */
+  getCentroid() {
+    return SelectedPointsLayer.centroidFromFeatures(this.data?.features)
+  }
+
+  static timeRangeFromFeatures(features = []) {
+    if (!features?.length) return null
 
     let start = null
     let end = null
 
-    for (const feature of this.data.features) {
+    for (const feature of features) {
       const date = parseTimestamp(feature.properties?.timestamp)
       if (!date) continue
 
@@ -119,5 +131,63 @@ export class SelectedPointsLayer extends BaseLayer {
 
     if (!start || !end) return null
     return { start, end }
+  }
+
+  static coordinateFromFeature(feature) {
+    const coords = feature.geometry?.coordinates
+    if (coords?.length >= 2) {
+      const rawLng = coords[0]
+      const rawLat = coords[1]
+      if (
+        rawLng != null &&
+        rawLng !== "" &&
+        rawLat != null &&
+        rawLat !== ""
+      ) {
+        const lng = Number(rawLng)
+        const lat = Number(rawLat)
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          return { lat, lng }
+        }
+      }
+    }
+
+    const props = feature.properties ?? {}
+    const rawPropLat = props.latitude
+    const rawPropLng = props.longitude
+    if (
+      rawPropLat != null &&
+      rawPropLat !== "" &&
+      rawPropLng != null &&
+      rawPropLng !== ""
+    ) {
+      const lat = Number(rawPropLat)
+      const lng = Number(rawPropLng)
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        return { lat, lng }
+      }
+    }
+
+    return null
+  }
+
+  static centroidFromFeatures(features = []) {
+    if (!features?.length) return null
+
+    let sumLat = 0
+    let sumLng = 0
+    let count = 0
+
+    for (const feature of features) {
+      const coordinate = SelectedPointsLayer.coordinateFromFeature(feature)
+      if (!coordinate) continue
+
+      sumLng += coordinate.lng
+      sumLat += coordinate.lat
+      count += 1
+    }
+
+    if (count === 0) return null
+    return { lat: sumLat / count, lng: sumLng / count }
   }
 }

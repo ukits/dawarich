@@ -3807,6 +3807,8 @@ de:
       click_on_the_map_to_place_a_visit_esc_to: Klicke auf die Karte, um einen Aufenthalt zu platzieren (Esc zum Abbrechen)
       visit_creation_modal_not_available: Dialog zum Erstellen eines Aufenthalts ist nicht verfügbar
       visit_creation_controller_not_available: Controller für Aufenthalt-Erstellung nicht verfügbar
+      visit_coordinates_missing: Besuchskoordinaten fehlen. Wähle Punkte auf der Karte oder klicke einen Ort an.
+      could_not_determine_coordinates_for_visit: Koordinaten für den Aufenthalt konnten nicht ermittelt werden
       area_drawer_controller_not_available: Controller für Flächenzeichnung nicht verfügbar
       area_created_successfully: Fläche erfolgreich erstellt!
       failed_to_reload_areas: Gebiete konnten nicht neu geladen werden

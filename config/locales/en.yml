@@ -3746,6 +3746,8 @@ en:
       click_on_the_map_to_place_a_visit_esc_to: Click on the map to place a visit (Esc to cancel)
       visit_creation_modal_not_available: Visit creation modal not available
       visit_creation_controller_not_available: Visit creation controller not available
+      visit_coordinates_missing: Visit coordinates are missing. Select points on the map or click a location.
+      could_not_determine_coordinates_for_visit: Could not determine coordinates for visit
       area_drawer_controller_not_available: Area drawer controller not available
       area_created_successfully: Area created successfully!
       failed_to_reload_areas: Failed to reload areas

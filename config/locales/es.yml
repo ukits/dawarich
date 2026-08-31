@@ -3752,6 +3752,8 @@ es:
       click_on_the_map_to_place_a_visit_esc_to: Haz clic en el mapa para colocar una visita (Pulsa Esc para cancelar)
       visit_creation_modal_not_available: Modal de creación de visitas no disponible
       visit_creation_controller_not_available: No se puede crear la visita
+      visit_coordinates_missing: Faltan las coordenadas de la visita. Selecciona puntos en el mapa o haz clic en una ubicación.
+      could_not_determine_coordinates_for_visit: No se pudieron determinar las coordenadas de la visita
       area_drawer_controller_not_available: No se puede abrir el controlador de área
       area_created_successfully: Área creada con éxito!
       failed_to_reload_areas: Falló al recargar áreas

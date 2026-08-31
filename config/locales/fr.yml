@@ -4996,6 +4996,10 @@ fr:
       visit_creation_modal_not_available: Fenêtre de création de visite non disponible
       visit_creation_controller_not_available: Contrôleur de création de visite non
         disponible
+      visit_coordinates_missing: Coordonnées de visite manquantes. Sélectionnez des points
+        sur la carte ou cliquez un emplacement.
+      could_not_determine_coordinates_for_visit: Impossible de déterminer les coordonnées
+        de la visite
       area_drawer_controller_not_available: Contrôleur de zone non disponible
       area_created_successfully: Zone créée avec succès !
       failed_to_reload_areas: Échec du rechargement des zones

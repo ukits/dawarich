@@ -94,6 +94,16 @@ test("raw point rendering keeps dense points", () => {
   )
 })
 
+test("pointsToGeoJSON carries numeric latitude and longitude in properties", () => {
+  const geojson = pointsToGeoJSON([
+    point(1, 52.520001, 13.405001, 1_700_000_000),
+  ])
+  const props = geojson.features[0].properties
+
+  assert.equal(props.latitude, 52.520001)
+  assert.equal(props.longitude, 13.405001)
+})
+
 test("parseTimestamp accepts unix seconds and rejects invalid values", () => {
   const date = parseTimestamp(1_700_000_000)
   assert.equal(date?.toISOString(), "2023-11-14T22:13:20.000Z")

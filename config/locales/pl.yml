@@ -3810,6 +3810,8 @@ pl:
       click_on_the_map_to_place_a_visit_esc_to: Kliknij na mapie, aby dodać wizytę (Esc aby anulować)
       visit_creation_modal_not_available: Okno tworzenia wizyty jest niedostępne
       visit_creation_controller_not_available: Kontroler tworzenia wizyty jest niedostępny
+      visit_coordinates_missing: Brak współrzędnych wizyty. Wybierz punkty na mapie lub kliknij lokalizację.
+      could_not_determine_coordinates_for_visit: Nie udało się ustalić współrzędnych wizyty
       area_drawer_controller_not_available: Kontroler panelu obszaru jest niedostępny
       area_created_successfully: Obszar utworzony pomyślnie!
       failed_to_reload_areas: Nie udało się odświeżyć obszarów

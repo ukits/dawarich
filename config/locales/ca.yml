@@ -3754,6 +3754,8 @@ ca:
       click_on_the_map_to_place_a_visit_esc_to: Fes clic al mapa per col·locar una visita (Esc per cancel·lar)
       visit_creation_modal_not_available: Diàleg de creació de visites no disponible
       visit_creation_controller_not_available: Controlador de creació de visites no disponible
+      visit_coordinates_missing: Falten les coordenades de la visita. Selecciona punts al mapa o fes clic en una ubicació.
+      could_not_determine_coordinates_for_visit: No s'han pogut determinar les coordenades de la visita
       area_drawer_controller_not_available: Controlador de dibuix d'àrees no disponible
       area_created_successfully: Àrea creada correctament!
       failed_to_reload_areas: No s'han pogut tornar a carregar les àrees

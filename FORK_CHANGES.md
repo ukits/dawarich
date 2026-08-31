@@ -81,7 +81,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 
 | ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
 |----|------|------|------|------------------|-----------------|
-| F13 | Track별 Visit 추천 카드 | 선택 Points를 Track 단위로 분리 추천 | `pending` | visit_card, area selection, create flow | `3c60668` |
+| F13 | Track별 Visit 추천 카드 | 선택 Points를 Track 단위로 분리 추천 | `adapted` | visit_card, area selection, create flow | `44fb32e` |
 | F14 | Select Area 좌표 0 버그 수정 | 선택 영역 Visit 생성 시 lat/lon 정상 | `pending` | area selection / visit create params | `2428b3e` |
 | F15 | Visit Card Place ID 표시 | 카드에 place id | `ported` | `visit_card.js`, timeline visit row | `a5898f1` |
 | F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `adapted` | `visits/create.rb`, `place_finder.rb` | `c9c6eb6` |

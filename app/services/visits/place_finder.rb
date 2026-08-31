@@ -22,15 +22,18 @@ module Visits
 
     private
 
-    # Rank candidates within the radius by exact-name, then manual-over-photon, then distance.
-    # Avoids minting duplicate "Suggested place" rows and prefers user-curated places.
+    # Reuse only same-name places within the radius. Prefer manual over photon, then distance.
     def find_existing_place(lat, lon, name)
-      candidates = user.places.near([lat, lon], SIMILARITY_RADIUS, :m).to_a
+      effective_name = name.presence || Place::DEFAULT_NAME
+
+      candidates = user.places
+                       .where(name: effective_name)
+                       .near([lat, lon], SIMILARITY_RADIUS, :m)
+                       .to_a
       return nil if candidates.empty?
 
       candidates.min_by do |place|
         [
-          name.present? && place.name == name ? 0 : 1,
           place.manual? ? 0 : 1,
           distance_meters(lat, lon, place.lat, place.lon)
         ]

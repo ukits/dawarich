@@ -2027,14 +2027,25 @@ fr:
       hello_there: Bonjour !
       here_you_ll_find_your_places_created_by_visits_suggestion: Vous trouverez ici
         les lieux créés grâce aux suggestions de visites. Il n’y en a encore aucun.
+      place_id: ID du lieu
       name: Nom
       visits: Visites
+      last_visited: Dernière visite
       created_at: Créé le
       coordinates: Coordonnées
+      source: Source
       actions: Actions
       timeline: Chronologie
       places: Lieux
       delete: Supprimer
+      search: Rechercher
+      search_by_name: Rechercher par nom
+      all_sources: Toutes les sources
+      delete_selected: Supprimer la sélection
+      bulk_delete_confirm: Êtes-vous sûr ? La suppression de lieux entraînera la suppression
+        de toutes les visites pour ces lieux.
+      no_places_found: Aucun lieu trouvé.
+      select_all: Tout sélectionner
       are_you_sure_deleting_a_place_will_result_in_deleting: Êtes-vous sûr ? La suppression
         d'un lieu entraînera la suppression de toutes les visites pour ce lieu.
   points:
@@ -4002,6 +4013,8 @@ fr:
       notification_was_successfully_destroyed: La notification a été supprimée.
     places:
       place_was_successfully_destroyed: Lieu supprimé avec succès
+      places_were_successfully_destroyed: Lieux supprimés avec succès
+      no_places_selected: Aucun lieu sélectionné.
       created: Lieu créé avec succès !
       updated: Lieu mis à jour avec succès
     points:

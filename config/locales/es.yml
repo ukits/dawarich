@@ -1306,14 +1306,24 @@ es:
     index:
       hello_there: "¡Hola!"
       here_you_ll_find_your_places_created_by_visits_suggestion: Aquí encontrarás tus lugares, creados por el proceso de sugerencia de visitas. Pero ahora no hay ninguno.
+      place_id: ID del lugar
       name: Nombre
       visits: Visitas
+      last_visited: Última visita
       created_at: Creado en
       coordinates: Coordenadas
+      source: Origen
       actions: Acciones
       timeline: Cronología
       places: Lugares
       delete: Eliminar
+      search: Buscar
+      search_by_name: Buscar por nombre
+      all_sources: Todas las fuentes
+      delete_selected: Eliminar seleccionados
+      bulk_delete_confirm: "¿Estás seguro? Eliminar lugares resultará en eliminar todas las visitas de estos lugares."
+      no_places_found: No se encontraron lugares.
+      select_all: Seleccionar todo
       are_you_sure_deleting_a_place_will_result_in_deleting: "¿Estás seguro? Eliminar un lugar resultará en eliminar todas las visitas para este lugar."
   points:
     address:
@@ -3033,6 +3043,8 @@ es:
       notification_was_successfully_destroyed: Notificación eliminada con éxito.
     places:
       place_was_successfully_destroyed: Lugar eliminado con éxito.
+      places_were_successfully_destroyed: Lugares eliminados con éxito.
+      no_places_selected: No se seleccionaron lugares.
       created: Se creó el lugar con éxito!
       updated: Se actualizó el lugar con éxito!
     points:

@@ -53,6 +53,20 @@ RSpec.describe Place, type: :model do
 
       expect(Place.with_active_visits_count.find(place.id).visits_count.to_i).to eq(1)
     end
+
+    it 'returns the latest active visit started_at as last_visited_at' do
+      user = create(:user)
+      place = create(:place, user: user)
+      base = Time.zone.parse('2026-04-01 12:00')
+      create(:visit, user: user, place: place, area: nil,
+             started_at: base, ended_at: base + 30.minutes)
+      latest = create(:visit, user: user, place: place, area: nil,
+                      started_at: base + 2.hours, ended_at: base + 150.minutes)
+      create(:visit, user: user, place: place, area: nil, deleted_at: 1.day.ago,
+             started_at: base + 3.hours, ended_at: base + 4.hours)
+
+      expect(Place.with_active_visits_count.find(place.id).last_visited_at).to eq(latest.started_at)
+    end
   end
 
   describe 'destroying a place' do

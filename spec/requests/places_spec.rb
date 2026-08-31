@@ -33,6 +33,67 @@ RSpec.describe '/places', type: :request do
       expect(response.body).to match(%r{Zeta New</td>\s*<td>2</td>}m)
       expect(response.body).to match(%r{Alpha Old</td>\s*<td>0</td>}m)
     end
+
+    it 'filters places by name' do
+      create(:place, user:, name: 'Coffee Shop')
+      create(:place, user:, name: 'Airport Lounge')
+
+      get places_url, params: { name: 'coffee' }
+
+      expect(response).to be_successful
+      expect(response.body).to include('Coffee Shop')
+      expect(response.body).not_to include('Airport Lounge')
+    end
+
+    it 'filters places by source' do
+      create(:place, user:, name: 'Manual Place', source: :manual)
+      create(:place, user:, name: 'Photon Place', source: :photon)
+
+      get places_url, params: { source: 'photon' }
+
+      expect(response).to be_successful
+      expect(response.body).to include('Photon Place')
+      expect(response.body).not_to include('Manual Place')
+    end
+
+    it 'shows last visited from active visits only' do
+      place = create(:place, user:, name: 'Visited Cafe')
+      base = Time.zone.parse('2026-06-15 14:30')
+      create(:visit, place:, user:, area: nil,
+                     started_at: base, ended_at: base + 30.minutes)
+      create(:visit, place:, user:, area: nil, deleted_at: 1.day.ago,
+                     started_at: base + 2.hours, ended_at: base + 150.minutes)
+
+      get places_url
+
+      expect(response.body).to include('2026-06-15')
+    end
+  end
+
+  describe 'DELETE /bulk_destroy' do
+    it 'destroys selected places and preserves filters' do
+      keep = create(:place, user:, name: 'Keep Me', source: :manual)
+      doomed = create(:place, user:, name: 'Remove Me', source: :manual)
+      other = create(:place, user:, name: 'Other Manual', source: :manual)
+
+      expect do
+        delete bulk_destroy_places_url,
+               params: { place_ids: [doomed.id, other.id], name: 'Manual', source: 'manual', page: 1 }
+      end.to change(Place, :count).by(-2)
+
+      expect(response).to redirect_to(places_url(name: 'Manual', source: 'manual', page: 1))
+      expect(Place.exists?(keep.id)).to be(true)
+      expect(Place.exists?(doomed.id)).to be(false)
+    end
+
+    it 'redirects with an alert when nothing is selected' do
+      create(:place, user:)
+
+      delete bulk_destroy_places_url, params: { name: 'nope' }
+
+      expect(response).to redirect_to(places_url(name: 'nope'))
+      expect(flash[:alert]).to eq(I18n.t('controllers.places.no_places_selected'))
+    end
   end
 
   describe 'POST /create' do

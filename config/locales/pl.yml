@@ -1264,14 +1264,24 @@ pl:
     index:
       hello_there: Cześć!
       here_you_ll_find_your_places_created_by_visits_suggestion: Tutaj znajdziesz miejsca utworzone przez mechanizm sugestii wizyt. Na razie jeszcze ich nie ma.
+      place_id: ID miejsca
       name: Nazwa
       visits: Wizyty
+      last_visited: Ostatnia wizyta
       created_at: Utworzono
       coordinates: Współrzędne
+      source: Źródło
       actions: Akcje
       timeline: Oś czasu
       places: Miejsca
       delete: Usuń
+      search: Szukaj
+      search_by_name: Szukaj po nazwie
+      all_sources: Wszystkie źródła
+      delete_selected: Usuń zaznaczone
+      bulk_delete_confirm: Czy na pewno chcesz kontynuować? Usunięcie miejsc spowoduje usunięcie wszystkich powiązanych wizyt.
+      no_places_found: Nie znaleziono miejsc.
+      select_all: Zaznacz wszystko
       are_you_sure_deleting_a_place_will_result_in_deleting: Czy na pewno chcesz kontynuować? Usunięcie miejsca spowoduje usunięcie wszystkich powiązanych z nim wizyt.
   points:
     address:
@@ -3077,6 +3087,8 @@ pl:
       notification_was_successfully_destroyed: Powiadomienie zostało pomyślnie usunięte.
     places:
       place_was_successfully_destroyed: Miejsce zostało pomyślnie usunięte.
+      places_were_successfully_destroyed: Miejsca zostały pomyślnie usunięte.
+      no_places_selected: Nie wybrano miejsc.
       created: Miejsce utworzono pomyślnie!
       updated: Miejsce zaktualizowano pomyślnie!
     points:

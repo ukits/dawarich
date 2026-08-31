@@ -37,11 +37,14 @@ class Place < ApplicationRecord
   scope :map_visible, lambda { |user|
     manual.or(linked_to_confirmed_visits(user)).or(tagged)
   }
-  # List pages need a count without N+1; reader surfaces ignore tombstones.
+  # List pages need aggregates without N+1; reader surfaces ignore tombstones.
   scope :with_active_visits_count, lambda {
-    count_sql = Visit.active.where("#{Visit.table_name}.place_id = #{table_name}.id")
-                     .select('COUNT(*)').to_sql
-    select("#{table_name}.*, (#{count_sql}) AS visits_count")
+    active_visits = Visit.active.where("#{Visit.table_name}.place_id = #{table_name}.id")
+    count_sql = active_visits.select('COUNT(*)').to_sql
+    last_visited_sql = active_visits.select('MAX(started_at)').to_sql
+    select(
+      "#{table_name}.*, (#{count_sql}) AS visits_count, (#{last_visited_sql}) AS last_visited_at"
+    )
   }
 
   # Legacy places predate the lonlat column and carry coordinates only in the

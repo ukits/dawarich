@@ -16,6 +16,14 @@ RSpec.describe 'Deleting a place preserves the current pagination page', type: :
     expect(response).to redirect_to(places_url(page: 2))
   end
 
+  it 'preserves name and source filters when deleting a place' do
+    place = create(:place, user:, name: 'Filter Target', source: :manual)
+
+    delete place_url(place, name: 'Filter', source: 'manual', page: 1)
+
+    expect(response).to redirect_to(places_url(name: 'Filter', source: 'manual', page: 1))
+  end
+
   it 'renders delete links that carry the current page' do
     create_list(:place, 21, user:)
 

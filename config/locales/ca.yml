@@ -1264,14 +1264,24 @@ ca:
     index:
       hello_there: Hola!
       here_you_ll_find_your_places_created_by_visits_suggestion: Aquí trobaràs els teus llocs, creats pel procés de suggeriment de visites. Però ara mateix no n'hi ha cap.
+      place_id: ID del lloc
       name: Nom
       visits: Visites
+      last_visited: Darrera visita
       created_at: Creat el
       coordinates: Coordenades
+      source: Font
       actions: Accions
       timeline: Línia de temps
       places: Llocs
       delete: Suprimeix
+      search: Cerca
+      search_by_name: Cerca per nom
+      all_sources: Totes les fonts
+      delete_selected: Suprimeix la selecció
+      bulk_delete_confirm: Estàs segur? Suprimir llocs eliminarà totes les visites d'aquests llocs.
+      no_places_found: No s'han trobat llocs.
+      select_all: Selecciona-ho tot
       are_you_sure_deleting_a_place_will_result_in_deleting: Estàs segur? Suprimir un lloc eliminarà totes les visites d'aquest lloc.
   points:
     address:
@@ -3022,6 +3032,8 @@ ca:
       notification_was_successfully_destroyed: La notificació s'ha suprimit correctament.
     places:
       place_was_successfully_destroyed: El lloc s'ha suprimit correctament.
+      places_were_successfully_destroyed: Els llocs s'han suprimit correctament.
+      no_places_selected: No s'ha seleccionat cap lloc.
       created: El lloc s'ha creat correctament!
       updated: El lloc s'ha actualitzat correctament!
     points:

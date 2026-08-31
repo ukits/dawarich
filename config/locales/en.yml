@@ -1264,14 +1264,24 @@ en:
     index:
       hello_there: Hello there!
       here_you_ll_find_your_places_created_by_visits_suggestion: Here you'll find your places, created by Visits suggestion process. But now there are none.
+      place_id: Place ID
       name: Name
       visits: Visits
+      last_visited: Last Visited
       created_at: Created at
       coordinates: Coordinates
+      source: Source
       actions: Actions
       timeline: Timeline
       places: Places
       delete: Delete
+      search: Search
+      search_by_name: Search by name
+      all_sources: All sources
+      delete_selected: Delete Selected
+      bulk_delete_confirm: Are you sure? Deleting places will result in deleting all visits for these places.
+      no_places_found: No places found.
+      select_all: Select all
       are_you_sure_deleting_a_place_will_result_in_deleting: Are you sure? Deleting a place will result in deleting all visits for this place.
   points:
     address:
@@ -3010,6 +3020,8 @@ en:
       notification_was_successfully_destroyed: Notification was successfully destroyed.
     places:
       place_was_successfully_destroyed: Place was successfully destroyed.
+      places_were_successfully_destroyed: Places were successfully destroyed.
+      no_places_selected: No places selected.
       created: Place created successfully!
       updated: Place updated successfully!
     points:

@@ -1306,14 +1306,24 @@ de:
     index:
       hello_there: Hallo!
       here_you_ll_find_your_places_created_by_visits_suggestion: Hier findest du deine Orte, die durch den Visits-Vorschlagsprozess erstellt wurden. Aber jetzt gibt es keine.
+      place_id: Orts-ID
       name: Name
       visits: Besuche
+      last_visited: Zuletzt besucht
       created_at: Erstellt am
       coordinates: Koordinaten
+      source: Quelle
       actions: Aktionen
       timeline: Zeitleiste
       places: Orte
       delete: Löschen
+      search: Suchen
+      search_by_name: Nach Name suchen
+      all_sources: Alle Quellen
+      delete_selected: Ausgewählte löschen
+      bulk_delete_confirm: Bist du sicher? Das Löschen von Orten führt zum Löschen aller Besuche für diese Orte.
+      no_places_found: Keine Orte gefunden.
+      select_all: Alle auswählen
       are_you_sure_deleting_a_place_will_result_in_deleting: Bist du sicher? Das Löschen eines Ortes wird dazu führen, dass alle Aufenthalte für diesen Ort gelöscht werden.
   points:
     address:
@@ -3088,6 +3098,8 @@ de:
       notification_was_successfully_destroyed: Benachrichtigung wurde erfolgreich gelöscht.
     places:
       place_was_successfully_destroyed: Ort wurde erfolgreich gelöscht.
+      places_were_successfully_destroyed: Orte wurden erfolgreich gelöscht.
+      no_places_selected: Keine Orte ausgewählt.
       created: Ort erfolgreich erstellt!
       updated: Ort erfolgreich aktualisiert!
     points:

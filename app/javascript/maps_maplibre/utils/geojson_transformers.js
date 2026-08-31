@@ -68,24 +68,34 @@ export function pointsToGeoJSON(points, options = {}) {
 }
 
 /**
+ * Parse a point timestamp into a Date
+ * @param {number|string} timestamp - Unix timestamp (seconds) or ISO 8601 string
+ * @returns {Date|null} Parsed date, or null when invalid
+ */
+export function parseTimestamp(timestamp) {
+  if (timestamp == null || timestamp === "") return null
+
+  let date
+  if (typeof timestamp === "string") {
+    date = new Date(timestamp)
+  } else if (timestamp < 10000000000) {
+    date = new Date(timestamp * 1000)
+  } else {
+    date = new Date(timestamp)
+  }
+
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+/**
  * Format timestamp for display
  * @param {number|string} timestamp - Unix timestamp (seconds) or ISO 8601 string
  * @param {string} timezone - IANA timezone string (e.g., 'Europe/Berlin')
  * @returns {string} Formatted date/time
  */
 export function formatTimestamp(timestamp, timezone = "UTC") {
-  // Handle different timestamp formats
-  let date
-  if (typeof timestamp === "string") {
-    // ISO 8601 string
-    date = new Date(timestamp)
-  } else if (timestamp < 10000000000) {
-    // Unix timestamp in seconds
-    date = new Date(timestamp * 1000)
-  } else {
-    // Unix timestamp in milliseconds
-    date = new Date(timestamp)
-  }
+  const date = parseTimestamp(timestamp)
+  if (!date) return ""
 
   return formatISODateTime(date, timezone, { seconds: true })
 }
@@ -97,20 +107,36 @@ export function formatTimestamp(timestamp, timezone = "UTC") {
  * @returns {string} Formatted time (e.g., "14:30")
  */
 export function formatTimeOnly(timestamp, timezone = "UTC") {
-  if (!timestamp) return "--:--"
-
-  let date
-  if (typeof timestamp === "string") {
-    date = new Date(timestamp)
-  } else if (timestamp < 10000000000) {
-    // Unix timestamp in seconds
-    date = new Date(timestamp * 1000)
-  } else {
-    // Unix timestamp in milliseconds
-    date = new Date(timestamp)
-  }
+  const date = parseTimestamp(timestamp)
+  if (!date) return "--:--"
 
   return formatISOTime(date, timezone)
+}
+
+/**
+ * Format a date/time range for compact UI labels
+ * @param {Date} start
+ * @param {Date} end
+ * @param {string} timezone - IANA timezone string (e.g., 'Europe/Berlin')
+ * @returns {string} Formatted range (e.g., "2026-07-05 09:00 - 18:30")
+ */
+export function formatDateTimeRange(start, end, timezone = "UTC") {
+  if (!start || !end) return ""
+
+  const startLabel = formatISODateTime(start, timezone)
+  const endLabel = formatISODateTime(end, timezone)
+
+  if (!startLabel || !endLabel) return ""
+  if (startLabel === endLabel) return startLabel
+
+  const startDate = startLabel.slice(0, 10)
+  const endDate = endLabel.slice(0, 10)
+
+  if (startDate === endDate) {
+    return `${startLabel} - ${endLabel.slice(11)}`
+  }
+
+  return `${startLabel} - ${endLabel}`
 }
 
 /**

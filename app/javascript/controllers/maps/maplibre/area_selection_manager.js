@@ -3,7 +3,7 @@ import { Toast } from "maps_maplibre/components/toast"
 import { VisitCard } from "maps_maplibre/components/visit_card"
 import { SelectedPointsLayer } from "maps_maplibre/layers/selected_points_layer"
 import { SelectionLayer } from "maps_maplibre/layers/selection_layer"
-import { pointsToGeoJSON } from "maps_maplibre/utils/geojson_transformers"
+import { pointsToGeoJSON, formatDateTimeRange } from "maps_maplibre/utils/geojson_transformers"
 
 /**
  * Manages area selection and bulk operations for Maps V2
@@ -128,12 +128,10 @@ export class AreaSelectionManager {
         this.controller.selectionActionsTarget.classList.remove("hidden")
       }
 
-      // Update delete button text with count
+      // Update delete button text with count and time range
       if (this.controller.hasDeleteButtonTextTarget) {
-        this.controller.deleteButtonTextTarget.textContent = translate(
-          "selection.delete_points",
-          { count: points.length },
-        )
+        this.controller.deleteButtonTextTarget.textContent =
+          this.formatDeletePointsButtonText(points.length)
       }
 
       // Track anomaly point IDs separately so the user can opt to delete
@@ -519,6 +517,32 @@ export class AreaSelectionManager {
     } catch (error) {
       console.error("[Maps V2] Failed to refresh visits:", error)
     }
+  }
+
+  /**
+   * Min/max timestamps of currently selected points, if any
+   * @returns {{ start: Date, end: Date }|null}
+   */
+  getSelectedPointsTimeRange() {
+    return this.selectedPointsLayer?.getTimeRange() ?? null
+  }
+
+  /**
+   * Build delete button label with optional selected points time range
+   */
+  formatDeletePointsButtonText(count) {
+    const label = translate("selection.delete_points", { count })
+    const timeRange = this.getSelectedPointsTimeRange()
+    if (!timeRange) return label
+
+    const rangeLabel = formatDateTimeRange(
+      timeRange.start,
+      timeRange.end,
+      this.controller.timezoneValue || "UTC",
+    )
+    if (!rangeLabel) return label
+
+    return `${label} (${rangeLabel})`
   }
 
   /**

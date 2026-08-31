@@ -9,6 +9,10 @@ const geometrySource = await readFile(
   ),
   "utf8",
 )
+const dateFormatSource = await readFile(
+  new URL("../../app/javascript/utils/date_format.js", import.meta.url),
+  "utf8",
+)
 const transformersSource = await readFile(
   new URL(
     "../../app/javascript/maps_maplibre/utils/geojson_transformers.js",
@@ -20,9 +24,18 @@ const withoutImports = transformersSource.replace(
   /^import[\s\S]*?from "[^"]+"\n/gm,
   "",
 )
-const combinedSource = `${geometrySource}\n${withoutImports}`
+const dateFormatWithoutExports = dateFormatSource.replace(
+  /^export /gm,
+  "",
+)
+const combinedSource = `${geometrySource}\n${dateFormatWithoutExports}\n${withoutImports}`
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(combinedSource).toString("base64")}`
-const { pointsToGeoJSON, simplifyPointsForRendering } = await import(moduleUrl)
+const {
+  pointsToGeoJSON,
+  simplifyPointsForRendering,
+  parseTimestamp,
+  formatDateTimeRange,
+} = await import(moduleUrl)
 
 function point(id, latitude, longitude, timestamp) {
   return { id, latitude, longitude, timestamp }
@@ -78,5 +91,32 @@ test("raw point rendering keeps dense points", () => {
   assert.deepEqual(
     pointsToGeoJSON(points).features.map((feature) => feature.properties.id),
     [1, 2],
+  )
+})
+
+test("parseTimestamp accepts unix seconds and rejects invalid values", () => {
+  const date = parseTimestamp(1_700_000_000)
+  assert.equal(date?.toISOString(), "2023-11-14T22:13:20.000Z")
+  assert.equal(parseTimestamp(null), null)
+  assert.equal(parseTimestamp(""), null)
+})
+
+test("formatDateTimeRange shortens end time on the same day", () => {
+  const start = new Date("2026-07-05T09:00:00Z")
+  const end = new Date("2026-07-05T18:30:00Z")
+
+  assert.equal(
+    formatDateTimeRange(start, end, "UTC"),
+    "2026-07-05 09:00 - 18:30",
+  )
+})
+
+test("formatDateTimeRange repeats full end label across days", () => {
+  const start = new Date("2026-07-05T09:00:00Z")
+  const end = new Date("2026-07-06T18:30:00Z")
+
+  assert.equal(
+    formatDateTimeRange(start, end, "UTC"),
+    "2026-07-05 09:00 - 2026-07-06 18:30",
   )
 })

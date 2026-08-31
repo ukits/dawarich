@@ -64,6 +64,9 @@
           <span class="visit-tag__dot" style="background-color: <%= t[:color] %>;"></span>#<%= t[:name] %>
         </span>
       <% end %>
+      <% if entry[:place_id].present? %>
+        <span class="visit-row__place-id"><%= t('.place_id', id: entry[:place_id]) %></span>
+      <% end %>
     </div>
   </div>
 

@@ -1217,6 +1217,7 @@ ca:
         name: Nom
         save: Desa
         attached_place: Lloc associat
+        place_id: Lloc #%{id}
         delete: Suprimeix
         delete_this_visit_your_location_points_stay: Suprimir aquesta visita? Els teus punts d'ubicació es mantenen.
   notifications:
@@ -3939,6 +3940,7 @@ ca:
       update: Actualitza la visita
       recent: Visites recents
       name: Nom de la visita
+      place_id: Lloc #%{id}
       no_data_loaded: No hi ha dades de visites carregades
       none_found: No s'ha trobat cap visita
       none_found_for: "No s'ha trobat cap visita per a \"%{query}\""

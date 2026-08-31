@@ -1256,6 +1256,7 @@ de:
         name: Name
         save: Speichern
         attached_place: Verknüpfter Ort
+        place_id: Ort #%{id}
         select_visit_for_merge: Aufenthalt zum Zusammenführen auswählen
         all_day: Ganz Tag
         pts: pts
@@ -3991,6 +3992,7 @@ de:
       update: Aufenthalt aktualisieren
       recent: Letzte Aufenthalte
       name: Aufenthaltsname
+      place_id: Ort #%{id}
       no_data_loaded: Keine Aufenthaltsdaten geladen
       none_found: Keine Aufenthalte gefunden
       none_found_for: Keine Aufenthalte gefunden für "%{query}"

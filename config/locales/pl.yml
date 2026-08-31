@@ -1217,6 +1217,7 @@ pl:
         name: Nazwa
         save: Zapisz
         attached_place: Powiązane miejsce
+        place_id: Miejsce #%{id}
         delete: Usuń
         delete_this_visit_your_location_points_stay: Usunąć tę wizytę? Punkty lokalizacji pozostaną.
   notifications:
@@ -3994,6 +3995,7 @@ pl:
       update: Zaktualizuj wizytę
       recent: Ostatnie wizyty
       name: Nazwa wizyty
+      place_id: Miejsce #%{id}
       no_data_loaded: Nie załadowano danych wizyt
       none_found: Nie znaleziono wizyt
       none_found_for: Nie znaleziono wizyt dla „%{query}”

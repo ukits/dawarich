@@ -21,8 +21,9 @@
 |------|-----|
 | 최초 fork 기준 | `7b877f9` — upstream **1.9.2** (2026-06-25) |
 | 작성자 | BYUN, SungUk |
-| 현재 활성 브랜치(fork 기능 소스) | `master` |
-| 열린 동기화 사이클 | [2026-08 · 1.9.2 → 1.14.0](docs/upstream-sync/cycles/2026-08-1.9.2-to-1.14.0.md) |
+| 현재 기능 베이스 | `sync/1.14.0` — upstream **1.14.0** (`8754f23`) 위 이식 |
+| 최근 닫힌 사이클 | [2026-08 · 1.9.2 → 1.14.0](docs/upstream-sync/cycles/2026-08-1.9.2-to-1.14.0.md) |
+| 열린 동기화 사이클 | 없음 |
 
 ### 상태 값
 
@@ -44,62 +45,65 @@ sync 사이클을 열면 해당 기능들을 `pending`으로 두고, 끝나면 `
 ## 기능 목록
 
 ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`superseded`로 둔다.
+「원본 커밋」은 최초 fork 구현 참고, 「이식 커밋」은 `sync/1.14.0` 기준이다.
 
 ### 개발 환경
 
-| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
-|----|------|------|------|------------------|-----------------|
-| F01 | Dev Container · Ruby · vendor | 로컬/컨테이너에서 빌드·실행 가능하게 | `defer` | `.devcontainer/`, `.ruby-version`, `vendor/` | `7b917e0` `ac63a44` `69e360c` `7318732` `ced265a` |
+| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
+|----|------|------|------|------------------|-------------|
+| F01 | Dev Container · Ruby · vendor | 로컬/컨테이너에서 빌드·실행 가능하게 | `defer` | `.devcontainer/`, `.ruby-version`, `vendor/` | `7b917e0`… / — |
 
 ### 지도 · Timeline · Route UI
 
-| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
-|----|------|------|------|------------------|-----------------|
-| F02 | Point 크기 설정 | 지도 포인트 반경을 설정으로 조절 | `adapted` | `maps_maplibre/utils/point_size`, settings, points_layer | `07b4fbd` |
-| F03 | Timeline 1열 레이아웃 | ≥1024px에서도 Timeline 1열 | `ported` | timeline CSS / panel | `7fe3789` |
-| F04 | Timeline 달력 padding | 달력 여백 | `ported` | timeline calendar styles | `b2fedf0` |
-| F05 | 시간 표시 `YYYY-MM-DD hh:mm:ss` | 일시 포맷 통일 | `adapted` | `date_format`, datetime helpers | `38443a4` `2ec38e1` |
-| F06 | 달력 일요일 시작 | week start = Sunday | `ported` | timeline calendar | `050850e` |
-| F07 | Route 구간 시작·끝 시간 | 구간 열에 시각 표시 | `adapted` | tracks/segments views·helpers | `108ac89` |
+| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
+|----|------|------|------|------------------|-------------|
+| F02 | Point 크기 설정 | 지도 포인트 반경을 설정으로 조절 | `adapted` | `maps_maplibre/utils/point_size`, settings, points_layer | `07b4fbd` / `849bd45` |
+| F03 | Timeline 1열 레이아웃 | ≥1024px에서도 Timeline 1열 | `ported` | timeline CSS / panel | `7fe3789` / `358c003` |
+| F04 | Timeline 달력 padding | 달력 여백 | `ported` | timeline calendar styles | `b2fedf0` / (F03 묶음) |
+| F05 | 시간 표시 `YYYY-MM-DD hh:mm:ss` | 일시 포맷 통일 | `adapted` | `date_format`, datetime helpers | `38443a4`… / `cf72c19` |
+| F06 | 달력 일요일 시작 | week start = Sunday | `ported` | timeline calendar | `050850e` / `bb88632` |
+| F07 | Route 구간 시작·끝 시간 | 구간 열에 시각 표시 | `adapted` | tracks/segments views·helpers | `108ac89` / `639724a` |
 
 ### Places
 
-| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
-|----|------|------|------|------------------|-----------------|
-| F08 | Places 정렬·visits 수 | 최신순 + 방문 횟수 | `adapted` | `places#index`, `_place` | `1f5d8ae` |
-| F09 | Edit Place 삭제 버튼 | 편집 UI에서 삭제 | `adapted` | places_manager / place drawer | `d93f8dd` |
-| F10 | Places 일괄삭제·검색·Last Visited | 목록 관리 강화 | `pending` | places index/controller, bulk destroy | `7492f10` |
+| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
+|----|------|------|------|------------------|-------------|
+| F08 | Places 정렬·visits 수 | 최신순 + 방문 횟수 | `adapted` | `places#index`, `_place` | `1f5d8ae` / `6c801a4` |
+| F09 | Edit Place 삭제 버튼 | 편집 UI에서 삭제 | `adapted` | places_manager / place drawer | `d93f8dd` / `92c4d4b` |
+| F10 | Places 일괄삭제·검색·Last Visited | 목록 관리 강화 | `adapted` | places index/controller, bulk destroy | `7492f10` / `f063402` |
 
 ### Points · Tools (선택 UI)
 
-| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
-|----|------|------|------|------------------|-----------------|
-| F11 | Tools Delete에 선택 기간 표시 | 삭제 전 구간 확인 | `pending` | selected_points_layer, tools UI | `56adc8e` |
-| F12 | Points 목록 컬럼·필터 | ID / Visit·Track / 고도 / 필터 | `pending` | `points#index`, `_point` | `e9111da` |
+| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
+|----|------|------|------|------------------|-------------|
+| F11 | Tools Delete에 선택 기간 표시 | 삭제 전 구간 확인 | `adapted` | selected_points_layer, tools UI | `56adc8e` / `6b1e381` |
+| F12 | Points 목록 컬럼·필터 | ID / Visit·Track / 고도 / 필터 | `adapted` | `points#index`, `_point` | `e9111da` / `a2c21d5` |
 
 ### Visits · Track (핵심 도메인)
 
-| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 커밋(참고) |
-|----|------|------|------|------------------|-----------------|
-| F13 | Track별 Visit 추천 카드 | 선택 Points를 Track 단위로 분리 추천 | `adapted` | visit_card, area selection, create flow | `44fb32e` |
-| F14 | Select Area 좌표 0 버그 수정 | 선택 영역 Visit 생성 시 lat/lon 정상 | `pending` | area selection / visit create params | `2428b3e` |
-| F15 | Visit Card Place ID 표시 | 카드에 place id | `ported` | `visit_card.js`, timeline visit row | `a5898f1` |
-| F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `adapted` | `visits/create.rb`, `place_finder.rb` | `c9c6eb6` |
-| F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `ported` | `visits/create.rb` | `612afb1` |
-| F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `defer` | `visits/side_effects.rb`, Visit callbacks | `70e7bb0` `841bf68` |
-| F19 | Track에서 Visit Point 제외 | visit_id Point는 트랙 제외·경계 분리 | `ported` | `tracks/segmentation.rb`, BoundaryDetector 등 | `7eda195` |
+| ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
+|----|------|------|------|------------------|-------------|
+| F13 | Track별 Visit 추천 카드 | 선택 Points를 Track 단위로 분리 추천 | `adapted` | visit_card, area selection, create flow | `3c60668` / `44fb32e` |
+| F14 | Select Area 좌표 0 버그 수정 | 선택 영역 Visit 생성 시 lat/lon 정상 | `adapted` | area selection / visit create params | `2428b3e` / `08567bf` |
+| F15 | Visit Card Place ID 표시 | 카드에 place id | `adapted` | `visit_card.js`, timeline visit row | `b62179f` / `a5898f1` |
+| F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `adapted` | `visits/create.rb`, `place_finder.rb` | `66fc9bb` / `c9c6eb6` |
+| F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `ported` | `visits/create.rb` | `5b9eb1c` / `612afb1` |
+| F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `defer` | `visits/side_effects.rb`, Visit callbacks | `70e7bb0` `841bf68` / — |
+| F19 | Track에서 Visit Point 제외 | visit_id Point는 트랙 제외·경계 분리 | `ported` | `tracks/segmentation.rb`, BoundaryDetector 등 | `17c7422` / `7eda195` |
 
 ### 도메인 메모 (F16–F19)
 
-수동 Visit과 Track이 한 세트로 동작하도록 묶인 정책이다. sync 시 **의존 순서**를 지킨다: `F16 → F17 → F18 → F19`, UI 의존 `F13`은 Create 계약(F16/F17) 이후.
+수동 Visit과 Track이 한 세트로 동작하도록 묶인 정책이다.
 
-핵심 파일(1.9.2 fork 기준):
+- **1.14.0 사이클:** `F16 → F17 → F19` 이식. **F18은 defer** (velocity SideEffects — 폐기 아님; F19만으로 Track 분리 UX를 쓰며 필요성 재판단).
+- UI 의존 `F13`은 Create 계약(F16/F17) + F14 좌표 인프라 이후 이식 완료.
+
+핵심 파일(1.14 sync 기준):
 
 - `app/services/visits/create.rb`
-- `app/services/visits/side_effects.rb`
 - `app/services/visits/place_finder.rb`
-- `app/services/visits/bulk_destroy.rb` (F10과 연동)
 - `app/services/tracks/segmentation.rb`
+- `app/javascript/maps_maplibre/…` (Select Area · VisitCard)
 
 ---
 

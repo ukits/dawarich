@@ -17,13 +17,12 @@ upstream을 올릴 때마다 새 사이클 파일을 `docs/upstream-sync/cycles/
 |------|------|
 | Fork 기준 (upstream) | `7b877f9` — Dawarich **1.9.2** (2026-06-25) |
 | Fork 시작 | 2026-07-05 |
-| 현재 HEAD | `e9111da` (2026-07-19) |
-| Fork 이후 커밋 수 | 25개 |
+| 최근 sync 베이스 | upstream **1.14.0** (`8754f23`) — 브랜치 `sync/1.14.0` |
 | 작성자 | BYUN, SungUk |
 
 ### 한 줄 요약
 
-개발 환경을 맞춘 뒤, **지도·Timeline UI**를 손보고, **Places / Points 목록** 사용성을 높였습니다. 가장 큰 변화는 **수동 Visit 생성·삭제와 Track 계산이 일관되게 연동**되도록 방문(Visit) 도메인 전반을 재정비한 것입니다.
+1.9.2 fork에서 쌓은 UI·Visit/Track 정책을 **1.14.0** 위에 기능 단위로 재이식했다. Visit tombstone·detection v3는 유지하고, 수동 Create·Track 제외·Select Area UX를 맞췄다. velocity SideEffects(F18)는 보류다.
 
 ---
 
@@ -157,6 +156,37 @@ Visit/Track 연동과 관련된 핵심 코드:
 
 ---
 
+## 2026-08-31 — Upstream 1.14.0 동기화
+
+**사이클:** [docs/upstream-sync/cycles/2026-08-1.9.2-to-1.14.0.md](docs/upstream-sync/cycles/2026-08-1.9.2-to-1.14.0.md) · 브랜치 `sync/1.14.0` · 베이스 `8754f23`
+
+upstream 1.14.0 위에 fork 카탈로그(F01–F19)를 cherry-pick 없이 **기능 단위로 재이식**했다. Visit detection v3·tombstone은 유지했다.
+
+### 이식 요약
+
+| 영역 | ID | 결과 |
+|------|-----|------|
+| Dev env | F01 | **defer** — 1.14 기본 Ruby/devcontainer |
+| 지도·Timeline·Route | F02–F07 | adapted/ported (MapLibre·MVT·ISO 시각·일요일 달력 등) |
+| Places / Points / Tools | F08–F12, F14–F15 | adapted (active visits, 목록·필터, Select Area 좌표) |
+| Visit Create | F16–F17 | adapted/ported — 50m 동명 Place, 시간 범위 `visit_id` |
+| Track 제외 | F19 | ported — `visit_id` Point 제외·경계 분리 |
+| Track별 Visit 카드 | F13 | adapted — Select Area pending 카드 |
+| SideEffects velocity | F18 | **defer** (폐기 아님) — F19로 Track UX를 쓰며 필요성 재판단 |
+
+### 제품 관점
+
+- 수동 Visit 생성 → Place 이름 매칭 → Point에 `visit_id` → Track에서 Visit 구간 제외
+- Tools Select Area → Track별 Visit 추천 → 좌표·시간 prefill
+- velocity=0 / 삭제 시 복원(F18)은 아직 없음. soft-delete(tombstone)와 충돌을 피하기 위해 보류
+
+### 다음 단계
+
+- `sync/1.14.0`을 fork 메인라인(`master`)에 통합할지 결정
+- 사용 후 F18 필요성 재판단, F01은 로컬 환경이 필요할 때
+
+---
+
 ## 문서 갱신 방법
 
 새 커밋을 push한 뒤:
@@ -174,4 +204,4 @@ git show --stat <commit-hash>
 
 ---
 
-*마지막 갱신: 2026-07-19 (HEAD `e9111da`)*
+*마지막 갱신: 2026-08-31 (사이클 1.9.2→1.14.0 closed, `sync/1.14.0`)*

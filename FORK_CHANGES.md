@@ -85,7 +85,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 | F14 | Select Area 좌표 0 버그 수정 | 선택 영역 Visit 생성 시 lat/lon 정상 | `pending` | area selection / visit create params | `2428b3e` |
 | F15 | Visit Card Place ID 표시 | 카드에 place id | `ported` | `visit_card.js`, timeline visit row | `a5898f1` |
 | F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `adapted` | `visits/create.rb`, `place_finder.rb` | `c9c6eb6` |
-| F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `pending` | `visits/create.rb` | `5b9eb1c` |
+| F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `ported` | `visits/create.rb` | `612afb1` |
 | F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `pending` | `visits/side_effects.rb`, Visit callbacks | `70e7bb0` `841bf68` |
 | F19 | Track에서 Visit Point 제외 | visit_id Point는 트랙 제외·경계 분리 | `pending` | `tracks/segmentation.rb`, BoundaryDetector 등 | `17c7422` |
 

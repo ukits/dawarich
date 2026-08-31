@@ -1292,8 +1292,12 @@ pl:
       geojson: GeoJSON
       gpx: GPX
       address: Adres
+      point_id: ID
+      visit_id: ID wizyty
+      track_id: ID trasy
       speed: Prędkość
       coordinates: Współrzędne
+      altitude: Wys.
       recorded_at: Zarejestrowano
       points: Punkty
       search: Szukaj

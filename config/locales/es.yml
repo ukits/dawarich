@@ -1333,8 +1333,12 @@ es:
       geojson: GeoJSON
       gpx: GPX
       address: Dirección
+      point_id: ID
+      visit_id: ID de visita
+      track_id: ID de track
       speed: Velocidad
       coordinates: Coordenadas
+      altitude: Alt
       recorded_at: Registrado el
       points: Puntos
       search: Buscar

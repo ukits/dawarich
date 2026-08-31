@@ -1292,8 +1292,12 @@ ca:
       geojson: GeoJSON
       gpx: GPX
       address: Adreça
+      point_id: ID
+      visit_id: ID de visita
+      track_id: ID de track
       speed: Velocitat
       coordinates: Coordenades
+      altitude: Alt
       recorded_at: Registrat el
       points: Punts
       search: Cerca

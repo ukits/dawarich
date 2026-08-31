@@ -24,6 +24,32 @@ RSpec.describe '/points', type: :request do
         expect(response).to be_successful
       end
 
+      it 'shows point id, visit/track ids, and altitude in the list' do
+        visit = create(:visit, user:, area: nil)
+        track = create(:track, user:)
+        create(:point, user:, visit:, track:, altitude: 42, timestamp: 1.day.ago.to_i)
+
+        get points_url
+
+        expect(response.body).to include("(Alt: 42)")
+        expect(response.body).to match(/>\s*#{visit.id}\s*<\/td>\s*<td[^>]*>\s*#{track.id}\s*<\/td>/m)
+      end
+
+      it 'filters by visit_id and track_id' do
+        visit = create(:visit, user:, area: nil)
+        track = create(:track, user:)
+        matched = create(:point, user:, visit:, track:, latitude: 11.0, longitude: 22.0,
+                                 lonlat: 'POINT(22.0 11.0)', timestamp: 1.day.ago.to_i)
+        create(:point, user:, latitude: 99.0, longitude: 88.0, lonlat: 'POINT(88.0 99.0)',
+                       timestamp: 2.days.ago.to_i)
+
+        get points_url, params: { visit_id: visit.id, track_id: track.id }
+
+        expect(response).to be_successful
+        expect(response.body).to include('11.000000, 22.000000')
+        expect(response.body).not_to include('99.000000, 88.000000')
+      end
+
       it 'renders the page-entry summary in French without missing translations' do
         user.update!(settings: { 'locale' => 'fr' })
 
@@ -161,6 +187,13 @@ RSpec.describe '/points', type: :request do
              params: { point_ids: [point1.id, point2.id], start_at: '2021-01-01', end_at: '2021-01-02' }
 
       expect(response).to redirect_to(points_url(start_at: '2021-01-01', end_at: '2021-01-02'))
+    end
+
+    it 'preserves visit_id and track_id filters' do
+      delete bulk_destroy_points_url,
+             params: { point_ids: [point1.id], visit_id: '99', track_id: '42' }
+
+      expect(response).to redirect_to(points_url(visit_id: '99', track_id: '42'))
     end
 
     context 'when no points are selected' do

@@ -2057,8 +2057,12 @@ fr:
       geojson: GeoJSON
       gpx: GPX
       address: Adresse
+      point_id: ID
+      visit_id: ID visite
+      track_id: ID track
       speed: Vitesse
       coordinates: Coordonnées
+      altitude: Alt
       recorded_at: Enregistré le
       points: Points
       search: Recherche

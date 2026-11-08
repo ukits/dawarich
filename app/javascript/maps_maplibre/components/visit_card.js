@@ -31,6 +31,11 @@ export class VisitCard {
         ? translate("map_info.duration_hours_minutes", { hours, minutes })
         : translate("map_info.duration_minutes", { minutes })
 
+    const placeIdLabel =
+      visit.place?.id != null
+        ? `<div class="text-xs text-base-content/50 mt-1">${translate("visits.place_id", { id: visit.place.id })}</div>`
+        : ""
+
     // Border style based on status
     const borderClass = isSuggested ? "border-dashed" : ""
     const bgClass = isDeclined ? "bg-base-200 opacity-60" : "bg-base-100"
@@ -83,6 +88,7 @@ export class VisitCard {
               </svg>
               <span class="truncate">${durationStr}</span>
             </div>
+            ${placeIdLabel}
           </div>
 
           <!-- Action buttons for suggested visits -->

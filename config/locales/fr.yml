@@ -2053,6 +2053,7 @@ fr:
         name: Nom
         save: Enregistrer
         attached_place: Lieu associé
+        place_id: Lieu #%{id}
         select_visit_for_merge: Sélectionnez une visite pour fusionner
         all_day: Toute la journée
         pts: pts
@@ -5494,6 +5495,7 @@ fr:
       update: Mise à jour de la visite
       recent: Visites récentes
       name: Nom de la visite
+      place_id: Lieu #%{id}
       no_data_loaded: Aucune donnée de visite chargée
       none_found: Aucune visite trouvée
       none_found_for: Aucune visite trouvée pour « %{query} »
@@ -5546,6 +5548,7 @@ fr:
         confirmed: Visite confirmée
         declined: Visite refusée
         suggested: Visite marquée comme suggérée
+      track_id: 'Trajet n°%{id}'
       unnamed: Visite non nommée
     sharing:
       expires_in: Expiration dans %{time}

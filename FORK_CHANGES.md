@@ -86,7 +86,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 |----|------|------|------|------------------|-------------|
 | F13 | Track별 Visit 추천 카드 | 선택 Points를 Track 단위로 분리 추천 | `pending` | area selection + 1.21 visit draft | `3c60668` / `44fb32e` |
 | F14 | Select Area 좌표 0 버그 수정 | 선택 영역 Visit 생성 시 lat/lon 정상 | `superseded` @1.21.0 | `pointsToVisitDraft` | `2428b3e` / — (검증) |
-| F15 | Visit Card Place ID 표시 | 카드에 place id | `pending` | `visit_card.js`, timeline visit row | `b62179f` / `a5898f1` |
+| F15 | Visit Card Place ID 표시 | 카드에 place id | `adapted` | `visit_card.js`, timeline visit row | `b62179f` / `a5898f1` → 1.22: SHA_F15 |
 | F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `pending` | `visits/create.rb`, `place_finder.rb` | `66fc9bb` / `c9c6eb6` |
 | F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `pending` | `visits/create.rb` | `5b9eb1c` / `612afb1` |
 | F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `pending` | Visit callbacks / RebuildDay (팁) | `70e7bb0`… / `9ffd211` |

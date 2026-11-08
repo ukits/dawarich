@@ -1362,6 +1362,7 @@ es:
         name: Nombre
         save: Guardar
         attached_place: Lugar vinculado
+        place_id: Lugar #%{id}
         select_visit_for_merge: Selecciona visita para fusionar
         all_day: Todo el día
         pts: pts
@@ -4264,6 +4265,7 @@ es:
       update: Actualizar visita
       recent: Visitas recientes
       name: Nombre de la visita
+      place_id: Lugar #%{id}
       no_data_loaded: No se ha cargado ninguna información de visitas
       none_found: No se encontraron visitas
       none_found_for: No se encontraron visitas para "%{query}"
@@ -4314,6 +4316,7 @@ es:
         confirmed: "Visita confirmada correctamente"
         declined: "Visita rechazada correctamente"
         suggested: "Visita marcada como sugerida"
+      track_id: 'Ruta n.º %{id}'
       unnamed: Visita sin nombre
     sharing:
       expires_in: Vence en %{time}

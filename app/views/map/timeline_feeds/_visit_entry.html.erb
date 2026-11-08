@@ -65,6 +65,9 @@
         <span class="timeline-local-time" title="<%= entry[:local_timezone] %>"><%= local_time %></span>
       <% end %>
       <span class="visit-row__points"><%= entry[:point_count] %> <%= t('.pts') %></span>
+      <% if entry[:place_id].present? %>
+        <span class="visit-row__place-id"><%= t('.place_id', id: entry[:place_id]) %></span>
+      <% end %>
       <% Array(entry[:tags]).each do |t| %>
         <span class="visit-tag">
           <span class="visit-tag__dot" style="background-color: <%= t[:color] %>;"></span>#<%= t[:name] %>

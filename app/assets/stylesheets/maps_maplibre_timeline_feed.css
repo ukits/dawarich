@@ -761,7 +761,8 @@
 
 /* How many fixes back this visit — a confidence signal, not a headline.
    Ranked below the address by size, not by fading it out of readability. */
-.visit-row__points {
+.visit-row__points,
+.visit-row__place-id {
   font-size: 0.625rem; /* 10px */
   font-variant-numeric: tabular-nums;
   color: var(--tl-text-2);

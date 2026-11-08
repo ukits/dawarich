@@ -20,9 +20,19 @@ const withoutImports = transformersSource.replace(
   /^import[\s\S]*?from "[^"]+"\n/gm,
   "",
 )
-const combinedSource = `${geometrySource}\n${withoutImports}`
+const i18nStubs = `
+const formatDate = (value, { timeZone } = {}) => new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(value)
+const formatTime = (value, { timeZone } = {}) => new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(value)
+const formatDateTime = (value, options) => formatDate(value, options) + ", " + formatTime(value, options)
+`
+const combinedSource = `${i18nStubs}\n${geometrySource}\n${withoutImports}`
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(combinedSource).toString("base64")}`
-const { pointsToGeoJSON, simplifyPointsForRendering } = await import(moduleUrl)
+const {
+  pointsToGeoJSON,
+  simplifyPointsForRendering,
+  parseTimestamp,
+  formatDateTimeRange,
+} = await import(moduleUrl)
 
 function point(id, latitude, longitude, timestamp) {
   return { id, latitude, longitude, timestamp }
@@ -79,4 +89,72 @@ test("raw point rendering keeps dense points", () => {
     pointsToGeoJSON(points).features.map((feature) => feature.properties.id),
     [1, 2],
   )
+})
+
+test("features carry the point's track and visit, or null when it has none", () => {
+  const [linked, loose] = pointsToGeoJSON([
+    { ...point(1, 52.52, 13.405, 1_700_000_000), track_id: 7, visit_id: 9 },
+    point(2, 52.53, 13.405, 1_700_000_010),
+  ]).features
+
+  assert.equal(linked.properties.track_id, 7)
+  assert.equal(linked.properties.visit_id, 9)
+  assert.equal(loose.properties.track_id, null)
+  assert.equal(loose.properties.visit_id, null)
+})
+
+test("parseTimestamp accepts unix seconds and rejects invalid values", () => {
+  assert.equal(
+    parseTimestamp(1_700_000_000)?.toISOString(),
+    "2023-11-14T22:13:20.000Z",
+  )
+  assert.equal(parseTimestamp(null), null)
+  assert.equal(parseTimestamp(""), null)
+  assert.equal(parseTimestamp("not a date"), null)
+})
+
+test("formatDateTimeRange shortens the end to its time on the same day", () => {
+  assert.equal(
+    formatDateTimeRange(
+      new Date("2026-07-05T09:00:00Z"),
+      new Date("2026-07-05T18:30:00Z"),
+      "UTC",
+    ),
+    "2026-07-05, 09:00 - 18:30",
+  )
+})
+
+test("formatDateTimeRange repeats the end date when the range crosses days", () => {
+  assert.equal(
+    formatDateTimeRange(
+      new Date("2026-07-05T09:00:00Z"),
+      new Date("2026-07-06T18:30:00Z"),
+      "UTC",
+    ),
+    "2026-07-05, 09:00 - 2026-07-06, 18:30",
+  )
+})
+
+test("formatDateTimeRange collapses an instant to one date and time", () => {
+  const instant = new Date("2026-07-05T09:00:00Z")
+
+  assert.equal(
+    formatDateTimeRange(instant, instant, "UTC"),
+    "2026-07-05, 09:00",
+  )
+})
+
+test("formatDateTimeRange reads the days in the given timezone", () => {
+  assert.equal(
+    formatDateTimeRange(
+      new Date("2026-07-05T20:00:00Z"),
+      new Date("2026-07-05T22:00:00Z"),
+      "Asia/Seoul",
+    ),
+    "2026-07-06, 05:00 - 07:00",
+  )
+})
+
+test("formatDateTimeRange is empty without both ends", () => {
+  assert.equal(formatDateTimeRange(null, new Date(), "UTC"), "")
 })

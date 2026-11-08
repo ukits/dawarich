@@ -2,7 +2,7 @@
 
 class Api::PointSerializer
   EXCLUDED_ATTRIBUTES = %w[
-    created_at updated_at visit_id import_id user_id raw_data
+    created_at updated_at import_id user_id raw_data
     country_id source_id lock_version
   ].freeze
 

@@ -45,6 +45,15 @@ RSpec.describe Api::PointSerializer do
       expect(serializer['longitude']).to eq(point.lon.to_s)
     end
 
+    it 'exposes the visit a point belongs to, or nil when it has none' do
+      expect(serializer).to include('visit_id' => nil)
+
+      visit = create(:visit, user: point.user)
+      point.update!(visit: visit)
+
+      expect(described_class.new(point).call).to include('visit_id' => visit.id)
+    end
+
     it 'exposes optimistic-lock state as an opaque revision' do
       expect(serializer['revision']).to eq(point.lock_version)
       expect(serializer).not_to have_key('lock_version')

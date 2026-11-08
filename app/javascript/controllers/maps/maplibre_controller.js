@@ -286,6 +286,18 @@ export default class extends Controller {
       this.boundHandleVisitCreated,
     )
 
+    // A visit made from a pending card in Select Area should show up in that
+    // area's visit list too.
+    this.boundRefreshSelectedVisitsInArea =
+      this.areaSelectionManager.refreshSelectedVisits.bind(
+        this.areaSelectionManager,
+      )
+    this.cleanup.addEventListener(
+      document,
+      "visit:created",
+      this.boundRefreshSelectedVisitsInArea,
+    )
+
     this.boundHandleVisitUpdated = this.visitsManager.handleVisitUpdated.bind(
       this.visitsManager,
     )
@@ -1261,6 +1273,9 @@ export default class extends Controller {
   }
   updateTrackColor(event) {
     return this.settingsController.updateTrackColor(event)
+  }
+  updatePointRadius(event) {
+    return this.settingsController.updatePointRadius(event)
   }
   toggleSpeedColoredRoutes(event) {
     return this.settingsController.toggleSpeedColoredRoutes(event)

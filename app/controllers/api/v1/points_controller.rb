@@ -221,7 +221,9 @@ class Api::V1::PointsController < ApiController
 
   def points_index_etag(start_at, end_at, order, max_timestamp, count, max_updated)
     [
-      'points/index', current_api_user.id, start_at, end_at, order, slim_points?,
+      # visit_id is part of the JSON. Keep it in the etag so cached bodies
+      # from before that field existed are not reused.
+      'points/index', 'visit_id', current_api_user.id, start_at, end_at, order, slim_points?,
       params[:page], params[:per_page] || 100, params[:import_id],
       params[:anomalies_only], params[:include_anomalies],
       params[:min_longitude], params[:max_longitude],

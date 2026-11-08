@@ -1,9 +1,13 @@
 import { translate } from "i18n"
+import { PendingVisitCard } from "maps_maplibre/components/pending_visit_card"
 import { Toast } from "maps_maplibre/components/toast"
 import { VisitCard } from "maps_maplibre/components/visit_card"
 import { SelectedPointsLayer } from "maps_maplibre/layers/selected_points_layer"
 import { SelectionLayer } from "maps_maplibre/layers/selection_layer"
-import { pointsToGeoJSON } from "maps_maplibre/utils/geojson_transformers"
+import {
+  formatDateTimeRange,
+  pointsToGeoJSON,
+} from "maps_maplibre/utils/geojson_transformers"
 import { anomaliesVisible } from "maps_maplibre/utils/layer_dependencies"
 import { SettingsManager } from "maps_maplibre/utils/settings_manager"
 
@@ -124,22 +128,18 @@ export class AreaSelectionManager {
         this.selectedPointsLayer.show()
       }
 
-      // Display visits in side panel and on map
-      if (visits.length > 0) {
-        this.displaySelectedVisits(visits)
-      }
+      // Display visits, plus pending Create Visit cards per selected stay
+      this.renderVisitsInArea(visits)
 
       // Update UI - show action buttons
       if (this.controller.hasSelectionActionsTarget) {
         this.controller.selectionActionsTarget.classList.remove("hidden")
       }
 
-      // Update delete button text with count
+      // Update delete button text with count and time range
       if (this.controller.hasDeleteButtonTextTarget) {
-        this.controller.deleteButtonTextTarget.textContent = translate(
-          "selection.delete_points",
-          { count: points.length },
-        )
+        this.controller.deleteButtonTextTarget.textContent =
+          this.formatDeletePointsButtonText(points.length)
       }
 
       // Track anomaly point IDs separately so the user can opt to delete
@@ -207,14 +207,27 @@ export class AreaSelectionManager {
   }
 
   /**
-   * Display selected visits in side panel
+   * Render the side panel for the selected area: one pending Create Visit
+   * card per stay found in the selected points, then the existing visits.
    */
-  displaySelectedVisits(visits) {
+  renderVisitsInArea(visits = []) {
     if (!this.controller.hasSelectedVisitsContainerTarget) return
 
     this.selectedVisits = visits
     this.selectedVisitIds = new Set()
 
+    const trackGroups = this.selectedPointsLayer?.getTrackGroups() ?? []
+
+    if (trackGroups.length === 0 && visits.length === 0) {
+      this.controller.selectedVisitsContainerTarget.classList.add("hidden")
+      this.controller.selectedVisitsContainerTarget.innerHTML = ""
+      return
+    }
+
+    const timezone = this.controller.timezoneValue || "UTC"
+    const pendingCardsHTML = trackGroups
+      .map((group) => PendingVisitCard.create(group, { timezone }))
+      .join("")
     const cardsHTML = visits
       .map((visit) => VisitCard.create(visit, { isSelected: false }))
       .join("")
@@ -228,12 +241,14 @@ export class AreaSelectionManager {
           </svg>
           <h3 class="text-sm font-bold">${translate("selection.visits_in_area", { count: visits.length })}</h3>
         </div>
+        ${pendingCardsHTML}
         ${cardsHTML}
       </div>
     `
 
     this.controller.selectedVisitsContainerTarget.classList.remove("hidden")
     this.attachVisitCardListeners()
+    this.attachPendingVisitListeners()
 
     requestAnimationFrame(() => {
       this.updateBulkActions()
@@ -275,6 +290,62 @@ export class AreaSelectionManager {
           await this.deleteVisit(visitId)
         })
       })
+  }
+
+  attachPendingVisitListeners() {
+    this.controller.element
+      .querySelectorAll("[data-visit-create-from-points]")
+      .forEach((btn) => {
+        btn.addEventListener("click", () => {
+          this.createVisitFromSelectedPoints(btn.dataset.visitCreateFromPoints)
+        })
+      })
+  }
+
+  /**
+   * Open the Create Visit form prefilled from one stay in the selection
+   * @param {string} groupKey - groupKey from SelectedPointsLayer#getTrackGroups
+   */
+  createVisitFromSelectedPoints(groupKey) {
+    const group = (this.selectedPointsLayer?.getTrackGroups() ?? []).find(
+      (entry) => entry.groupKey === groupKey,
+    )
+
+    if (!group) {
+      Toast.error(translate("messages.no_points_selected"))
+      return
+    }
+
+    const { start, end } = PendingVisitCard.displayRange(group.timeRange)
+    const draft = {
+      lat: group.centroid.lat,
+      lng: group.centroid.lng,
+      startedAt: start.toISOString(),
+      endedAt: end.toISOString(),
+    }
+
+    return this.controller.visitsManager.openVisitCreationModal(
+      draft.lat,
+      draft.lng,
+      draft,
+    )
+  }
+
+  /**
+   * Build the Delete button label: count plus the time range of the selection
+   */
+  formatDeletePointsButtonText(count) {
+    const label = translate("selection.delete_points", { count })
+    const timeRange = this.selectedPointsLayer?.getTimeRange()
+    if (!timeRange) return label
+
+    const rangeLabel = formatDateTimeRange(
+      timeRange.start,
+      timeRange.end,
+      this.controller.timezoneValue || "UTC",
+    )
+
+    return rangeLabel ? `${label} (${rangeLabel})` : label
   }
 
   /**
@@ -526,7 +597,7 @@ export class AreaSelectionManager {
    * Refresh selected visits after changes
    */
   async refreshSelectedVisits() {
-    const bounds = this.selectionLayer.currentRect
+    const bounds = this.selectionLayer?.currentRect
     if (!bounds) return
 
     try {
@@ -542,7 +613,7 @@ export class AreaSelectionManager {
           bounds.start.lng > bounds.end.lng ? bounds.start.lng : bounds.end.lng,
       })
 
-      this.displaySelectedVisits(visits)
+      this.renderVisitsInArea(visits)
     } catch (error) {
       console.error("[Maps V2] Failed to refresh visits:", error)
     }

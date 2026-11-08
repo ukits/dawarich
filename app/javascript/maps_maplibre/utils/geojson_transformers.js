@@ -1,4 +1,4 @@
-import { formatDateTime, formatTime } from "i18n"
+import { formatDate, formatDateTime, formatTime } from "i18n"
 import { calculateDistance } from "./geometry"
 
 export const SIMPLIFIED_POINTS_DISTANCE_METERS = 50
@@ -53,6 +53,8 @@ export function pointsToGeoJSON(points, options = {}) {
       properties: {
         id: point.id,
         timestamp: point.timestamp,
+        track_id: point.track_id ?? null,
+        visit_id: point.visit_id ?? null,
         altitude: point.altitude,
         battery: point.battery,
         accuracy: point.accuracy,
@@ -65,6 +67,51 @@ export function pointsToGeoJSON(points, options = {}) {
       },
     })),
   }
+}
+
+/**
+ * Parse a point timestamp into a Date
+ * @param {number|string} timestamp - Unix timestamp (seconds or ms) or ISO 8601 string
+ * @returns {Date|null} Parsed date, or null when invalid
+ */
+export function parseTimestamp(timestamp) {
+  if (timestamp == null || timestamp === "") return null
+
+  let date
+  if (typeof timestamp === "string") {
+    date = new Date(timestamp)
+  } else if (timestamp < 10000000000) {
+    date = new Date(timestamp * 1000)
+  } else {
+    date = new Date(timestamp)
+  }
+
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+/**
+ * Format a date/time range for compact UI labels, in the user's date and
+ * time preferences. The end repeats its date only when it is another day.
+ * @param {Date} start
+ * @param {Date} end
+ * @param {string} timezone - IANA timezone string (e.g., 'Europe/Berlin')
+ * @returns {string} Formatted range, or "" when either end is missing
+ */
+export function formatDateTimeRange(start, end, timezone = "UTC") {
+  if (!start || !end) return ""
+
+  const options = { timeZone: timezone }
+  const startDate = formatDate(start, options)
+  const endDate = formatDate(end, options)
+  const startTime = formatTime(start, options)
+  const endTime = formatTime(end, options)
+
+  if (startDate !== endDate) {
+    return `${startDate}, ${startTime} - ${endDate}, ${endTime}`
+  }
+  if (startTime === endTime) return `${startDate}, ${startTime}`
+
+  return `${startDate}, ${startTime} - ${endTime}`
 }
 
 /**

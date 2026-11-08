@@ -46,7 +46,7 @@ function buildManager({ allTime }) {
     currentRect: { start: { lat: 1, lng: 1 }, end: { lat: 2, lng: 2 } },
   }
   manager.selectedPointsLayer = { updateSelectedPoints() {}, show() {} }
-  manager.displaySelectedVisits = () => {}
+  manager.renderVisitsInArea = () => {}
   return { manager, checkbox, visitRequests }
 }
 

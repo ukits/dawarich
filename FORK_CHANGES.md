@@ -58,12 +58,12 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 
 | ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
 |----|------|------|------|------------------|-------------|
-| F02 | Point 크기 설정 | 지도 포인트 반경을 설정으로 조절 | `adapted` | `maps_maplibre` MVT / settings | `07b4fbd` / `849bd45` → 1.22: SHA_F02 |
-| F03 | Timeline 1열 레이아웃 | ≥1024px에서도 Timeline 1열 | `adapted` | timeline CSS / panel | `7fe3789` / `358c003` → 1.22: SHA_F03F04 |
-| F04 | Timeline 달력 padding | 달력 여백 | `adapted` | timeline calendar styles | `b2fedf0` / (F03 묶음) → 1.22: SHA_F03F04 |
+| F02 | Point 크기 설정 | 지도 포인트 반경을 설정으로 조절 | `adapted` | `maps_maplibre` MVT / settings | `07b4fbd` / `849bd45` → 1.22: 0457290c9 |
+| F03 | Timeline 1열 레이아웃 | ≥1024px에서도 Timeline 1열 | `adapted` | timeline CSS / panel | `7fe3789` / `358c003` → 1.22: 0d8e7887b |
+| F04 | Timeline 달력 padding | 달력 여백 | `adapted` | timeline calendar styles | `b2fedf0` / (F03 묶음) → 1.22: 0d8e7887b |
 | F05 | 시간 표시 `YYYY-MM-DD hh:mm:ss` | 일시 포맷 통일 | `superseded` @1.18.0 | Settings date/time prefs | `38443a4`… / — (검증) |
 | F06 | 달력 일요일 시작 | week start = Sunday | `superseded` @1.18.0 | Settings `first_day_of_week` | `050850e` / — (검증) |
-| F07 | Route 구간 시작·끝 시간 | 구간 열에 시각 표시 | `ported` | tracks/segments views·helpers | `108ac89` / `639724a` → 1.22: SHA_F07 |
+| F07 | Route 구간 시작·끝 시간 | 구간 열에 시각 표시 | `ported` | tracks/segments views·helpers | `108ac89` / `639724a` → 1.22: 6b1c59f32 |
 
 ### Places
 
@@ -78,7 +78,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 | ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
 |----|------|------|------|------------------|-------------|
 | F11 | Tools Delete에 선택 기간 표시 | 삭제 전 구간 확인 | `pending` | selected_points_layer, tools UI | `56adc8e` / `6b1e381` |
-| F12 | Points 목록 컬럼·필터 | ID / Visit·Track / 고도 / 필터 | `adapted` | `points#index`, `_point` | `e9111da` / `a2c21d5` → 1.22: SHA_F12 |
+| F12 | Points 목록 컬럼·필터 | ID / Visit·Track / 고도 / 필터 | `adapted` | `points#index`, `_point` | `e9111da` / `a2c21d5` → 1.22: c94befc3e |
 
 ### Visits · Track (핵심 도메인)
 
@@ -86,7 +86,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 |----|------|------|------|------------------|-------------|
 | F13 | Track별 Visit 추천 카드 | 선택 Points를 Track 단위로 분리 추천 | `pending` | area selection + 1.21 visit draft | `3c60668` / `44fb32e` |
 | F14 | Select Area 좌표 0 버그 수정 | 선택 영역 Visit 생성 시 lat/lon 정상 | `superseded` @1.21.0 | `pointsToVisitDraft` | `2428b3e` / — (검증) |
-| F15 | Visit Card Place ID 표시 | 카드에 place id | `adapted` | `visit_card.js`, timeline visit row | `b62179f` / `a5898f1` → 1.22: SHA_F15 |
+| F15 | Visit Card Place ID 표시 | 카드에 place id | `adapted` | `visit_card.js`, timeline visit row | `b62179f` / `a5898f1` → 1.22: 2e015dfd7 |
 | F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `pending` | `visits/create.rb`, `place_finder.rb` | `66fc9bb` / `c9c6eb6` |
 | F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `pending` | `visits/create.rb` | `5b9eb1c` / `612afb1` |
 | F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `pending` | Visit callbacks / RebuildDay (팁) | `70e7bb0`… / `9ffd211` |

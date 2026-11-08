@@ -77,19 +77,19 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 
 | ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
 |----|------|------|------|------------------|-------------|
-| F11 | Tools Delete에 선택 기간 표시 | 삭제 전 구간 확인 | `pending` | selected_points_layer, tools UI | `56adc8e` / `6b1e381` |
+| F11 | Tools Delete에 선택 기간 표시 | 삭제 전 구간 확인 | `adapted` | selected_points_layer, tools UI | `56adc8e` / `6b1e381` → 1.22: 6f4fd06da |
 | F12 | Points 목록 컬럼·필터 | ID / Visit·Track / 고도 / 필터 | `adapted` | `points#index`, `_point` | `e9111da` / `a2c21d5` → 1.22: c94befc3e |
 
 ### Visits · Track (핵심 도메인)
 
 | ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
 |----|------|------|------|------------------|-------------|
-| F13 | Track별 Visit 추천 카드 | 선택 Points를 Track 단위로 분리 추천 | `pending` | area selection + 1.21 visit draft | `3c60668` / `44fb32e` |
+| F13 | Track별 Visit 추천 카드 | 선택 Points를 Track 단위로 분리 추천 | `adapted` | area selection + 1.21 visit draft | `3c60668` / `44fb32e` → 1.22: 6f4fd06da |
 | F14 | Select Area 좌표 0 버그 수정 | 선택 영역 Visit 생성 시 lat/lon 정상 | `superseded` @1.21.0 | `pointsToVisitDraft` | `2428b3e` / — (검증) |
 | F15 | Visit Card Place ID 표시 | 카드에 place id | `adapted` | `visit_card.js`, timeline visit row | `b62179f` / `a5898f1` → 1.22: 2e015dfd7 |
-| F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `pending` | `visits/create.rb`, `place_finder.rb` | `66fc9bb` / `c9c6eb6` |
-| F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `pending` | `visits/create.rb` | `5b9eb1c` / `612afb1` |
-| F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `pending` | Visit callbacks / RebuildDay (팁) | `70e7bb0`… / `9ffd211` |
+| F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `adapted` | `visits/create.rb` (`place_finder.rb`는 upstream 동일 계약) | `66fc9bb` / `c9c6eb6` → 1.22: eb3971e94 |
+| F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `ported` | `visits/create.rb` | `5b9eb1c` / `612afb1` → 1.22: eb3971e94 |
+| F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `dropped` @1.22.0 (velocity 미이식, 코드 없음; Track rebuild는 F19 잔여 갭 재오픈 시만) | Visit callbacks / RebuildDay (팁) | `70e7bb0`… / `9ffd211` |
 | F19 | Track에서 Visit Point 제외 | visit_id Point는 트랙 제외·경계 분리 | `superseded` @1.22.0 | `Tracks::StationaryStops` | `17c7422` / — (검증; 잔여 갭 defer) |
 
 ### 도메인 메모 (F16–F19)
@@ -98,7 +98,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 
 - **1.14.0 사이클:** `F16 → F17 → F19` 이식. **F18은 defer** (velocity SideEffects — 폐기 아님; F19만으로 Track 분리 UX를 쓰며 필요성 재판단).
 - UI 의존 `F13`은 Create 계약(F16/F17) + F14 좌표 인프라 이후 이식 완료.
-- **1.22.0 사이클:** `F14`→1.21, `F19`→1.22로 **superseded** (코드 이식 없음, **검증 필수**). `F16`/`F17`/`F18`/`F13`은 보드 승인 후 이식.
+- **1.22.0 사이클:** `F14`→1.21, `F19`→1.22로 **superseded** (코드 이식 없음, **검증 필수**). `F16`(adapted)/`F17`(ported)/`F13`(adapted)은 이식 완료, `F18`은 velocity **dropped**.
 
 핵심 파일(1.14 sync 기준):
 

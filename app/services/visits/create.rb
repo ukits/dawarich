@@ -31,7 +31,7 @@ module Visits
     rescue ActiveRecord::RecordNotUnique
       @duplicate = true
       @visit = existing_visit
-      @visit.update!(deleted_at: nil, status: :confirmed) if @visit && revivable?(@visit)
+      revive(@visit) if @visit && revivable?(@visit)
       @errors = 'Failed to create visit: duplicate visit' unless @visit
 
       @visit || false
@@ -153,15 +153,22 @@ module Visits
       @supplied_place = user.places.find_by(id: params[:place_id]) if params[:place_id].present?
     end
 
+    # Reuse only a same-name Place within the radius PlaceFinder uses for
+    # detected visits. A nameless or differently named nearby Place is a
+    # different place, so a new one is created instead (F16).
     def find_existing_place
-      Place.joins('JOIN visits ON places.id = visits.place_id')
-           .where(user: user)
-           .where(visits: { user: user })
-           .where(
-             'ST_DWithin(places.lonlat::geography, ' \
-             'ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)',
-             longitude, latitude, 100
-           ).first
+      normalized_name = params[:name].to_s.strip.downcase
+      return nil if normalized_name.blank?
+
+      user.places.not_archived
+          .where('LOWER(BTRIM(places.name)) = ?', normalized_name)
+          .where(
+            'ST_DWithin(places.lonlat::geography, ' \
+            'ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)',
+            longitude, latitude, Visits::PlaceFinder::SIMILARITY_RADIUS
+          )
+          .order(:id)
+          .first
     end
 
     def create_new_place
@@ -232,7 +239,27 @@ module Visits
         status: params[:status].presence || :confirmed
       )
 
+      assign_points_to_visit(@visit)
+
       @visit
+    end
+
+    # Re-creating a visit over its tombstone (or an old decline) is an explicit
+    # undo: claim the time range's points again along with the revive.
+    def revive(visit)
+      Visit.transaction do
+        assign_points_to_visit(visit)
+        visit.update!(deleted_at: nil, status: :confirmed)
+      end
+    end
+
+    # A manual visit owns every point in its time range, like a detected one,
+    # so tracks, the points list and the map can group by visit (F17). It takes
+    # over points a machine-suggested visit holds; redetection rewrites those.
+    def assign_points_to_visit(visit)
+      user.points
+          .where(timestamp: visit.started_at.to_i..visit.ended_at.to_i)
+          .update_all(visit_id: visit.id)
     end
   end
 end

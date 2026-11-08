@@ -128,7 +128,7 @@ RSpec.describe 'Api::V1::Visits', type: :request do
     end
 
     context 'with valid parameters' do
-      let(:existing_place) { create(:place, user: user, latitude: 52.52, longitude: 13.405) }
+      let(:existing_place) { create(:place, user: user, name: 'Test Visit', latitude: 52.52, longitude: 13.405) }
 
       it 'creates a new visit' do
         expect do
@@ -215,7 +215,7 @@ RSpec.describe 'Api::V1::Visits', type: :request do
         expect(JSON.parse(response.body)['place']['address']).to be_nil
       end
 
-      it 'reuses existing place when coordinates are exactly the same' do
+      it 'reuses existing place when name and coordinates match' do
         create(:visit, user: user, place: existing_place)
 
         expect do

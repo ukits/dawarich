@@ -75,22 +75,58 @@ RSpec.describe Visits::Create do
         expect(place.longitude).to eq(13.405)
         expect(place.source).to eq('manual')
       end
+
+      it 'assigns visit_id to points inside the visit time range only' do
+        inside_point = create(:point, user: user, timestamp: Time.zone.parse('2023-12-01T11:00:00Z').to_i)
+        outside_point = create(:point, user: user, timestamp: Time.zone.parse('2023-12-01T13:00:00Z').to_i)
+        other_user_point = create(:point, user: create(:user), timestamp: Time.zone.parse('2023-12-01T11:00:00Z').to_i)
+
+        service.call
+
+        expect(inside_point.reload.visit_id).to eq(service.visit.id)
+        expect(outside_point.reload.visit_id).to be_nil
+        expect(other_user_point.reload.visit_id).to be_nil
+      end
+
+      it 'assigns visit_id again to the time range when a tombstoned visit is revived' do
+        point = create(:point, user: user, timestamp: Time.zone.parse('2023-12-01T11:00:00Z').to_i)
+        first = described_class.new(user, valid_params)
+        first.call
+        first.visit.soft_delete!
+        point.update_columns(visit_id: nil)
+
+        expect(service.call).to be_truthy
+
+        expect(service.visit.id).to eq(first.visit.id)
+        expect(point.reload.visit_id).to eq(first.visit.id)
+      end
     end
 
     context 'when manually creating another visit near an existing Place' do
-      let!(:nearby) { create(:place, user: user, name: 'Existing cafe', latitude: 52.5203, longitude: 13.405) }
-      let!(:previous) do
-        create(:visit, user: user, place: nearby, started_at: '2023-11-30T10:00:00Z',
-                       ended_at: '2023-11-30T12:00:00Z', status: :confirmed)
-      end
+      let!(:nearby) { create(:place, user: user, name: 'Test Visit', latitude: 52.5203, longitude: 13.405) }
 
-      it 'creates a second visit at the nearby Place and preserves the Visit Name' do
-        service = described_class.new(user, valid_params)
+      it 'reuses the same-name nearby Place for a second visit and keeps the Place name' do
+        service = described_class.new(user, valid_params.merge(name: ' test visit '))
 
         expect { service.call }.to change { user.visits.count }.by(1).and change { Place.count }.by(0)
-        expect(service.visit).to have_attributes(place: nearby, name: 'Test Visit',
-                                                 started_at: Time.zone.parse(valid_params[:started_at]))
-        expect(nearby.reload.name).to eq('Existing cafe')
+        expect(service.visit).to have_attributes(place: nearby, started_at: Time.zone.parse(valid_params[:started_at]))
+        expect(nearby.reload.name).to eq('Test Visit')
+      end
+
+      it 'creates a new Place when the nearby Place has a different name' do
+        service = described_class.new(user, valid_params.merge(name: 'Other cafe'))
+
+        expect { service.call }.to change { Place.count }.by(1)
+        expect(service.visit.place).not_to eq(nearby)
+        expect(service.visit.name).to eq('Other cafe')
+      end
+
+      it 'ignores an archived same-name Place' do
+        nearby.update!(archived_at: Time.current)
+        service = described_class.new(user, valid_params)
+
+        expect { service.call }.to change { Place.count }.by(1)
+        expect(service.visit.place).not_to eq(nearby)
       end
 
       it 'uses an explicitly chosen different Place instead of the nearby Place' do
@@ -139,7 +175,6 @@ RSpec.describe Visits::Create do
       end
 
       it 'clears an echoed nearby Place name when no explicit Place is supplied' do
-        create(:visit, user: user, place: place)
         service = described_class.new(user, valid_params.merge(name: place.name))
         service.call
 
@@ -151,15 +186,15 @@ RSpec.describe Visits::Create do
       let!(:existing_place) do
         create(:place,
                user: user,
+               name: 'Test Visit',
                latitude: 52.52,
                longitude: 13.405,
                lonlat: 'POINT(13.405 52.52)')
       end
-      let!(:existing_visit) { create(:visit, user: user, place: existing_place) }
 
       subject(:service) { described_class.new(user, valid_params) }
 
-      it 'reuses the existing place' do
+      it 'reuses the existing place with the same name within the radius' do
         expect { service.call }.not_to(change { Place.count })
         expect(service.visit.place).to eq(existing_place)
       end
@@ -222,22 +257,22 @@ RSpec.describe Visits::Create do
       end
     end
 
-    context 'distance threshold is exactly 100 meters (no degree-vs-meter drift)' do
+    context 'distance threshold is exactly 50 meters (no degree-vs-meter drift)' do
       let(:base_lat) { 52.52 }
       let(:base_lon) { 13.405 }
 
       let!(:existing_place) do
         create(:place,
                user: user,
+               name: 'Test Visit',
                latitude: base_lat,
                longitude: base_lon,
                lonlat: "POINT(#{base_lon} #{base_lat})")
       end
-      let!(:existing_visit) { create(:visit, user: user, place: existing_place) }
 
       let(:lon_offset_120m) { 0.0018 }
 
-      it 'does NOT match a place 120m away (would have matched under the old 0.001° threshold)' do
+      it 'does NOT match a place 120m away' do
         params_120m_away = valid_params.merge(
           latitude: base_lat,
           longitude: base_lon + lon_offset_120m
@@ -248,7 +283,7 @@ RSpec.describe Visits::Create do
         expect(service.visit.place).not_to eq(existing_place)
       end
 
-      it 'matches a place 50m away' do
+      it 'matches a place 50m away with the same name' do
         params_50m_away = valid_params.merge(
           latitude: base_lat,
           longitude: base_lon + 0.0006
@@ -320,8 +355,8 @@ RSpec.describe Visits::Create do
       end
 
       it 'does not enqueue when an existing place is reused' do
-        existing = create(:place, user: user, latitude: 52.52, longitude: 13.405, lonlat: 'POINT(13.405 52.52)')
-        create(:visit, user: user, place: existing)
+        create(:place, user: user, name: 'Test Visit', latitude: 52.52, longitude: 13.405,
+                       lonlat: 'POINT(13.405 52.52)')
         service = described_class.new(user, valid_params.merge(status: 'suggested'))
 
         expect { service.call }.not_to have_enqueued_job(Places::NameFetchingJob)

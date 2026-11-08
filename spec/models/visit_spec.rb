@@ -96,6 +96,18 @@ RSpec.describe Visit, type: :model do
       expect { visit.soft_delete! }.to change { visit.reload.deleted_at }.from(nil)
       expect(Visit.count).to eq(1)
     end
+
+    it 'releases the visit points and rebuilds that day\'s tracks' do
+      visit = create(:visit, user: user, status: :confirmed)
+      point = create(:point, user: user, visit: visit, timestamp: visit.started_at.to_i)
+
+      expect { visit.soft_delete! }.to have_enqueued_job(Tracks::ParallelGeneratorJob).with(
+        user.id,
+        hash_including(mode: :bulk)
+      )
+      expect(point.reload.visit_id).to be_nil
+      expect(visit.reload.deleted_at).to be_present
+    end
   end
 
   describe 'self-cleanup callbacks' do
@@ -146,7 +158,7 @@ RSpec.describe Visit, type: :model do
       end
 
       it 'deletes the place after the job runs when only the tombstone references it' do
-        perform_enqueued_jobs { visit.soft_delete! }
+        perform_enqueued_jobs(only: Places::DeleteIfOrphanJob) { visit.soft_delete! }
 
         expect(Place.exists?(old_place.id)).to be false
       end

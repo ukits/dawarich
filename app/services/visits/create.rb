@@ -23,7 +23,14 @@ module Visits
       @visit = existing_visit
       # Re-creating a visit over its own tombstone (or an old decline) is an
       # explicit undo: revive the row instead of returning it still hidden.
-      @visit.update!(deleted_at: nil, status: :confirmed) if @visit && (@visit.soft_deleted? || @visit.declined?)
+      # Points were released when it was tombstoned, so claim them again
+      # before the commit that enqueues the track rebuild.
+      if @visit && (@visit.soft_deleted? || @visit.declined?)
+        Visit.transaction do
+          assign_points_to_visit(@visit)
+          @visit.update!(deleted_at: nil, status: :confirmed)
+        end
+      end
       @errors = 'Failed to create visit: duplicate visit' unless @visit
 
       @visit || false

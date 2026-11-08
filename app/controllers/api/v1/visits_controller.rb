@@ -116,7 +116,8 @@ class Api::V1::VisitsController < ApiController
     visit = current_api_user.scoped_visits.find(params[:id])
 
     # Soft delete keeps the row as a tombstone so visit detection never
-    # re-suggests it. Same contract as before: 204, points untouched.
+    # re-suggests it. The visit callback releases its points and rebuilds
+    # that day's tracks.
     if visit.update(deleted_at: Time.current)
       head :no_content
     else

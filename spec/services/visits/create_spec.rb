@@ -85,6 +85,13 @@ RSpec.describe Visits::Create do
         expect(inside_point.reload.visit_id).to eq(service.visit.id)
         expect(outside_point.reload.visit_id).to be_nil
       end
+
+      it 'enqueues a rebuild of the tracks on the visit day' do
+        expect { service.call }.to have_enqueued_job(Tracks::ParallelGeneratorJob).with(
+          user.id,
+          hash_including(mode: :bulk)
+        )
+      end
     end
 
     context 'when reusing existing place' do

@@ -41,9 +41,18 @@ module Visits
       place_ids = visits.reorder(nil).where.not(place_id: nil).distinct.pluck(:place_id)
       started_at = Time.current
 
-      # Soft delete: rows stay as tombstones (points and place links intact)
-      # so visit detection never re-suggests what the user removed.
+      # Soft delete: rows stay as tombstones so visit detection never
+      # re-suggests what the user removed. Points are released — update_all
+      # skips the model callback that does this for a single delete — and the
+      # affected days are rebuilt so those points can join a track again.
       Visit.where(id: ids).update_all(deleted_at: Time.current)
+      Point.where(visit_id: ids).update_all(visit_id: nil)
+      timezone = user.safe_settings.timezone.presence || 'UTC'
+      Time.use_zone(timezone) do
+        started_ats.map { |started_at| started_at.in_time_zone.to_date }.uniq.each do |date|
+          Tracks::RebuildDay.enqueue(user, date.beginning_of_day)
+        end
+      end
 
       # update_all skips AR callbacks, so the orphan-place check the model
       # runs on single soft deletes must be enqueued here by hand.

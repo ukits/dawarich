@@ -20,6 +20,7 @@ class Visit < ApplicationRecord
   # after_*_commit hooks would silently keep only the last registration.
   after_commit :cleanup_place_if_orphan, on: %i[update destroy], if: :left_active_state?
   after_commit :bust_timeline_month_summary_cache, unless: :demo?
+  after_commit :sync_tracks_after_visit_change, on: %i[create update]
 
   validates :started_at, :ended_at, :duration, :name, :status, presence: true
 
@@ -132,6 +133,21 @@ class Visit < ApplicationRecord
     return unless place_id
 
     Places::DeleteIfOrphanJob.perform_later(place_id)
+  end
+
+  # A new confirmed visit, or one the user just hid, changes which points
+  # may belong to a track. Tombstoning releases the points first: the row
+  # stays so detection does not recreate the visit, and the day's tracks
+  # are rebuilt with those points included again.
+  def sync_tracks_after_visit_change
+    return if demo? || user_id.blank? || started_at.blank?
+
+    if saved_change_to_deleted_at? && deleted_at.present?
+      points.update_all(visit_id: nil)
+      Tracks::RebuildDay.enqueue(user, started_at)
+    elsif confirmed? && (previously_new_record? || saved_change_to_deleted_at? || saved_change_to_status?)
+      Tracks::RebuildDay.enqueue(user, started_at)
+    end
   end
 
   def left_active_state?

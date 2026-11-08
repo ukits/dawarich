@@ -169,7 +169,8 @@ class VisitsController < ApplicationController
     day_date = Time.use_zone(tz) { @visit.started_at.in_time_zone.to_date.to_s }
     @affected_started_at = [@visit.started_at]
     # Soft delete: the row stays as a tombstone so visit detection never
-    # re-suggests it; the user's points are untouched either way.
+    # re-suggests it. The visit callback releases its points and rebuilds
+    # that day's tracks.
     @visit.soft_delete!
 
     respond_to do |format|

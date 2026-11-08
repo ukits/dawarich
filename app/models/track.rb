@@ -279,6 +279,12 @@ class Track < ApplicationRecord
     track_segments.group(:transportation_mode).sum(:duration)
   end
 
+  # Unix timestamps of this track's points in chronological order. Used as a
+  # fallback when a legacy index-anchored segment has no start_at/end_at.
+  def ordered_point_timestamps
+    @ordered_point_timestamps ||= points.order(:timestamp).pluck(:timestamp)
+  end
+
   MOVING_DISTANCE_THRESHOLD_M = 50
 
   # update_column skips after_commit, and dominant_mode is a tile property —

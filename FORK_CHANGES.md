@@ -63,7 +63,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 | F04 | Timeline 달력 padding | 달력 여백 | `pending` | timeline calendar styles | `b2fedf0` / (F03 묶음) |
 | F05 | 시간 표시 `YYYY-MM-DD hh:mm:ss` | 일시 포맷 통일 | `superseded` @1.18.0 | Settings date/time prefs | `38443a4`… / — (검증) |
 | F06 | 달력 일요일 시작 | week start = Sunday | `superseded` @1.18.0 | Settings `first_day_of_week` | `050850e` / — (검증) |
-| F07 | Route 구간 시작·끝 시간 | 구간 열에 시각 표시 | `pending` | tracks/segments views·helpers | `108ac89` / `639724a` |
+| F07 | Route 구간 시작·끝 시간 | 구간 열에 시각 표시 | `ported` | tracks/segments views·helpers | `108ac89` / `639724a` → 1.22: SHA_F07 |
 
 ### Places
 

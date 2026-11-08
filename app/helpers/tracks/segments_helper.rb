@@ -79,4 +79,44 @@ module Tracks::SegmentsHelper
 
     I18n.t('units.hours_minutes_compact', hours: minutes / 60, minutes: minutes % 60)
   end
+
+  # "HH:MM - HH:MM" in the viewer's timezone. Prefers time anchors;
+  # index-anchored rows fall back to the track's ordered point timestamps.
+  def segment_time_range(segment)
+    start_time, end_time = segment_bound_times(segment)
+    return if start_time.blank? || end_time.blank?
+
+    "#{format_segment_clock(start_time)} - #{format_segment_clock(end_time)}"
+  end
+
+  private
+
+  def segment_bound_times(segment)
+    if segment.start_at.present? && segment.end_at.present?
+      [segment.start_at, segment.end_at]
+    else
+      index_bound_times(segment)
+    end
+  end
+
+  def index_bound_times(segment)
+    return [nil, nil] if segment.start_index.nil? || segment.end_index.nil?
+
+    timestamps = segment.track.ordered_point_timestamps
+    start_ts = timestamps[segment.start_index]
+    end_ts = timestamps[segment.end_index]
+    return [nil, nil] unless start_ts && end_ts
+
+    [Time.zone.at(start_ts), Time.zone.at(end_ts)]
+  end
+
+  def format_segment_clock(time)
+    I18n.l(time.in_time_zone(segment_time_zone), format: :hour_minute)
+  rescue ArgumentError
+    I18n.l(time, format: :hour_minute)
+  end
+
+  def segment_time_zone
+    current_user_safe_settings&.timezone.presence || Time.zone.name
+  end
 end

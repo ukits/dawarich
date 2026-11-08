@@ -59,8 +59,8 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 | ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
 |----|------|------|------|------------------|-------------|
 | F02 | Point 크기 설정 | 지도 포인트 반경을 설정으로 조절 | `adapted` | `maps_maplibre` MVT / settings | `07b4fbd` / `849bd45` → 1.22: SHA_F02 |
-| F03 | Timeline 1열 레이아웃 | ≥1024px에서도 Timeline 1열 | `pending` | timeline CSS / panel | `7fe3789` / `358c003` |
-| F04 | Timeline 달력 padding | 달력 여백 | `pending` | timeline calendar styles | `b2fedf0` / (F03 묶음) |
+| F03 | Timeline 1열 레이아웃 | ≥1024px에서도 Timeline 1열 | `adapted` | timeline CSS / panel | `7fe3789` / `358c003` → 1.22: SHA_F03F04 |
+| F04 | Timeline 달력 padding | 달력 여백 | `adapted` | timeline calendar styles | `b2fedf0` / (F03 묶음) → 1.22: SHA_F03F04 |
 | F05 | 시간 표시 `YYYY-MM-DD hh:mm:ss` | 일시 포맷 통일 | `superseded` @1.18.0 | Settings date/time prefs | `38443a4`… / — (검증) |
 | F06 | 달력 일요일 시작 | week start = Sunday | `superseded` @1.18.0 | Settings `first_day_of_week` | `050850e` / — (검증) |
 | F07 | Route 구간 시작·끝 시간 | 구간 열에 시각 표시 | `ported` | tracks/segments views·helpers | `108ac89` / `639724a` → 1.22: SHA_F07 |

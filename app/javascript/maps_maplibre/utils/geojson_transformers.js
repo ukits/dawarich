@@ -58,6 +58,7 @@ export function pointsToGeoJSON(points, options = {}) {
           id: point.id,
           timestamp: point.timestamp,
           track_id: point.track_id ?? null,
+          visit_id: point.visit_id ?? null,
           altitude: point.altitude,
           battery: point.battery,
           accuracy: point.accuracy,

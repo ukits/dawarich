@@ -1,5 +1,5 @@
-import { BaseLayer } from "./base_layer"
 import { parseTimestamp } from "../utils/geojson_transformers"
+import { BaseLayer } from "./base_layer"
 
 /**
  * Layer for displaying selected points with distinct styling
@@ -116,28 +116,62 @@ export class SelectedPointsLayer extends BaseLayer {
   }
 
   /**
-   * Group selected points by track_id for split visit creation.
+   * Group selected points for split visit creation.
+   * Points on a track stay one group per track_id. Points with no track are
+   * split into time-ordered runs, and a run also breaks when visit_id changes.
+   * A long gap inside one visit (asleep at home) stays one stay. A later visit
+   * stays separate even when the track points between them are outside the
+   * rectangle.
    * @returns {Array<{ groupKey: string, trackId: number|null, timeRange: { start: Date, end: Date }, centroid: { lat: number, lng: number }, pointCount: number }>}
    */
   getTrackGroups() {
     if (!this.data?.features?.length) return []
 
-    const groups = new Map()
+    const features = [...this.data.features].sort(
+      (a, b) =>
+        SelectedPointsLayer.timestampMs(a) - SelectedPointsLayer.timestampMs(b),
+    )
 
-    for (const feature of this.data.features) {
+    const trackGroups = new Map()
+    const noneRuns = []
+    let openNone = null
+    let openRunKey = null
+
+    for (const feature of features) {
       const trackId = feature.properties?.track_id ?? null
-      const groupKey = SelectedPointsLayer.trackGroupKey(trackId)
-
-      if (!groups.has(groupKey)) {
-        groups.set(groupKey, { groupKey, trackId, features: [] })
+      if (trackId == null) {
+        const runKey = SelectedPointsLayer.noneRunKey(feature)
+        if (!openNone || openRunKey !== runKey) {
+          openNone = []
+          openRunKey = runKey
+          noneRuns.push(openNone)
+        }
+        openNone.push(feature)
+        continue
       }
-      groups.get(groupKey).features.push(feature)
+
+      openNone = null
+      openRunKey = null
+      const groupKey = SelectedPointsLayer.trackGroupKey(trackId)
+      if (!trackGroups.has(groupKey)) {
+        trackGroups.set(groupKey, { groupKey, trackId, features: [] })
+      }
+      trackGroups.get(groupKey).features.push(feature)
     }
 
-    return Array.from(groups.values())
-      .map(({ groupKey, trackId, features }) => {
-        const timeRange = SelectedPointsLayer.timeRangeFromFeatures(features)
-        const centroid = SelectedPointsLayer.centroidFromFeatures(features)
+    const groups = [
+      ...trackGroups.values(),
+      ...noneRuns.map((run, index) => ({
+        groupKey: noneRuns.length === 1 ? "none" : `none-${index}`,
+        trackId: null,
+        features: run,
+      })),
+    ]
+
+    return groups
+      .map(({ groupKey, trackId, features: run }) => {
+        const timeRange = SelectedPointsLayer.timeRangeFromFeatures(run)
+        const centroid = SelectedPointsLayer.centroidFromFeatures(run)
         if (!timeRange || !centroid) return null
 
         return {
@@ -145,13 +179,23 @@ export class SelectedPointsLayer extends BaseLayer {
           trackId,
           timeRange,
           centroid,
-          pointCount: features.length,
+          pointCount: run.length,
         }
       })
       .filter(Boolean)
-      .sort(
-        (a, b) => a.timeRange.start.getTime() - b.timeRange.start.getTime(),
-      )
+      .sort((a, b) => a.timeRange.start.getTime() - b.timeRange.start.getTime())
+  }
+
+  static noneRunKey(feature) {
+    const visitId = feature.properties?.visit_id ?? null
+    return visitId == null ? "novisit" : `visit:${visitId}`
+  }
+
+  static timestampMs(feature) {
+    return (
+      parseTimestamp(feature.properties?.timestamp)?.getTime() ??
+      Number.POSITIVE_INFINITY
+    )
   }
 
   static trackGroupKey(trackId) {
@@ -181,12 +225,7 @@ export class SelectedPointsLayer extends BaseLayer {
     if (coords?.length >= 2) {
       const rawLng = coords[0]
       const rawLat = coords[1]
-      if (
-        rawLng != null &&
-        rawLng !== "" &&
-        rawLat != null &&
-        rawLat !== ""
-      ) {
+      if (rawLng != null && rawLng !== "" && rawLat != null && rawLat !== "") {
         const lng = Number(rawLng)
         const lat = Number(rawLat)
         if (Number.isFinite(lat) && Number.isFinite(lng)) {

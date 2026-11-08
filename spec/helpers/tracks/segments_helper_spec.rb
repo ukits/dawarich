@@ -49,7 +49,10 @@ RSpec.describe Tracks::SegmentsHelper, type: :helper do
     let(:user) { create(:user) }
 
     before do
-      allow(helper).to receive(:current_user_safe_settings).and_return(user.safe_settings)
+      # helper_method from ApplicationController — not on ActionView::Base in isolation
+      without_partial_double_verification do
+        allow(helper).to receive(:current_user_safe_settings).and_return(user.safe_settings)
+      end
     end
 
     it 'formats start_at and end_at as HH:MM - HH:MM' do
@@ -61,7 +64,9 @@ RSpec.describe Tracks::SegmentsHelper, type: :helper do
 
     it 'formats times in the viewer timezone' do
       user.settings['timezone'] = 'Asia/Seoul'
-      allow(helper).to receive(:current_user_safe_settings).and_return(user.safe_settings)
+      without_partial_double_verification do
+        allow(helper).to receive(:current_user_safe_settings).and_return(user.safe_settings)
+      end
 
       start_at = Time.utc(2026, 7, 5, 1, 0, 0)
       segment = build_stubbed(:track_segment, start_at: start_at, end_at: start_at + 10.minutes)

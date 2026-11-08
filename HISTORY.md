@@ -17,12 +17,13 @@ upstream을 올릴 때마다 새 사이클 파일을 `docs/upstream-sync/cycles/
 |------|------|
 | Fork 기준 (upstream) | `7b877f9` — Dawarich **1.9.2** (2026-06-25) |
 | Fork 시작 | 2026-07-05 |
-| 최근 sync 베이스 | upstream **1.14.0** (`8754f23`) — 브랜치 `sync/1.14.0` |
+| 최근 sync 베이스 | upstream **1.22.0** (`0ac68e183`) — 브랜치 `sync/1.22.0` (진행 중) |
+| 직전 베이스 | upstream **1.14.0** — 브랜치 `sync/1.14.0` |
 | 작성자 | BYUN, SungUk |
 
 ### 한 줄 요약
 
-1.9.2 fork에서 쌓은 UI·Visit/Track 정책을 **1.14.0** 위에 기능 단위로 재이식했다. Visit tombstone·detection v3는 유지하고, 수동 Create·Track 제외·Select Area UX를 맞췄다. velocity SideEffects(F18)는 보류다.
+1.14 fork 정책을 **1.22.0** 위에 재이식 중. Settings/Places/StationaryStops로 대체된 항목은 코드 없이 검증하고, 수동 Visit·Select Area·Points/Timeline UI는 adapted/ported로 유지. F18 velocity는 dropped.
 
 ---
 
@@ -187,6 +188,37 @@ upstream 1.14.0 위에 fork 카탈로그(F01–F19)를 cherry-pick 없이 **기�
 
 ---
 
+## 2026-11-08 — Upstream 1.22.0 동기화 (진행 중)
+
+**브랜치:** `sync/1.22.0` (base `1.22.0` / `0ac68e183`)  
+**참고:** `sync/1.14.0` @ `9ffd211`  
+**사이클:** [docs/upstream-sync/cycles/2026-11-1.14.0-to-1.22.0.md](./docs/upstream-sync/cycles/2026-11-1.14.0-to-1.22.0.md)
+
+### 코드 이식
+
+- F07 Route 구간 시각, F12 Points 열·필터, F02 Point 반경, F03/F04 Timeline 1열, F15 Place ID
+- F16 이름+50m Place 매칭, F17 수동 Visit `visit_id`, F11 Delete 기간, F13 Track/Visit pending 카드
+
+### Upstream 대체 (코드 없음 · 검증)
+
+| ID | @버전 |
+|----|-------|
+| F05, F06 | 1.18.0 Settings 날짜·주시작 |
+| F08–F10 | 1.19.0 Places 대개편 |
+| F14 | 1.21.0 Create Visit draft |
+| F19 | 1.22.0 StationaryStops |
+
+### 폐기
+
+- F18 velocity SideEffects — `raw_data` 복원 경로 불가. Track rebuild도 F19 대체로 미이식.
+
+### 남은 일
+
+- superseded 항목 수동 UI 검증
+- `sync/1.22.0` 메인라인 통합 여부
+
+---
+
 ## 문서 갱신 방법
 
 새 커밋을 push한 뒤:
@@ -204,4 +236,4 @@ git show --stat <commit-hash>
 
 ---
 
-*마지막 갱신: 2026-08-31 (사이클 1.9.2→1.14.0 closed, `sync/1.14.0`)*
+*마지막 갱신: 2026-11-08 (사이클 1.14.0→1.22.0 open, `sync/1.22.0`)*

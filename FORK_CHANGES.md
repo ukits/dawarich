@@ -78,7 +78,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 | ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
 |----|------|------|------|------------------|-------------|
 | F11 | Tools Delete에 선택 기간 표시 | 삭제 전 구간 확인 | `pending` | selected_points_layer, tools UI | `56adc8e` / `6b1e381` |
-| F12 | Points 목록 컬럼·필터 | ID / Visit·Track / 고도 / 필터 | `pending` | `points#index`, `_point` | `e9111da` / `a2c21d5` |
+| F12 | Points 목록 컬럼·필터 | ID / Visit·Track / 고도 / 필터 | `adapted` | `points#index`, `_point` | `e9111da` / `a2c21d5` → 1.22: SHA_F12 |
 
 ### Visits · Track (핵심 도메인)
 

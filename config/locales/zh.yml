@@ -1439,6 +1439,10 @@ zh:
       address: 地址：
     index:
       all_imports: 全部导入
+      point_id: ID
+      visit_id: 到访记录 ID
+      track_id: 轨迹 ID
+      altitude: 海拔
       export: 导出
       geojson: GeoJSON
       gpx: GPX

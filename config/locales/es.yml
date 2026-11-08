@@ -1488,6 +1488,10 @@ es:
       are_you_sure: "¿Estás seguro?"
       select_all: Selecciona todo
       all_imports: "Todas las importaciones"
+      point_id: ID
+      visit_id: ID de visita
+      track_id: ID de track
+      altitude: Alt
   posters:
     poster:
       download_png: Descargar PNG

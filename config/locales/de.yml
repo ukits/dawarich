@@ -1488,6 +1488,10 @@ de:
       are_you_sure: Bist du sicher?
       select_all: Alles auswählen
       all_imports: "Alle Importe"
+      point_id: ID
+      visit_id: Visit-ID
+      track_id: Track-ID
+      altitude: Höhe
   posters:
     poster:
       download_png: PNG herunterladen

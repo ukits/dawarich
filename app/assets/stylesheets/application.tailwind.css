@@ -552,4 +552,9 @@ html.dark em-emoji-picker {
     grid-row: 4;
     font-size: 12px;
   }
+  .points-responsive-table td[data-point-column="id"],
+  .points-responsive-table td[data-point-column="visit"],
+  .points-responsive-table td[data-point-column="track"] {
+    display: none;
+  }
 }

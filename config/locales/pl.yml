@@ -1438,6 +1438,10 @@ pl:
       address: 'Adres:'
     index:
       all_imports: Wszystkie importy
+      point_id: ID
+      visit_id: ID wizyty
+      track_id: ID trasy
+      altitude: Wys.
       export: Eksportuj
       geojson: GeoJSON
       gpx: GPX

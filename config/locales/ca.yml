@@ -1424,6 +1424,10 @@ ca:
       address: 'Adreça:'
     index:
       all_imports: Totes les importacions
+      point_id: ID
+      visit_id: ID de visita
+      track_id: ID de track
+      altitude: Alt
       export: Exporta
       geojson: GeoJSON
       gpx: GPX

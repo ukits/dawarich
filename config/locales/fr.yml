@@ -2170,6 +2170,10 @@ fr:
       address: 'Adresse :'
     index:
       all_imports: Toutes les importations
+      point_id: ID
+      visit_id: ID visite
+      track_id: ID track
+      altitude: Alt
       export: Exporter
       geojson: GeoJSON
       gpx: GPX

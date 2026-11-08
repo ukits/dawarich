@@ -1424,6 +1424,10 @@ en:
       address: 'Address:'
     index:
       all_imports: All imports
+      point_id: ID
+      visit_id: Visit ID
+      track_id: Track ID
+      altitude: Alt
       export: Export
       geojson: GeoJSON
       gpx: GPX

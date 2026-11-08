@@ -15,6 +15,7 @@
       }
     %>
   </td>
+  <td data-point-column="id" class="px-3 py-2 text-sm text-right tabular-nums text-base-content/50 whitespace-nowrap"><%= point.id %></td>
   <% if reverse_geocoding_enabled_for?(current_user) %>
     <td data-point-column="address" class="px-3 py-2 text-sm text-left text-base-content/60" style="overflow: visible;">
       <% props = Geocoding::ResultNormalizer.from_data(point.geodata)[:properties] %>
@@ -28,9 +29,14 @@
       <% end %>
     </td>
   <% end %>
+  <td data-point-column="visit" class="px-3 py-2 text-sm text-right tabular-nums text-base-content/50 whitespace-nowrap"><%= point.visit_id %></td>
+  <td data-point-column="track" class="px-3 py-2 text-sm text-right tabular-nums text-base-content/50 whitespace-nowrap"><%= point.track_id %></td>
   <td data-point-column="speed" class="px-3 py-2 text-sm text-right tabular-nums font-medium whitespace-nowrap <%= speed_text_color(point.velocity) %>">
     <%= point_speed(point.velocity, current_user.safe_settings.distance_unit) %>
   </td>
-  <td data-point-column="coordinates" class="px-3 py-2 text-sm tabular-nums text-base-content/50 whitespace-nowrap"><%= point_coordinates(point) %></td>
+  <td data-point-column="coordinates" class="px-3 py-2 text-sm tabular-nums text-base-content/50 whitespace-nowrap">
+    <%= point_coordinates(point) %>
+    <span class="text-base-content/40">(<%= t('points.index.altitude') %>: <%= point.altitude.presence || '—' %>)</span>
+  </td>
   <td data-point-column="recorded" class="px-3 py-2 text-sm tabular-nums whitespace-nowrap"><%= human_datetime_with_seconds(point.recorded_at, current_user.safe_settings.timezone) %></td>
 </tr>

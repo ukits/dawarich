@@ -1047,6 +1047,8 @@ zh:
         globe_view: 地球视图
         render_map_as_a_3d_globe_requires_page_reload: 将地图渲染为 3D 地球视图（需要重新加载页面）
         route_opacity: 路线不透明度
+        point_size: 点大小
+        size_of_location_point_markers_on_the_map: 地图上位置点标记的大小
         layer_colors: 图层颜色
         reset_to_defaults: 重置为默认值
         distance_unit: 距离单位

@@ -31,6 +31,14 @@ const markerThemeSource = await readFile(
   "utf8",
 )
 
+const pointSizeSource = await readFile(
+  new URL(
+    "../../app/javascript/maps_maplibre/utils/point_size.js",
+    import.meta.url,
+  ),
+  "utf8",
+)
+
 const freshness = await readFile(
   new URL(
     "../../app/javascript/maps_maplibre/utils/tile_freshness.js",
@@ -45,6 +53,7 @@ const combined = [
   heatmapSource,
   markerThemeSource,
   freshness,
+  pointSizeSource,
   mvtSource,
 ]
   .map(stripImports)

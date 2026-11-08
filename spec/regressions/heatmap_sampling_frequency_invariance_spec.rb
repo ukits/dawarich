@@ -37,7 +37,7 @@ RSpec.describe 'Heatmap sampling frequency invariance' do
       (async () => {
         const paths = [
           'layers/base_layer.js', 'layers/heatmap_layer.js',
-          'utils/marker_theme.js', 'utils/tile_freshness.js',
+          'utils/marker_theme.js', 'utils/tile_freshness.js', 'utils/point_size.js',
           'layers/points_mvt_layer.js'
         ];
         const source = paths.map(path => fs.readFileSync(

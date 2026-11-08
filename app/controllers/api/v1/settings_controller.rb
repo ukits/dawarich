@@ -81,7 +81,7 @@ class Api::V1::SettingsController < ApiController
     permitted = params.require(:settings).permit(
       :timezone, :date_format, :time_format, :first_day_of_week,
       :meters_between_routes, :minutes_between_routes, :split_tracks_at_midnight, :fog_of_war_meters,
-      :time_threshold_minutes, :merge_threshold_minutes, :route_opacity,
+      :time_threshold_minutes, :merge_threshold_minutes, :route_opacity, :point_radius,
       :route_color, :track_color,
       :preferred_map_layer, :points_rendering_mode, :live_map_enabled,
       :immich_url, :immich_api_key, :photoprism_url, :photoprism_api_key,

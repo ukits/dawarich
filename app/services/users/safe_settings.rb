@@ -31,6 +31,7 @@ class Users::SafeSettings
     'merge_threshold_minutes' => 15,
     'live_map_enabled' => true,
     'route_opacity' => 0.6,
+    'point_radius' => 6,
     # Layer colors: route fallback matches Map v1's blue, track color matches
     # Tracks::GeojsonSerializer::DEFAULT_COLOR, keep them in sync.
     'route_color' => '#0000ff',
@@ -98,10 +99,13 @@ class Users::SafeSettings
   APPEARANCE_KEYS = %w[
     maps_maplibre_style maps_maplibre_custom_theme maps_maplibre_tiles_url
     maps_maplibre_tiles_fallback track_color enabled_map_layers places_tag_filters
-    globe_projection speed_colored_routes speed_color_scale
+    globe_projection speed_colored_routes speed_color_scale point_radius
     fog_of_war_mode fog_of_war_meters fog_of_war_threshold
     maps.hidden_tile_categories maps.disabled_poi_groups
   ].freeze
+
+  POINT_RADIUS_MIN = 2
+  POINT_RADIUS_MAX = 12
 
   GPS_ACCURACY_THRESHOLD_MIN = 50
   GPS_ACCURACY_THRESHOLD_MAX = 1000
@@ -122,6 +126,7 @@ class Users::SafeSettings
       time_threshold_minutes: time_threshold_minutes,
       merge_threshold_minutes: merge_threshold_minutes,
       live_map_enabled: live_map_enabled,
+      point_radius: point_radius,
       track_color: track_color,
       immich_url: immich_url,
       immich_api_key: immich_api_key,
@@ -219,6 +224,10 @@ class Users::SafeSettings
 
   def route_opacity
     settings['route_opacity']
+  end
+
+  def point_radius
+    settings['point_radius'].to_i.clamp(POINT_RADIUS_MIN, POINT_RADIUS_MAX)
   end
 
   def route_color

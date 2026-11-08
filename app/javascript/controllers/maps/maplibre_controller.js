@@ -65,6 +65,8 @@ export default class extends Controller {
     "visitsSearch",
     "placesFilters",
     "enableAllPlaceTagsToggle",
+    "pointRadiusRange",
+    "pointRadiusValue",
     "fogRadiusValue",
     "fogThresholdValue",
     "minMinutesInCityValue",

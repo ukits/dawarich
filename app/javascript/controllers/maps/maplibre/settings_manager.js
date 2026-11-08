@@ -7,6 +7,10 @@ import {
 } from "maps_maplibre/utils/basemap_url"
 import { isGatedPlan } from "maps_maplibre/utils/layer_gate"
 import {
+  applyPointSize,
+  clampPointRadius,
+} from "maps_maplibre/utils/point_size"
+import {
   LAYER_NAME_MAP,
   SettingsManager,
 } from "maps_maplibre/utils/settings_manager"
@@ -145,6 +149,7 @@ export class SettingsController {
     }
 
     this.syncTrackColorPicker(this.settings.trackColor)
+    this.syncPointRadius(this.settings.pointRadius)
 
     // Sync distance unit radio
     const distanceUnitInput = controller.element.querySelector(
@@ -841,6 +846,25 @@ export class SettingsController {
     this.applyTrackColor(color)
     this.syncLayerColorLabel("trackColor", color)
     this.scheduleLayerColorSave("trackColor", color)
+  }
+
+  /** Point size applies immediately; saving is debounced while dragging. */
+  updatePointRadius(event) {
+    const radius = clampPointRadius(event.target.value)
+    this.syncPointRadius(radius, { updateInput: false })
+    applyPointSize(this.layerManager, radius)
+    this.scheduleLayerColorSave("pointRadius", radius)
+  }
+
+  syncPointRadius(radius, { updateInput = true } = {}) {
+    const value = clampPointRadius(radius)
+    const controller = this.controller
+    if (updateInput && controller.hasPointRadiusRangeTarget) {
+      controller.pointRadiusRangeTarget.value = value
+    }
+    if (controller.hasPointRadiusValueTarget) {
+      controller.pointRadiusValueTarget.textContent = `${value}px`
+    }
   }
 
   async resetLayerColors() {

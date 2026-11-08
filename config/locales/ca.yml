@@ -1040,6 +1040,8 @@ ca:
         globe_view: Vista de globus
         render_map_as_a_3d_globe_requires_page_reload: Mostra el mapa com un globus 3D (cal recarregar la pàgina)
         route_opacity: Opacitat de la ruta
+        point_size: Mida dels punts
+        size_of_location_point_markers_on_the_map: Mida dels marcadors de punts d'ubicació al mapa
         layer_colors: Colors de les capes
         reset_to_defaults: Restableix als valors per defecte
         distance_unit: Unitat de distància

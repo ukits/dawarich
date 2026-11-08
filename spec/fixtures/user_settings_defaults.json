@@ -61,6 +61,7 @@
   "photoprism_url": null,
   "places_tag_filters": null,
   "point_dragging_enabled": false,
+  "point_radius": 6,
   "points_rendering_mode": "raw",
   "points_tiled_rendering": true,
   "preferred_map_layer": "OpenStreetMap",

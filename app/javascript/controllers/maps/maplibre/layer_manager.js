@@ -414,6 +414,7 @@ export class LayerManager {
         visible: false,
         apiClient: this.api,
         timezone: this.settings.timezone,
+        pointRadius: this.settings.pointRadius,
       })
       this.layers.anomaliesLayer.add({
         type: "FeatureCollection",
@@ -460,6 +461,7 @@ export class LayerManager {
         apiKey: this.apiKey,
         importId: this.controller?.importIdValue || null,
         styleName: this.settings.mapStyle,
+        pointRadius: this.settings.pointRadius,
         onTileError: () =>
           Toast.retry(
             translate("messages.failed_to_load_map_tiles"),

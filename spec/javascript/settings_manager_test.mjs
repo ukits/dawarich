@@ -228,6 +228,13 @@ async function loadSettingsController(settingsManager, overrides = {}) {
     ),
     "utf8",
   )
+  const pointSizeSource = await readFile(
+    new URL(
+      "../../app/javascript/maps_maplibre/utils/point_size.js",
+      import.meta.url,
+    ),
+    "utf8",
+  )
   const withoutImports = controllerSource.replace(
     /^import[\s\S]*?from "[^"]+";?\n/gm,
     "",
@@ -248,6 +255,7 @@ async function loadSettingsController(settingsManager, overrides = {}) {
     const getMapStyle = globalThis.__settingsManagerGetMapStyle
     const translate = globalThis.__settingsManagerTranslate ?? ((key) => key)
     ${basemapUrlSource.replace(/^export /gm, "")}
+    ${pointSizeSource.replace(/^export /gm, "")}
   `
   const url = `data:text/javascript;base64,${Buffer.from(`${dependencies}\n${withoutImports}`).toString("base64")}`
   return await import(`${url}#${Date.now()}`)
@@ -733,6 +741,40 @@ test("Lite toggles are forced off only for layers the server gates", async () =>
     delete globalThis.__settingsManagerIsGatedPlan
     globalThis.document = originalDocument
   }
+})
+
+test("point size repaints the point layers at once and saves the clamped radius once", async () => {
+  const saved = []
+  const radii = []
+  const layer = (name) => ({
+    setPointRadius: (radius) => radii.push([name, radius]),
+  })
+  const { SettingsController } = await loadSettingsController({
+    updateSetting: (key, value) => saved.push([key, value]),
+  })
+  const valueTarget = { textContent: "" }
+  const controller = new SettingsController({
+    element: { querySelector: () => null },
+    hasPointRadiusValueTarget: true,
+    pointRadiusValueTarget: valueTarget,
+    layerManager: {
+      getLayer: (name) =>
+        ["anomalies", "points-mvt"].includes(name) ? layer(name) : null,
+    },
+  })
+
+  controller.updatePointRadius({ target: { value: "4" } })
+  controller.updatePointRadius({ target: { value: "99" } })
+  await new Promise((resolve) => setTimeout(resolve, 200))
+
+  assert.deepEqual(radii, [
+    ["anomalies", 4],
+    ["points-mvt", 4],
+    ["anomalies", 12],
+    ["points-mvt", 12],
+  ])
+  assert.equal(valueTarget.textContent, "12px")
+  assert.deepEqual(saved, [["pointRadius", 12]])
 })
 
 test("reset drops a pending colour save so it cannot land after the reset", async () => {

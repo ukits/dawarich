@@ -30,6 +30,13 @@ const markerThemeSource = await readFile(
   ),
   "utf8",
 )
+const pointSizeSource = await readFile(
+  new URL(
+    "../../app/javascript/maps_maplibre/utils/point_size.js",
+    import.meta.url,
+  ),
+  "utf8",
+)
 const pointsMvtSource = await readFile(
   new URL(
     "../../app/javascript/maps_maplibre/layers/points_mvt_layer.js",
@@ -47,6 +54,7 @@ const combined =
     baseLayerSource,
     heatmapSource,
     markerThemeSource,
+    pointSizeSource,
     pointsMvtSource,
     fogSource,
   ]
@@ -320,9 +328,32 @@ test("points MVT keep-alive hides via paint, not layout, so the source stays use
   const restoredRadius = map.paintCalls.filter(
     (c) => c.layerId === "points-mvt" && c.property === "circle-radius",
   )
-  assert.equal(restoredRadius.at(-1).value, PointsMvtLayer.CIRCLE_RADIUS)
+  assert.equal(restoredRadius.at(-1).value, 6)
   const restoredStroke = map.paintCalls.filter(
     (c) => c.layerId === "points-mvt" && c.property === "circle-stroke-width",
   )
-  assert.equal(restoredStroke.at(-1).value, PointsMvtLayer.CIRCLE_STROKE_WIDTH)
+  assert.equal(restoredStroke.at(-1).value, 2)
+})
+
+test("points MVT applies the user point radius, clamped, and keeps it through a paint hide", () => {
+  const map = fogMap()
+  const layer = new PointsMvtLayer(map, { visible: true, pointRadius: 99 })
+  layer.add({})
+
+  const radiusCalls = () =>
+    map.paintCalls.filter(
+      (c) => c.layerId === "points-mvt" && c.property === "circle-radius",
+    )
+  assert.equal(layer.pointRadius, 12)
+
+  layer.setPointRadius(9)
+  assert.equal(radiusCalls().at(-1).value, 9)
+
+  layer.setSourceKeepAlive(true)
+  layer.setVisibility(false)
+  layer.setPointRadius(4)
+  assert.equal(radiusCalls().at(-1).value, 0)
+
+  layer.setSourceKeepAlive(false)
+  assert.equal(radiusCalls().at(-1).value, 4)
 })

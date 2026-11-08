@@ -41,6 +41,7 @@ export const BACKEND_SETTINGS_MAP = {
   vectorTilesUrl: "maps_maplibre_tiles_url",
   tilesFallback: "maps_maplibre_tiles_fallback",
   trackColor: "track_color",
+  pointRadius: "point_radius",
   enabledMapLayers: "enabled_map_layers",
   placesTagFilters: "places_tag_filters",
   fogOfWarRadius: "fog_of_war_meters",
@@ -241,6 +242,7 @@ export class SettingsManager {
             if (
               frontendKey === "fogOfWarRadius" ||
               frontendKey === "fogOfWarThreshold" ||
+              frontendKey === "pointRadius" ||
               frontendKey === "metersBetweenRoutes" ||
               frontendKey === "minutesBetweenRoutes" ||
               frontendKey === "minMinutesSpentInCity"

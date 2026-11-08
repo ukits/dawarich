@@ -58,7 +58,7 @@ ID는 바꾸지 않는다. 폐기해도 행은 남기고 상태만 `dropped`/`su
 
 | ID | 제목 | 의도 | 상태 | 주요 경로 (힌트) | 원본 / 이식 |
 |----|------|------|------|------------------|-------------|
-| F02 | Point 크기 설정 | 지도 포인트 반경을 설정으로 조절 | `pending` | `maps_maplibre` MVT / settings | `07b4fbd` / `849bd45` |
+| F02 | Point 크기 설정 | 지도 포인트 반경을 설정으로 조절 | `adapted` | `maps_maplibre` MVT / settings | `07b4fbd` / `849bd45` → 1.22: SHA_F02 |
 | F03 | Timeline 1열 레이아웃 | ≥1024px에서도 Timeline 1열 | `pending` | timeline CSS / panel | `7fe3789` / `358c003` |
 | F04 | Timeline 달력 padding | 달력 여백 | `pending` | timeline calendar styles | `b2fedf0` / (F03 묶음) |
 | F05 | 시간 표시 `YYYY-MM-DD hh:mm:ss` | 일시 포맷 통일 | `superseded` @1.18.0 | Settings date/time prefs | `38443a4`… / — (검증) |

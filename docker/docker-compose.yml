@@ -68,6 +68,7 @@ services:
     stop_grace_period: 60s
     environment:
       RAILS_ENV: ${RAILS_ENV:-production}
+      MALLOC_ARENA_MAX: 2
       ### To run under a non-root user, set PUID/PGID here (do NOT use `user:`).
       # PUID: ${PUID:-1000}
       # PGID: ${PGID:-1000}

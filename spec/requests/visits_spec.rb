@@ -591,14 +591,14 @@ RSpec.describe '/visits', type: :request do
       expect(Rails.cache.read(cache_key)).to be_nil
     end
 
-    it 'keeps points attached to the tombstoned visit' do
+    it 'releases points from the tombstoned visit so tracks can reclaim them' do
       point = create(:point, user: user, visit: visit_a)
 
       delete bulk_destroy_visits_url(format: :turbo_stream),
              params: { visit_ids: [visit_a.id] }
 
       expect(Point.where(id: point.id)).to exist
-      expect(point.reload.visit_id).to eq(visit_a.id)
+      expect(point.reload.visit_id).to be_nil
     end
 
     it 'rejects when more than the maximum number of visit_ids are submitted' do

@@ -302,7 +302,8 @@ RSpec.describe 'Map::TimelineFeeds', type: :request do
                              started_at: day + 2.hours, ended_at: day + 3.hours, duration: 60)
 
       row = page_for_day.at_css("#visit_entry_#{visit.id}")
-      expect(row.at_css('.visit-row__time').text.strip).to eq('02:00')
+      expect(row.at_css('.visit-row__start').text.strip).to eq('02:00')
+      expect(row.at_css('.visit-row__end').text.strip).to eq('03:00')
       expect(row.at_css('.timeline-local-time').text.strip).to eq('Jan 14, 19:00 local')
       expect(row['aria-label']).to include('Jan 14, 19:00 local')
     end

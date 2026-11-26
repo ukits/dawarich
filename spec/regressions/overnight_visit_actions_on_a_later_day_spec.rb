@@ -83,7 +83,8 @@ RSpec.describe 'Visit actions taken on a later day of an overnight visit', type:
     patch visit_url(overnight), params: { visit: { name: 'Renamed night' }, date: '2026-10-21' }, as: :turbo_stream
 
     row = Nokogiri::HTML(response.body).at_css("turbo-stream[target=\"visit_entry_#{overnight.id}\"] template li")
-    expect(row.at_css('.visit-row__time').text.squish).to eq('00:00')
+    expect(row.at_css('.visit-row__start').text.squish).to eq('00:00')
+    expect(row.at_css('.visit-row__end').text.squish).to eq('08:00')
     expect(row.at_css('.visit-row__duration').text.squish).to eq('8h')
   end
 end

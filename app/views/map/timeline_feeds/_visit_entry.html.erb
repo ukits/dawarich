@@ -15,7 +15,7 @@
     data-testid="visit-row"
     tabindex="0"
     role="button"
-    aria-label="<%= visit_entry_display_name(entry) %> · <%= times[:start_label] %><%= " · #{local_time}" if local_time %>"
+    aria-label="<%= visit_entry_display_name(entry) %> · <%= times[:start_label] %><%= "–#{times[:end_label]}" unless all_day %><%= " · #{local_time}" if local_time %>"
     data-action="click->timeline-feed#selectVisit keydown.enter->timeline-feed#selectVisit keydown.space->timeline-feed#selectVisit mouseenter->timeline-feed#entryHover mouseleave->timeline-feed#entryUnhover"
     data-entry-type="visit"
     data-started-at="<%= entry[:started_at] %>"
@@ -39,13 +39,14 @@
            tabindex="-1">
   </span>
 
-  <%# Arrival time only. The end time is the start plus the duration printed
-      on the right, and stacking both turned the column into a grey block. %>
+  <%# Start on the title line, end one step smaller under it — duration stays
+      on the right as the length summary. %>
   <div class="visit-row__time">
     <% if all_day %>
       <span class="visit-row__all-day"><%= t('.all_day') %></span>
     <% else %>
-      <%= times[:start_label] %>
+      <span class="visit-row__start"><%= times[:start_label] %></span>
+      <span class="visit-row__end"><%= times[:end_label] %></span>
     <% end %>
   </div>
 

@@ -104,7 +104,8 @@ RSpec.describe 'Timeline feed rows for a visit that started on an earlier day', 
   it 'shows the time from midnight and only the part of the stay on the departure day' do
     row = visit_row_for('2026-10-22')
 
-    expect(row.at_css('.visit-row__time').text.squish).to eq('00:00')
+    expect(row.at_css('.visit-row__start').text.squish).to eq('00:00')
+    expect(row.at_css('.visit-row__end').text.squish).to eq('19:24')
     expect(row.at_css('.visit-row__duration').text.squish).to eq('19h 24m')
     expect(row.css('form input[name="date"]').map { |input| input['value'] }).to eq(%w[2026-10-22 2026-10-22])
   end
@@ -113,6 +114,8 @@ RSpec.describe 'Timeline feed rows for a visit that started on an earlier day', 
     row = visit_row_for('2026-10-21')
 
     expect(row.at_css('.visit-row__all-day')).to be_present
+    expect(row.at_css('.visit-row__start')).to be_nil
+    expect(row.at_css('.visit-row__end')).to be_nil
   end
 
   it 'keeps the arrival time and the whole stay on the arrival day of a short overnight visit' do
@@ -121,7 +124,8 @@ RSpec.describe 'Timeline feed rows for a visit that started on an earlier day', 
                    ended_at: Time.utc(2026, 10, 21, 8, 0), duration: 600)
     row = visit_row_for('2026-10-20')
 
-    expect(row.at_css('.visit-row__time').text.squish).to eq('22:00')
+    expect(row.at_css('.visit-row__start').text.squish).to eq('22:00')
+    expect(row.at_css('.visit-row__end').text.squish).to eq('08:00')
     expect(row.at_css('.visit-row__duration').text.squish).to eq('10h')
   end
 end

@@ -10,7 +10,7 @@ RSpec.describe 'Place ID locale interpolation' do
     'map.timeline_feeds.visit_entry.place_id' => 'Place #12345',
     'javascript.visits.place_id' => 'Place #12345'
   }.each do |key, expected|
-    it "keeps %{id} in #{key} after YAML load" do
+    it "keeps the id placeholder in #{key} after YAML load" do
       expect(I18n.t(key, id: 12_345, locale: :en)).to eq(expected)
     end
   end

@@ -94,6 +94,14 @@ RSpec.describe 'map/timeline_feeds/_day' do
     expect(rendered).to have_css('.visit-row__duration', text: '24m')
   end
 
+  it 'stacks the end clock under the start clock in a smaller size' do
+    row = Nokogiri::HTML(rendered).at_css('.visit-row')
+    times = view.visit_entry_times(entries.first)
+
+    expect(row.at_css('.visit-row__start').text.squish).to eq(times[:start_label])
+    expect(row.at_css('.visit-row__end').text.squish).to eq(times[:end_label])
+  end
+
   context 'when a visit has no name of its own' do
     let(:entries) do
       [visit_entry(id: 7, name: 'Corner Cafe', start_hm: '09:00', end_hm: '10:00', duration: 60)

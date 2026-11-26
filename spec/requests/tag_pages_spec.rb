@@ -122,7 +122,7 @@ RSpec.describe 'Tag management pages', type: :request do
   it 'renders the new warning and places list in all seven locales without fallback' do
     attach_place
 
-    %i[en de es fr pl ca zh].each do |locale|
+    %i[en de es fr pl ca zh ko].each do |locale|
       get edit_tag_path(tag, confirm_delete: '1', locale: locale)
       expect(document.at_css('[data-testid="privacy-tag-warning"]')).to be_present
       %w[title covered_places visibility shared_links].each do |key|

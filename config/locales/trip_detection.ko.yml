@@ -1,0 +1,82 @@
+ko:
+  trip_detection:
+    # Detected Trip 이름: 장소(도시 또는 국가 최대 3개), 그다음 월.
+    name: "%{places}, %{month}"
+    list_separator: ", "
+    # 도시나 국가를 모를 때 쓰는 이름.
+    fallback_name: "여행, %{range}"
+    formats:
+      month_year: "%Y년 %b"
+    # 날짜 범위. 각 부분은 I18n.l로 지역화된 strftime 형식(%b는 약식 월 이름).
+    range:
+      same_month:
+        pattern: "%{start}–%{end}"
+        start: "%-d일"
+        end: "%Y년 %b %-d일"
+      same_year:
+        pattern: "%{start} – %{end}"
+        start: "%b %-d일"
+        end: "%Y년 %b %-d일"
+      cross_year:
+        pattern: "%{start} – %{end}"
+        start: "%Y년 %b %-d일"
+        end: "%Y년 %b %-d일"
+    # 실행으로 만든 Detected Trips에 대한 앱 알림.
+    notifications:
+      one:
+        title: "여행 발견: %{name}"
+        content: "Dawarich가 기록에서 새 여행을 찾았습니다. <a href=\"%{url}\">여행 열기</a>"
+      many:
+        title:
+          one: "여행 %{count}개 발견"
+          other: "여행 %{count}개 발견"
+        content: "Dawarich가 기록에서 새 여행을 찾았습니다. <a href=\"%{url}\">자동으로 찾은 여행 보기</a>"
+    # Place 편집 페이지의 집 기간. 빈 날짜는 열린 끝.
+    homes:
+      title: "여기에 살거나 살았음"
+      help: "빈 “시작”은 여기에 처음 기록된 때부터, 빈 “까지”는 지금도 산다는 뜻입니다."
+      from: "시작"
+      until: "까지"
+      save: "저장"
+      remove: "제거"
+      remove_confirm: "이 기간을 제거할까요? 날짜가 삭제되며, 그 기간에 자동으로 찾은 여행도 제거될 수 있습니다."
+      add: "기간 추가"
+      end_before_start: "“까지”는 “시작”보다 앞일 수 없습니다."
+      # 원클릭 집: Places 목록 각 행의 버튼과 새 Place 폼의 체크박스.
+      live_here: "여기에 산다"
+      live_here_at: "%{place}에 산다"
+      live_here_help: "Dawarich는 집을 이용해 여행을 자동으로 찾습니다."
+      open_home_note_html: "종료일이 없는 집이 이미 있습니다: %{places}. 이사했다면 떠난 날짜를 설정하세요."
+    # Trips 목록의 출처 필터. 직접 만든 여행은 사용자가 만든 것으로 셉니다.
+    filter:
+      label: "표시"
+      all: "모든 여행"
+      manual: "내가 만든 여행"
+      detected: "자동으로 찾은 여행"
+    # Trips 페이지 안내(Places 페이지 링크로 끝남)와 Places 목록.
+    hints:
+      no_home: "집을 추가하면 Dawarich가 여행을 자동으로 찾을 수 있습니다."
+      # Place에 Home 태그가 있어도 집이 되지는 않음.
+      tagged_home: "“%{place}”에 “%{tag}” 태그가 있지만, 태그만으로는 집이 되지 않습니다. 옆의 “여기에 산다”를 클릭하세요."
+      tagged_home_link: "“%{tag}” 태그가 있는 장소 보기"
+      long_absence: "Dawarich가 집에서 %{days}일보다 긴 부재를 건너뛰었습니다. 그때 다른 곳에 살았다면 그 이전 집을 추가하세요."
+      add_home: "Places 페이지에서 집 추가"
+      # Places 목록에 집이 없을 때. 두 번째는 새 Place 폼 링크.
+      pick_home: "목록에서 집 옆의 “여기에 산다”를 클릭하세요."
+      new_home_place: "목록에 없나요? 새 장소로 추가하세요."
+    # 온보딩에서 고른 집용 Place 이름.
+    home_place_name: "집"
+    # 온보딩 모달의 선택적 “집 추가” 화면.
+    onboarding:
+      title: "집 추가"
+      intro: "Dawarich는 집을 이용해 여행을 자동으로 찾습니다. 위치를 공유하거나 지도를 클릭한 뒤 확인하세요."
+      use_my_location: "내 위치 사용"
+      confirm: "여기가 내 집입니다"
+      skip: "건너뛰기"
+      location_denied: "위치를 읽을 수 없습니다. 대신 지도를 클릭해 집을 놓거나, 나중에 Places 페이지에서 설정하세요."
+      home_saved: "집이 저장되었습니다. Dawarich가 여행을 찾습니다."
+      invalid_location: "먼저 지도에서 위치를 선택하세요."
+      # 온보딩은 두 번째 집을 추가하지 않음.
+      home_exists: "집이 이미 있습니다. Places 페이지에서 변경할 수 있습니다."
+      # 가져오기 화면에서 집 단계로 가거나 모달을 닫음.
+      continue: "계속"

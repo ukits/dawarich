@@ -790,7 +790,7 @@ kml_max_file_size_mb: '128' } }
     it 'defines the coordinate input and validation strings without locale fallbacks' do
       keys = %w[admin.settings.show.geocoding.test_latitude admin.settings.show.geocoding.test_longitude
                 admin.settings.show.geocoding.test_coordinates_hint admin.settings.test_geocoding.invalid_coordinates]
-      %i[en de es fr pl ca zh].product(keys).each do |locale, key|
+      %i[en de es fr pl ca zh ko].product(keys).each do |locale, key|
         expect(I18n.exists?(key, locale, fallback: false)).to be(true), "missing #{key} for #{locale}"
       end
     end

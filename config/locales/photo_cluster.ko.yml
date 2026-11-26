@@ -1,0 +1,15 @@
+ko:
+  javascript:
+    photo_cluster:
+      title: "이 클러스터의 사진"
+      close: "닫기"
+      previous: "이전"
+      next: "다음"
+      loading: "사진 불러오는 중…"
+      range: "사진 %{total}장 중 %{start}–%{end}"
+      empty: "이 클러스터에 사진이 없습니다."
+      error: "사진을 불러오지 못했습니다. 다시 시도해 주세요."
+      retry: "다시 시도"
+      back: "썸네일로 돌아가기"
+      image_error: "썸네일을 사용할 수 없습니다"
+      keyboard_hint: "Enter를 누르면 지도 중심에 가장 가까운 사진 클러스터를 봅니다."

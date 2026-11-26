@@ -1,0 +1,10 @@
+ko:
+  admin:
+    settings:
+      show:
+        geocoding:
+          test_latitude: "위도"
+          test_longitude: "경도"
+          test_coordinates_hint: "저장된 설정으로 한 번 조회합니다. 좌표를 모두 입력하거나, 둘 다 비워 두면 51.3402, 12.3712를 사용합니다. 좌표는 저장되지 않습니다."
+      test_geocoding:
+        invalid_coordinates: "위도(−90~90)와 경도(−180~180)를 모두 유효한 숫자로 입력하거나, 둘 다 비워 두면 기본 좌표를 사용합니다."

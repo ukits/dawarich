@@ -1,0 +1,60 @@
+ko:
+  notes:
+    flash:
+      saved: 메모가 저장되었습니다
+      deleted: 메모가 삭제되었습니다
+      pick_a_point_on_the_map: 이 메모의 위치를 지도에서 선택하세요
+    form:
+      note: 메모
+      what_happened_here: 여기서 무슨 일이 있었나요?
+      when: 언제
+      delete: 삭제
+      delete_this_note: 이 메모를 삭제할까요?
+      cancel: 취소
+      save: 저장
+    index:
+      notes: 일기
+      search: 검색
+      search_placeholder: 메모 검색
+      from: 시작
+      to: 끝
+      clear: 지우기
+      nothing_found: 검색과 일치하는 메모가 없습니다
+      no_notes_yet: 아직 메모가 없습니다
+      no_notes_yet_hint: 지도를 열고 도구에서 메모 추가를 선택한 뒤, 기억하고 싶은 지점을 클릭하세요.
+      open_the_map: 지도 열기
+    note:
+      trip: '여행: %{name}'
+      open_this_day_on_the_map: 지도에서 이 날 열기
+  map:
+    maplibre:
+      note_modal:
+        map_note: 지도 메모
+      settings_panel:
+        notes: 메모
+        show_your_map_notes: 지도에 작성한 메모 표시
+        add_note: 메모 추가
+    timeline_feeds:
+      note_entry:
+        edit: 편집
+      on_this_day:
+        on_this_day: 이 날
+        more: "+%{count}개 더"
+  javascript:
+    messages:
+      click_on_the_map_to_place_a_note_esc_to: 지도를 클릭해 메모를 배치하세요. Esc로 취소합니다.
+      failed_to_load_notes: 메모를 불러오지 못했습니다
+  shared:
+    navbar:
+      notes: 일기
+    links:
+      map_notes:
+        notes: 메모
+  shared_links:
+    map_notes_toggle:
+      label: 내 지도 메모 표시
+      hint: 이 기간에 대한 메모의 텍스트와 시간을 보여 주며, 작성 위치는 표시하지 않습니다. 나중에 이 기간에 대해 작성한 메모도 나타납니다.
+  ux_p2:
+    sharing:
+      sections:
+        show_map_notes: 지도 메모

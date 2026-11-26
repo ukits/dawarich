@@ -296,7 +296,7 @@ RSpec.describe 'Settings → Geofencing', type: :request do
   end
 
   describe 'archived geofence labels', :archive do
-    %i[en de es fr pl ca zh].each do |locale|
+    %i[en de es fr pl ca zh ko].each do |locale|
       it "marks archived geofences as paused in the filter and webhook forms in #{locale}" do
         home.update!(archived: true)
         webhook = create(:webhook, user:, place_ids: [home.id])

@@ -1,0 +1,8 @@
+ko:
+  javascript:
+    range_statistics:
+      scope: "선택한 기간의 내 포인트이며, 비공개 구역과 가족 기록은 제외됩니다."
+      unavailable: "통계를 사용할 수 없습니다"
+      summary:
+        one: "%{points}개 포인트 · %{distance} %{unit}"
+        other: "%{points}개 포인트 · %{distance} %{unit}"

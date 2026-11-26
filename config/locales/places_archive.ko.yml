@@ -1,0 +1,8 @@
+ko:
+  places:
+    archive:
+      badge: "보관됨"
+      archive: "보관"
+      unarchive: "보관 해제"
+      hint: "확인된 방문과 비공개 마스킹은 유지됩니다. 보관 중에는 새 방문이 연결되지 않고 지오펜싱이 일시 중지됩니다."
+      show_on_map: "보관한 장소 표시"

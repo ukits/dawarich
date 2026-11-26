@@ -1,0 +1,241 @@
+# Korean Rails framework translations adapted from rails-i18n:
+# https://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/ko.yml
+#
+# Copyright (c) 2008-2012 Sven Fuchs and contributors
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+ko:
+  activerecord:
+    errors:
+      messages:
+        record_invalid: "데이터 검증에 실패하였습니다. %{errors}"
+        restrict_dependent_destroy:
+          has_one: "%{record}(이)가 존재하기 때문에 삭제할 수 없습니다"
+          has_many: "%{record}(이)가 존재하기 때문에 삭제할 수 없습니다"
+  date:
+    abbr_day_names:
+      - 일
+      - 월
+      - 화
+      - 수
+      - 목
+      - 금
+      - 토
+    abbr_month_names:
+      - null
+      - 1월
+      - 2월
+      - 3월
+      - 4월
+      - 5월
+      - 6월
+      - 7월
+      - 8월
+      - 9월
+      - 10월
+      - 11월
+      - 12월
+    day_names:
+      - 일요일
+      - 월요일
+      - 화요일
+      - 수요일
+      - 목요일
+      - 금요일
+      - 토요일
+    formats:
+      default: "%Y-%m-%d"
+      long: "%Y년 %m월 %d일"
+      short: "%m월 %d일"
+    month_names:
+      - null
+      - 1월
+      - 2월
+      - 3월
+      - 4월
+      - 5월
+      - 6월
+      - 7월
+      - 8월
+      - 9월
+      - 10월
+      - 11월
+      - 12월
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: 약 %{count}시간
+        other: 약 %{count}시간
+      about_x_months:
+        one: 약 %{count}개월
+        other: 약 %{count}개월
+      about_x_years:
+        one: 약 %{count}년
+        other: 약 %{count}년
+      almost_x_years:
+        one: 거의 %{count}년
+        other: 거의 %{count}년
+      half_a_minute: 30초
+      less_than_x_seconds:
+        one: "%{count}초 미만"
+        other: "%{count}초 미만"
+      less_than_x_minutes:
+        one: 1분 미만
+        other: "%{count}분 미만"
+      over_x_years:
+        one: "%{count}년 초과"
+        other: "%{count}년 초과"
+      x_seconds:
+        one: "%{count}초"
+        other: "%{count}초"
+      x_minutes:
+        one: "%{count}분"
+        other: "%{count}분"
+      x_days:
+        one: "%{count}일"
+        other: "%{count}일"
+      x_months:
+        one: "%{count}개월"
+        other: "%{count}개월"
+      x_years:
+        one: "%{count}년"
+        other: "%{count}년"
+    prompts:
+      second: 초
+      minute: 분
+      hour: 시
+      day: 일
+      month: 월
+      year: 년
+    relative:
+      future: "%{time} 후"
+      past: "%{time} 전"
+  errors:
+    format: "%{attribute}%{message}"
+    messages:
+      accepted: 반드시 확인해 주세요
+      blank: 내용을 입력해 주세요
+      confirmation: "%{attribute}와(과) 일치해야 합니다"
+      empty: 값을 입력해 주세요
+      equal_to: 값은 %{count}와(과) 같아야 합니다
+      even: 짝수를 입력해 주세요
+      exclusion: 이미 예약된 값입니다
+      greater_than: 값은 %{count}보다 커야 합니다
+      greater_than_or_equal_to: 값은 %{count}보다 크거나 같아야 합니다
+      in: 값은 %{count} 범위 안에 있어야 합니다
+      inclusion: 목록에 포함된 값이 아닙니다
+      invalid: 올바르지 않은 값입니다
+      model_invalid: "데이터 검증에 실패하였습니다: %{errors}"
+      not_a_number: 숫자를 입력해 주세요
+      not_an_integer: 정수를 입력해 주세요
+      odd: 홀수를 입력해 주세요
+      other_than: 값은 %{count}와(과) 달라야 합니다
+      password_too_long: 너무 깁니다
+      present: 값은 비어 있어야 합니다
+      required: 값이 반드시 필요합니다
+      taken: 이미 존재하는 값입니다
+      too_long:
+        one: "너무 깁니다(최대 %{count}자)"
+        other: "너무 깁니다(최대 %{count}자)"
+      too_short:
+        one: "너무 짧습니다(최소 %{count}자)"
+        other: "너무 짧습니다(최소 %{count}자)"
+      wrong_length:
+        one: "길이가 잘못되었습니다(%{count}자여야 함)"
+        other: "길이가 잘못되었습니다(%{count}자여야 함)"
+      less_than: 값은 %{count}보다 작아야 합니다
+      less_than_or_equal_to: 값은 %{count}보다 작거나 같아야 합니다
+    template:
+      body: 아래 문제를 확인해 주세요.
+      header:
+        one: "%{count}개의 오류로 인해 %{model}을(를) 저장할 수 없습니다"
+        other: "%{count}개의 오류로 인해 %{model}을(를) 저장할 수 없습니다"
+  helpers:
+    select:
+      prompt: 선택해 주세요
+    submit:
+      create: "%{model} 등록"
+      submit: "%{model} 저장"
+      update: "%{model} 수정"
+  number:
+    currency:
+      format:
+        delimiter: ","
+        format: "%n%u"
+        precision: 0
+        separator: .
+        significant: false
+        strip_insignificant_zeros: false
+        unit: 원
+        negative_format: "-%n%u"
+    format:
+      delimiter: ","
+      precision: 3
+      round_mode: default
+      separator: .
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n%u"
+        units:
+          billion: 십억
+          million: 백만
+          quadrillion: 천조
+          thousand: 천
+          trillion: 조
+          unit: ""
+      format:
+        delimiter: ""
+        precision: 3
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n%u"
+        units:
+          byte:
+            one: 바이트
+            other: 바이트
+          eb: EB
+          gb: GB
+          kb: KB
+          mb: MB
+          pb: PB
+          tb: TB
+          zb: ZB
+    percentage:
+      format:
+        delimiter: ""
+        format: "%n%"
+    precision:
+      format:
+        delimiter: ""
+  support:
+    array:
+      last_word_connector: ", "
+      two_words_connector: ", "
+      words_connector: ", "
+  time:
+    am: 오전
+    pm: 오후
+    formats:
+      default: "%Y년 %m월 %d일 %H:%M"
+      long: "%Y년 %m월 %d일 %H:%M"
+      short: "%m월 %d일 %H:%M"

@@ -1,0 +1,123 @@
+ko:
+  activerecord:
+    errors:
+      models:
+        webhook:
+          attributes:
+            url:
+              https_required: https를 사용해야 합니다
+            base:
+              too_many: 웹훅은 최대 %{count}개까지 만들 수 있습니다.
+  webhooks:
+    notifications:
+      deactivated:
+        title: 웹훅이 꺼졌습니다
+        content: "웹훅 “%{name}”이(가) 연속 다섯 번 전송에 실패해 꺼졌습니다. 수신 URL을 확인한 뒤 설정 → 지오펜싱에서 다시 켜세요."
+  settings:
+    navigation:
+      geofencing: 지오펜싱
+    geofencing:
+      show:
+        title: 지오펜싱
+        intro: "Dawarich는 “입장·퇴장 알림”이 켜진 장소에 들어가거나 나올 때를 기록합니다. 휴대폰이 보고하거나 수신하는 포인트로 판단하며, 각 이벤트를 내 서비스로 보낼 수 있습니다."
+        webhooks: 웹훅
+        webhooks_intro: 각 이벤트는 서명된 JSON POST로 전송됩니다. X-Dawarich-Signature 헤더를 본문의 HMAC-SHA256(비밀키)과 비교하세요.
+        no_webhooks: 아직 웹훅이 없습니다.
+        new_webhook: 새 웹훅
+        upgrade_title: 웹훅은 Pro 기능입니다
+        upgrade_text: 입장·퇴장 이벤트를 Home Assistant, Node-RED, n8n 또는 내 서비스로 보내세요.
+        upgrade: Pro로 업그레이드
+        events: 이벤트
+        no_events: "아직 입장·퇴장 이벤트가 없습니다. 휴대폰이나 추적 앱이 이런 장소 안에서 포인트를 보고하면 나타납니다."
+        no_places: "입장·퇴장을 보고하는 장소가 아직 없습니다. 장소를 열고 “입장·퇴장 알림”을 켜세요."
+        open_places: "장소 열기"
+        place: "장소"
+        all_places: "모든 장소"
+        from: 시작
+        to: 끝
+        filter: 필터
+        time: 시간
+        event: 이벤트
+        source: 출처
+        deliveries: 전송
+        event_types:
+          enter: 입장
+          leave: 퇴장
+        sources:
+          native_app: 휴대폰
+          server_inferred: 위치 포인트
+          owntracks_native: OwnTracks
+        delivered: '%{count}건 전송됨'
+        failed: '%{count}건 실패'
+        in_progress: '%{count}건 진행 중'
+        not_sent_late: "전송 안 함: %{minutes}분보다 늦게 도착"
+        not_sent_throttled: "전송 안 함: 한 시간에 입장·퇴장 이벤트가 %{count}건을 초과"
+    webhooks:
+      form:
+        name: 이름
+        url: URL
+        events: 이벤트
+        places: "장소"
+        places_hint: "모두 선택하지 않으면 알림이 켜진 모든 장소의 이벤트를 받습니다."
+        home_assistant_hint: "Home Assistant는 웹훅 ID가 틀려도 항상 200으로 응답하므로, 여기서 “전송됨”이 자동화가 실행됐다는 뜻은 아닙니다. Home Assistant의 추적을 확인하세요. Home Assistant는 서명을 검사하지 않으며, URL의 웹훅 ID가 비공개를 유지합니다."
+        home_assistant_cloud_hint: "기본적으로 Home Assistant는 자체 네트워크의 웹훅만 받습니다. Nabu Casa 웹훅 URL을 쓰거나, 트리거의 웹훅 설정에서 local_only를 끄세요."
+        active: 활성
+        save: 저장
+        create: 웹훅 추가
+      webhook:
+        active: 활성
+        inactive: 꺼짐
+        failing: 실패 중
+        every_place: "모든 장소"
+        places_count:
+          one: "장소 %{count}개"
+          other: "장소 %{count}개"
+        last_success: "%{time} 전에 마지막 전송"
+        never_delivered: 아직 전송된 적 없음
+        failures:
+          one: '연속 %{count}건 전송 실패'
+          other: '연속 %{count}건 전송 실패'
+        test: 테스트 보내기
+        deliveries: 전송
+        regenerate: 새 비밀키
+        delete: 삭제
+        edit: 편집
+        confirm_regenerate: 새 비밀키를 만들까요? 이전 키는 즉시 사용할 수 없게 됩니다.
+        confirm_delete: 이 웹훅을 삭제할까요?
+      secret:
+        title: "%{name}의 서명 비밀키"
+        text: 지금 복사하세요 — 다시 표시되지 않습니다.
+        copy: 복사
+      show:
+        title: '전송: %{name}'
+        back: 지오펜싱으로 돌아가기
+        empty: 아직 전송이 없습니다.
+        time: 시간
+        event: 이벤트
+        status: 상태
+        attempts: 시도
+        response: 응답
+        retry: 다시 시도
+        test: 테스트
+        statuses:
+          pending: 대기 중
+          success: 전송됨
+          failure: 실패
+          retrying: 재시도 중
+      create:
+        created: 웹훅이 추가되었습니다.
+      update:
+        updated: 웹훅이 저장되었습니다.
+      destroy:
+        deleted: 웹훅이 삭제되었습니다.
+      test:
+        sent: 테스트 이벤트를 보냈습니다.
+        no_place: "테스트 이벤트를 보내려면 먼저 장소에서 “입장·퇴장 알림”을 켜세요."
+        rate_limited: "테스트 전송이 너무 많습니다. 잠시 후 다시 시도하세요."
+      retry_delivery:
+        queued: 전송이 다시 대기열에 올랐습니다.
+  places:
+    drawer:
+      geofence: "입장·퇴장 알림"
+      geofence_hint: "방문 반경(%{radius} m)을 사용합니다."
+      geofence_link: "이벤트와 웹훅"

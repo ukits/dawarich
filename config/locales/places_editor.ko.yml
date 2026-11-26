@@ -1,0 +1,39 @@
+ko:
+  places:
+    # Places 목록의 집/직장 추가 버튼. 마지막은 Place와 태그의 이름.
+    shortcuts:
+      add_home: "집 추가"
+      add_work: "직장 추가"
+      work_place_name: "직장"
+    # Place의 선택적 기간: 폼의 필드셋과 Places 목록 이름 아래 한 줄.
+    period:
+      title: "기간"
+      help: "선택 사항: 이 장소가 내 삶의 일부였던 때입니다. 여전히 해당하면 “까지”를 비워 두세요."
+      since: "%{date}부터"
+      until: "%{date}까지"
+      range: "%{from} – %{to}"
+    polish:
+      selected: "선택됨"
+      location: "위치"
+      notifications: "알림"
+      visits: "방문"
+      manage: "관리"
+      total_time: "총 시간"
+      avg_dwell: "평균 체류"
+      statistics: "통계"
+      merge_duplicate: "중복 병합"
+      back_to_places: "장소로 돌아가기"
+      clear: "지우기"
+    inline_tags:
+      new_tag: "새 태그"
+      name: "태그 이름"
+      emoji: "이모지(선택)"
+      create: "태그 만들기"
+    drawer:
+      hidden_by_tag: "태그 %{name}로 숨김, %{radius} m"
+      geofence_events: "최근 지오펜스 이벤트"
+      no_geofence_events: "입장·퇴장 이벤트가 아직 없습니다."
+      geofence_disabled: "이 장소의 이벤트를 기록하려면 입장·퇴장 알림을 켜세요."
+  javascript:
+    map_info:
+      geofence_boundary: "지오펜스 경계"

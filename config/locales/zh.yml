@@ -1330,7 +1330,7 @@ zh:
         name: 名称
         save: 保存
         attached_place: 关联的地点
-        place_id: 地点 #%{id}
+        place_id: "地点 #%{id}"
         delete: 删除
         delete_this_visit_your_location_points_stay: 删除本次到访记录吗？您的轨迹点会保留。
   notifications:
@@ -4333,7 +4333,7 @@ zh:
       update: 更新到访记录
       recent: 最近到访
       name: 到访记录名称
-      place_id: 地点 #%{id}
+      place_id: "地点 #%{id}"
       no_data_loaded: 未加载到访数据
       none_found: 未找到到访记录
       none_found_for: 未找到与“%{query}”相关的到访记录

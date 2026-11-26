@@ -1315,7 +1315,7 @@ en:
         name: Name
         save: Save
         attached_place: Attached place
-        place_id: Place #%{id}
+        place_id: "Place #%{id}"
         delete: Delete
         delete_this_visit_your_location_points_stay: Delete this visit? Your location points stay.
   notifications:
@@ -4256,7 +4256,7 @@ en:
       update: Update Visit
       recent: Recent Visits
       name: Visit Name
-      place_id: Place #%{id}
+      place_id: "Place #%{id}"
       no_data_loaded: No visits data loaded
       none_found: No visits found
       none_found_for: No visits found for "%{query}"

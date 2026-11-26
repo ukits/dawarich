@@ -38,12 +38,22 @@ module Visits
       end
 
       started_ats = visits.pluck(:started_at)
+      ended_ats = visits.pluck(:ended_at)
       place_ids = visits.reorder(nil).where.not(place_id: nil).distinct.pluck(:place_id)
       started_at = Time.current
 
-      # Soft delete: rows stay as tombstones (points and place links intact)
-      # so visit detection never re-suggests what the user removed.
+      # Soft delete: rows stay as tombstones so visit detection never
+      # re-suggests what the user removed. Points are released — update_all
+      # skips the model callback that does this for a single delete — and the
+      # neighboring-visit track ranges are rebuilt so those points can join a
+      # track again (F20).
       Visit.where(id: ids).update_all(deleted_at: Time.current)
+      Point.where(visit_id: ids).update_all(visit_id: nil)
+      ids.zip(started_ats, ended_ats).each do |id, visit_started_at, visit_ended_at|
+        Tracks::RebuildAroundVisit.enqueue(
+          Visit.new(id: id, user: user, started_at: visit_started_at, ended_at: visit_ended_at)
+        )
+      end
 
       # update_all skips AR callbacks, so the orphan-place check the model
       # runs on single soft deletes must be enqueued here by hand.

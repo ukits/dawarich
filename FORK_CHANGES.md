@@ -93,8 +93,9 @@ ID는 바꾸지 않는다. 포기하거나 업스트림에 맡겨도 행은 남�
 | F15 | Visit Card Place ID 표시 | 카드에 place id | `고쳐 반영` | `visit_card.js`, timeline visit row | `b62179f` / `a5898f1` → 1.22: 2e015dfd7 |
 | F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `고쳐 반영` | `visits/create.rb` (`place_finder.rb`는 upstream 동일 계약) | `66fc9bb` / `c9c6eb6` → 1.22: eb3971e94 |
 | F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `그대로 반영` | `visits/create.rb` | `5b9eb1c` / `612afb1` → 1.22: eb3971e94 |
-| F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `포기` @1.22.0 (velocity 미이식, 코드 없음. Track 재계산은 F19 잔여 갭을 다시 열 때만) | Visit callbacks / RebuildDay (팁) | `70e7bb0`… / `9ffd211` |
-| F19 | Track에서 Visit Point 제외 | visit_id Point는 트랙 제외·경계 분리 | `업스트림에 맡김` @1.22.0 | `Tracks::StationaryStops` | `17c7422` / — (검증. 잔여 갭은 미룸) |
+| F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `포기` @1.22.0 (velocity 미이식. Track 재계산은 F20으로 분리) | Visit callbacks / RebuildDay (팁) | `70e7bb0`… / `9ffd211` |
+| F19 | Track에서 Visit Point 제외 | visit_id Point는 트랙 제외·경계 분리 | `업스트림에 맡김` @1.22.0 | `Tracks::StationaryStops` | `17c7422` / — (검증. 잔여 갭 → F20) |
+| F20 | Visit 전후 Track 재계산 | WebUI/API suggested·confirmed Visit 유입·삭제 시 이웃 Visit 범위 Track rebuild + visit_id 제외(잔여 갭) | `유지 중` | `Tracks::RebuildAroundVisit`, Visit callback, segmentation/SQL | — / (본 브랜치) |
 
 ### 도메인 메모 (F16–F19)
 
@@ -103,12 +104,14 @@ ID는 바꾸지 않는다. 포기하거나 업스트림에 맡겨도 행은 남�
 - **1.14.0 사이클:** `F16 → F17 → F19`를 가져왔다. **F18은 미룸** (velocity는 그때 버리지 않았다. F19만으로 Track 분리를 쓰며 필요성을 다시 보았다).
 - UI 의존 `F13`은 Create 계약(F16/F17) + F14 좌표 인프라 이후 반영이 끝났다.
 - **1.22.0 사이클:** `F14`는 1.21에, `F19`는 1.22에 **업스트림에 맡김** (우리 코드 없음, 검증 필수). `F16`·`F13`은 고쳐 반영, `F17`은 그대로 반영. `F18`의 velocity는 **포기**.
+- **F20:** 1.22에서 빠진 Visit→Track rebuild를 이웃 Visit 범위로 복원. StationaryStops가 놓치는 짧은/반경 밖 수동 Visit은 `visit_id` 제외로 보완. 기계 감지 insert는 rebuild 생략.
 
 핵심 파일(1.14 sync 기준):
 
 - `app/services/visits/create.rb`
 - `app/services/visits/place_finder.rb`
 - `app/services/tracks/segmentation.rb`
+- `app/services/tracks/rebuild_around_visit.rb` (F20)
 - `app/javascript/maps_maplibre/…` (Select Area · VisitCard)
 
 ---

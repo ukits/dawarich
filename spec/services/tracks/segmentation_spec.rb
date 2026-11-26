@@ -122,5 +122,24 @@ lonlat: 'POINT(1.1 1.1)')
 
       expect(segmenter.send(:split_points_into_segments_geocoder, points)).to eq([points])
     end
+
+    it 'excludes visit-owned points and splits the journeys on either side' do
+      before = [
+        build(:point, timestamp: base_time, lonlat: 'POINT(-140.0 -40.0)', visit_id: nil),
+        build(:point, timestamp: base_time + 5.minutes.to_i, lonlat: 'POINT(-139.998 -40.0)', visit_id: nil)
+      ]
+      visit_points = [
+        build(:point, timestamp: base_time + 10.minutes.to_i, lonlat: 'POINT(-139.997 -40.0)', visit_id: 42),
+        build(:point, timestamp: base_time + 15.minutes.to_i, lonlat: 'POINT(-139.997 -40.0)', visit_id: 42)
+      ]
+      after = [
+        build(:point, timestamp: base_time + 20.minutes.to_i, lonlat: 'POINT(-139.995 -40.0)', visit_id: nil),
+        build(:point, timestamp: base_time + 25.minutes.to_i, lonlat: 'POINT(-139.993 -40.0)', visit_id: nil)
+      ]
+
+      segments = segmenter.send(:split_points_into_segments_geocoder, before + visit_points + after)
+
+      expect(segments).to eq([before, after])
+    end
   end
 end

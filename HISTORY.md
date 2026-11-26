@@ -210,7 +210,13 @@ upstream 1.14.0 위에 fork 카탈로그(F01–F19)를 cherry-pick 없이 **기�
 
 ### 폐기
 
-- F18 velocity SideEffects — `raw_data` 복원 경로 불가. Track rebuild도 F19 대체로 미이식.
+- F18 velocity SideEffects — `raw_data` 복원 경로 불가.
+
+### F20 — Visit 전후 Track 재계산 (복원)
+
+- Visit(WebUI/API, suggested·confirmed) 생성·확인·삭제 시 **이웃 Visit 범위** Track rebuild
+- 짧은/반경 밖 수동 Visit을 위해 `visit_id` Point Track 제외(F19 잔여 갭) 병행
+- 기계 감지 suggested insert는 rebuild 생략
 
 ### 남은 일
 

@@ -15,6 +15,8 @@
 # - Time threshold: Gap longer than X minutes indicates a new track
 # - Stationary stop: Staying within the visit radius of one place for as long as a visit
 #   ends a track (see Tracks::StationaryStops)
+# - Visit boundaries: Points with visit_id are excluded from tracks (F20 residual of
+#   fork F19). Covers short/out-of-radius manual visits StationaryStops misses.
 # - Local midnight: Ends a track when the user splits tracks at midnight (see Tracks::DayBoundary)
 # - Minimum segment size: Segments must have at least 2 points to form a track
 #
@@ -57,7 +59,17 @@ module Tracks::Segmentation
     stationary_breaks = long_stationary_breaks(points)
 
     points.each_with_index do |point, index|
-      if stationary_breaks.include?(index) || should_start_new_segment?(point, current_segment.last)
+      # Visit-owned points never join a track. Finalize the approach segment and
+      # drop the visit point so a fresh track starts on the first free point after.
+      if point_in_visit?(point)
+        segments << current_segment if current_segment.size >= 2
+        current_segment = []
+        next
+      end
+
+      if current_segment.empty?
+        current_segment = [point]
+      elsif stationary_breaks.include?(index) || should_start_new_segment?(point, current_segment.last)
         # Finalize current segment if it has enough points
         segments << current_segment if current_segment.size >= 2
         current_segment = [point]
@@ -70,6 +82,17 @@ module Tracks::Segmentation
     segments << current_segment if current_segment.size >= 2
 
     segments
+  end
+
+  def point_in_visit?(point)
+    visit_id =
+      if point.respond_to?(:visit_id)
+        point.visit_id
+      elsif point.is_a?(Hash)
+        point[:visit_id] || point['visit_id']
+      end
+
+    visit_id.present?
   end
 
   # Alias for backwards compatibility with TimeChunkProcessorJob

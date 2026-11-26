@@ -33,6 +33,13 @@ RSpec.describe Visits::BulkDestroy do
           .to have_enqueued_job(Places::DeleteIfOrphanJob).with(place.id)
       end
 
+      it 'releases points and rebuilds tracks around the removed visits' do
+        point = create(:point, user: user, visit: visit1, timestamp: visit1.started_at.to_i + 60)
+
+        expect { service.call }.to have_enqueued_job(Tracks::ParallelGeneratorJob).at_least(:once)
+        expect(point.reload.visit_id).to be_nil
+      end
+
       it 'leaves other users\' visits untouched' do
         service.call
 
@@ -118,10 +125,10 @@ RSpec.describe Visits::BulkDestroy do
       let!(:point) { create(:point, user: user, visit: visit1) }
       subject(:service) { described_class.new(user, [visit1.id]) }
 
-      it 'keeps points and place_visits attached to the tombstone' do
+      it 'releases points from the tombstone but keeps place_visits' do
         expect { service.call }.not_to change(Point, :count)
 
-        expect(point.reload.visit_id).to eq(visit1.id)
+        expect(point.reload.visit_id).to be_nil
         expect(PlaceVisit.where(id: place_visit.id)).to exist
         expect(Place.where(id: place.id)).to exist
       end

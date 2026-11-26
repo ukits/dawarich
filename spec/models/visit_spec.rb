@@ -84,6 +84,8 @@ RSpec.describe Visit, type: :model do
   end
 
   describe 'soft deletion' do
+    include ActiveJob::TestHelper
+
     let(:user) { create(:user) }
 
     it 'excludes soft-deleted and declined visits from .active' do
@@ -100,6 +102,59 @@ RSpec.describe Visit, type: :model do
 
       expect { visit.soft_delete! }.to change { visit.reload.deleted_at }.from(nil)
       expect(Visit.count).to eq(1)
+    end
+
+    it 'releases points and rebuilds flanking tracks when soft-deleted' do
+      visit = create(:visit, user: user, status: :confirmed)
+      point = create(:point, user: user, visit: visit, timestamp: visit.started_at.to_i + 60)
+      clear_enqueued_jobs
+
+      expect { visit.soft_delete! }.to have_enqueued_job(Tracks::ParallelGeneratorJob).with(
+        user.id,
+        hash_including(mode: :bulk)
+      )
+      expect(point.reload.visit_id).to be_nil
+      expect(visit.reload.deleted_at).to be_present
+    end
+  end
+
+  describe 'track rebuild callback' do
+    include ActiveJob::TestHelper
+
+    let(:user) { create(:user) }
+
+    it 'rebuilds tracks when a confirmed visit is created' do
+      expect do
+        create(:visit, user: user, status: :confirmed)
+      end.to have_enqueued_job(Tracks::ParallelGeneratorJob).with(
+        user.id,
+        hash_including(mode: :bulk)
+      )
+    end
+
+    it 'rebuilds tracks when a suggested visit is created without detection_version' do
+      expect do
+        create(:visit, user: user, status: :suggested, detection_version: nil)
+      end.to have_enqueued_job(Tracks::ParallelGeneratorJob).with(
+        user.id,
+        hash_including(mode: :bulk)
+      )
+    end
+
+    it 'skips rebuild for machine-detected suggested inserts' do
+      expect do
+        create(:visit, user: user, status: :suggested, detection_version: Visits::Detection::VERSION)
+      end.not_to have_enqueued_job(Tracks::ParallelGeneratorJob)
+    end
+
+    it 'rebuilds when a suggested visit is confirmed' do
+      visit = create(:visit, user: user, status: :suggested, detection_version: Visits::Detection::VERSION)
+      clear_enqueued_jobs
+
+      expect { visit.update!(status: :confirmed) }.to have_enqueued_job(Tracks::ParallelGeneratorJob).with(
+        user.id,
+        hash_including(mode: :bulk)
+      )
     end
   end
 

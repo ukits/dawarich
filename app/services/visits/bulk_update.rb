@@ -43,6 +43,7 @@ module Visits
 
       # Captured before update_all: declined visits drop out of scoped_visits.
       declined_place_ids = status == 'declined' ? visits.where.not(place_id: nil).distinct.pluck(:place_id) : []
+      rebuild_snapshots = visits.pluck(:id, :started_at, :ended_at)
       tz = user.safe_settings.timezone.presence || 'UTC'
       months = visits.distinct.pluck(:started_at, :ended_at).select(&:first)
                      .flat_map { |from, to| Timeline::MonthSummary.months_spanning(from, to, tz) }.uniq
@@ -53,6 +54,16 @@ module Visits
       # update_all skips AR callbacks, so declining here must enqueue the
       # orphan-place check the model runs on single-record declines.
       declined_place_ids.each { |place_id| Places::DeleteIfOrphanJob.perform_later(place_id) }
+
+      # Confirming/suggesting changes which points belong on a track; rebuild
+      # the flanking range the model callback would have enqueued (F20).
+      if %w[confirmed suggested].include?(status)
+        rebuild_snapshots.each do |id, started_at, ended_at|
+          Tracks::RebuildAroundVisit.enqueue(
+            Visit.new(id: id, user: user, started_at: started_at, ended_at: ended_at)
+          )
+        end
+      end
 
       ActiveRecord.after_all_transactions_commit do
         months.each { |month| Rails.cache.delete(Timeline::MonthSummary.cache_key_for(user, month)) }

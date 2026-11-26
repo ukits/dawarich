@@ -22,6 +22,7 @@ class Visit < ApplicationRecord
   # after_*_commit hooks would silently keep only the last registration.
   after_commit :cleanup_place_if_orphan, on: %i[update destroy], if: :left_active_state?
   after_commit :bust_timeline_month_summary_cache, unless: -> { demo? && previously_new_record? }
+  after_commit :sync_tracks_after_visit_change, on: %i[create update]
 
   validates :started_at, :ended_at, :duration, :status, presence: true
 
@@ -177,6 +178,34 @@ class Visit < ApplicationRecord
     destroyed? ||
       (saved_change_to_deleted_at? && deleted_at.present?) ||
       (saved_change_to_status? && declined?)
+  end
+
+  # A new active visit (suggested or confirmed), or one the user just hid,
+  # changes which points may belong to a track. Tombstoning releases the
+  # points first: the row stays so detection does not recreate the visit, and
+  # tracks between neighboring visits are rebuilt with those points included
+  # again. Machine detection inserts skip the rebuild — StationaryStops already
+  # split those dwells when tracks were generated (F20).
+  def sync_tracks_after_visit_change
+    return if demo? || user_id.blank? || started_at.blank?
+
+    if saved_change_to_deleted_at? && deleted_at.present?
+      points.update_all(visit_id: nil)
+      Tracks::RebuildAroundVisit.enqueue(self)
+    elsif track_relevant_visit? && track_relevant_change?
+      return if previously_new_record? && detection_version.present?
+
+      Tracks::RebuildAroundVisit.enqueue(self)
+    end
+  end
+
+  def track_relevant_visit?
+    !soft_deleted? && (suggested? || confirmed?)
+  end
+
+  def track_relevant_change?
+    previously_new_record? || saved_change_to_deleted_at? || saved_change_to_status? ||
+      saved_change_to_started_at? || saved_change_to_ended_at?
   end
 
   # Keeps the Timeline calendar/filter-count cache fresh when visits are

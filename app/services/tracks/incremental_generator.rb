@@ -99,8 +99,23 @@ class Tracks::IncrementalGenerator
     return unless preceding
     return if Tracks::HandoffSplitter.handoff_between?(user, new_track.tracker_id, preceding.end_at,
                                                        new_track.start_at)
+    # Don't stitch across a visit — the stay is a hard track boundary.
+    return if visit_between?(preceding, new_track)
 
     Tracks::Merger.new(preceding, new_track).call
+  end
+
+  # True when at least one visit point exists in the time gap between two tracks.
+  def visit_between?(track_a, track_b)
+    earlier, later = [track_a, track_b].sort_by(&:start_at)
+    gap_start = earlier.end_at.to_i
+    gap_end = later.start_at.to_i
+    return false if gap_end <= gap_start
+
+    user.points
+        .where(timestamp: gap_start..gap_end)
+        .where.not(visit_id: nil)
+        .exists?
   end
 
   def end_preceding_track_at_arrival(departure_track)

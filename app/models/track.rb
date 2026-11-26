@@ -145,6 +145,8 @@ class Track < ApplicationRecord
     # on both sides of an already tracked stretch would join into one segment.
     # Filter them out only after calculating the segment boundaries, and break wherever
     # the track changes so the untracked points around a tracked stretch stay apart.
+    # Visit points stay in the window functions (so LAG sees the transition) but are
+    # dropped from final segments via `WHERE visit_id IS NULL` (F20).
     sql = <<~SQL
       WITH points_with_gaps AS (
         SELECT
@@ -153,9 +155,11 @@ class Track < ApplicationRecord
           lonlat,
           tracker_id,
           track_id,
+          visit_id,
           LAG(track_id) OVER (PARTITION BY tracker_id ORDER BY timestamp) as prev_track_id,
           LAG(lonlat) OVER (PARTITION BY tracker_id ORDER BY timestamp) as prev_lonlat,
           LAG(timestamp) OVER (PARTITION BY tracker_id ORDER BY timestamp) as prev_timestamp,
+          LAG(visit_id) OVER (PARTITION BY tracker_id ORDER BY timestamp) as prev_visit_id,
           ST_Distance(
             lonlat::geography,
             LAG(lonlat) OVER (PARTITION BY tracker_id ORDER BY timestamp)::geography
@@ -169,6 +173,8 @@ class Track < ApplicationRecord
         SELECT points_with_gaps.*,
           CASE
             WHEN prev_lonlat IS NULL THEN 1
+            WHEN visit_id IS NOT NULL THEN 1
+            WHEN prev_visit_id IS NOT NULL THEN 1
             WHEN time_diff_seconds > $4 THEN 1
             WHEN stop_breaks.id IS NOT NULL THEN 1
             WHEN (to_timestamp(timestamp) AT TIME ZONE $6::text)::date
@@ -193,7 +199,8 @@ class Track < ApplicationRecord
         max(timestamp) as end_timestamp,
         sum(COALESCE(distance_meters, 0)) as total_distance_meters
       FROM segments
-      #{'WHERE track_id IS NULL' if untracked_only}
+      WHERE visit_id IS NULL
+      #{'AND track_id IS NULL' if untracked_only}
       GROUP BY tracker_id, segment_id
       HAVING count(*) >= 2
       ORDER BY tracker_id NULLS FIRST, segment_id

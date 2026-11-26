@@ -23,6 +23,13 @@ RSpec.describe Visits::Create do
         expect(service.visit).to be_persisted
       end
 
+      it 'enqueues a rebuild of tracks around the new visit' do
+        expect { service.call }.to have_enqueued_job(Tracks::ParallelGeneratorJob).with(
+          user.id,
+          hash_including(mode: :bulk)
+        )
+      end
+
       it 'returns the existing visit instead of duplicating it on a repeated call' do
         first = described_class.new(user, valid_params)
         first.call

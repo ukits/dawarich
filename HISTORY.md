@@ -218,6 +218,11 @@ upstream 1.14.0 위에 fork 카탈로그(F01–F19)를 cherry-pick 없이 **기�
 - 짧은/반경 밖 수동 Visit을 위해 `visit_id` Point Track 제외(F19 잔여 갭) 병행
 - 기계 감지 suggested insert는 rebuild 생략
 
+### F15 — Place ID 로케일 따옴표 (1.22 추가 수정)
+
+- F15의 버그. `Place #%{id}`를 따옴표로 감싸 YAML `#` 주석으로 id가 잘리지 않게 함 (PR #2, `8acef9090`)
+- visit card·로케일 interpolation에 id가 남음. 타임라인 행의 `#id` 표기는 F22
+
 ### 남은 일
 
 - superseded 항목 수동 UI 검증
@@ -242,4 +247,4 @@ git show --stat <commit-hash>
 
 ---
 
-*마지막 갱신: 2026-11-08 (사이클 1.14.0→1.22.0 open, `sync/1.22.0`)*
+*마지막 갱신: 2026-11-28 (사이클 1.14.0→1.22.0 open, F15 추가 수정)*

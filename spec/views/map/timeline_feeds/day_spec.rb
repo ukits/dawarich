@@ -99,7 +99,7 @@ RSpec.describe 'map/timeline_feeds/_day' do
     times = view.visit_entry_times(entries.first)
 
     expect(row.at_css('.visit-row__start').text.squish).to eq(times[:start_label])
-    expect(row.at_css('.visit-row__end').text.squish).to eq(times[:end_label])
+    expect(row.at_css('.visit-row__end').text.squish).to eq("- #{times[:end_label]}")
   end
 
   context 'when a visit has no name of its own' do

@@ -105,7 +105,7 @@ RSpec.describe 'Timeline feed rows for a visit that started on an earlier day', 
     row = visit_row_for('2026-10-22')
 
     expect(row.at_css('.visit-row__start').text.squish).to eq('00:00')
-    expect(row.at_css('.visit-row__end').text.squish).to eq('19:24')
+    expect(row.at_css('.visit-row__end').text.squish).to eq('- 19:24')
     expect(row.at_css('.visit-row__duration').text.squish).to eq('19h 24m')
     expect(row.css('form input[name="date"]').map { |input| input['value'] }).to eq(%w[2026-10-22 2026-10-22])
   end
@@ -125,7 +125,7 @@ RSpec.describe 'Timeline feed rows for a visit that started on an earlier day', 
     row = visit_row_for('2026-10-20')
 
     expect(row.at_css('.visit-row__start').text.squish).to eq('22:00')
-    expect(row.at_css('.visit-row__end').text.squish).to eq('08:00')
+    expect(row.at_css('.visit-row__end').text.squish).to eq('- 08:00')
     expect(row.at_css('.visit-row__duration').text.squish).to eq('10h')
   end
 end

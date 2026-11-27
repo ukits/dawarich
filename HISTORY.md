@@ -223,6 +223,12 @@ upstream 1.14.0 위에 fork 카탈로그(F01–F19)를 cherry-pick 없이 **기�
 - F15의 버그. `Place #%{id}`를 따옴표로 감싸 YAML `#` 주석으로 id가 잘리지 않게 함 (PR #2, `8acef9090`)
 - visit card·로케일 interpolation에 id가 남음. 타임라인 행의 `#id` 표기는 F22
 
+### F22 — Timeline 의 Visit 종료시간 표시
+
+- 시작 시각 아래 종료 시각. 종료 시각은 `- `와 `oklch(var(--bc) / 0.4)`
+- `.visit-status-dot`은 행 위·아래 같은 여백의 세로 막대 (`--tl-dot-y`·`--tl-dot-bottom` 각 0.45rem, `.visit-row` padding-top 0.42rem)
+- place id는 `#id`만. 막대·종료 시각 줄은 PR #3 (`4a6c91962`), `#id`·`- `·여백은 이 커밋이 최종
+
 ### 남은 일
 
 - superseded 항목 수동 UI 검증
@@ -247,4 +253,4 @@ git show --stat <commit-hash>
 
 ---
 
-*마지막 갱신: 2026-11-28 (사이클 1.14.0→1.22.0 open, F15 추가 수정)*
+*마지막 갱신: 2026-11-28 (사이클 1.14.0→1.22.0 open, F15 추가 수정, F22)*

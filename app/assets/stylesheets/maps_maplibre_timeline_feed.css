@@ -56,12 +56,11 @@
     var(--tl-rail-col) /
     2
   );
-  /* Marker centre on the title line, measured from a visit row's top border
-     edge. Also where the spine starts on the first row. */
-  --tl-dot-y: 1.15rem;
-  /* Vertical pill covering the title + meta rows so consecutive visits read
-     as distinct blocks on the spine. */
-  --tl-dot-height: 1.85rem;
+  /* Top of the visit marker, above the start-time line. The spine on the
+     first and last visit rows starts and ends with this inset. */
+  --tl-dot-y: 0.45rem;
+  /* Bottom inset matching the top, so the marker is a bar down the row. */
+  --tl-dot-bottom: 0.45rem;
   --tl-rail-color: oklch(var(--bc) / 0.16);
   /* Every piece of secondary text on a row shares one tone, set at the
      lowest alpha that still clears 4.5:1 in both themes. Hierarchy below the
@@ -100,8 +99,8 @@
 }
 
 .timeline-entries > .visit-row:last-child::before {
-  /* Cap at the bottom of the vertical marker, not its title-line centre. */
-  bottom: calc(100% - var(--tl-dot-y) - var(--tl-dot-height));
+  /* Cap at the bottom of the vertical marker. */
+  bottom: var(--tl-dot-bottom);
 }
 
 /* Helper shown when search/filter hides every visit row on a day that has
@@ -592,7 +591,7 @@
   align-items: start;
   /* No row border. Hairlines between every entry imposed table rhythm and
      fought the spine; the rail and the whitespace do the separating now. */
-  padding: 0.55rem var(--tl-pad-x) 0.6rem;
+  padding: 0.42rem var(--tl-pad-x) 0.6rem;
   border-radius: 8px;
   cursor: pointer;
   transition:
@@ -702,7 +701,7 @@
   margin-top: -0.1rem;
   font-size: 0.625rem; /* one step under the start clock */
   line-height: 1.2;
-  color: var(--tl-text-2);
+  color: oklch(var(--bc) / 0.4);
 }
 
 .visit-row__all-day {
@@ -824,15 +823,16 @@
   opacity: 1;
 }
 
-/* Vertical pill on the spine spanning title + meta, so adjacent visits
-   separate cleanly. Anchored at the title line (--tl-dot-y) and grows down. */
+/* Vertical bar on the spine covering the whole row, starting above the
+   start-time line so it does not sit mid-row like the old title-line dot. */
 .visit-status-dot {
   position: absolute;
   left: var(--tl-rail-x);
   top: var(--tl-dot-y);
+  bottom: var(--tl-dot-bottom);
   transform: translateX(-50%);
   width: 7px;
-  height: var(--tl-dot-height);
+  height: auto;
   border-radius: 9999px;
   background: var(--visit-marker);
   box-shadow: 0 0 0 2px oklch(var(--b1));

@@ -46,7 +46,7 @@
       <span class="visit-row__all-day"><%= t('.all_day') %></span>
     <% else %>
       <span class="visit-row__start"><%= times[:start_label] %></span>
-      <span class="visit-row__end"><%= times[:end_label] %></span>
+      <span class="visit-row__end">- <%= times[:end_label] %></span>
     <% end %>
   </div>
 
@@ -67,7 +67,7 @@
       <% end %>
       <span class="visit-row__points"><%= entry[:point_count] %> <%= t('.pts') %></span>
       <% if entry[:place_id].present? %>
-        <span class="visit-row__place-id"><%= t('.place_id', id: entry[:place_id]) %></span>
+        <span class="visit-row__place-id">#<%= entry[:place_id] %></span>
       <% end %>
       <% Array(entry[:tags]).each do |t| %>
         <span class="visit-tag">

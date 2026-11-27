@@ -96,6 +96,7 @@ ID는 바꾸지 않는다. 포기하거나 업스트림에 맡겨도 행은 남�
 | F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `포기` @1.22.0 (velocity 미이식. Track 재계산은 F20으로 분리) | Visit callbacks / RebuildDay (팁) | `70e7bb0`… / `9ffd211` |
 | F19 | Track에서 Visit Point 제외 | visit_id Point는 트랙 제외·경계 분리 | `업스트림에 맡김` @1.22.0 | `Tracks::StationaryStops` | `17c7422` / — (검증. 잔여 갭 → F20) |
 | F20 | Visit 전후 Track 재계산 | WebUI/API suggested·confirmed Visit 유입·삭제 시 이웃 Visit 범위 Track rebuild + visit_id 제외(잔여 갭) | `유지 중` | `Tracks::RebuildAroundVisit`, Visit callback, segmentation/SQL | — / (본 브랜치) |
+| F22 | Timeline 의 Visit 종료시간 표시 | 시작 시각 아래 종료 시각. `.visit-status-dot`은 행 위·아래 같은 여백의 세로 막대(`--tl-dot-y`·`--tl-dot-bottom` 각 0.45rem, `.visit-row` padding-top 0.42rem). place id는 `#id`만, 종료 시각은 `oklch(var(--bc) / 0.4)`와 앞의 `- ` | `유지 중` | `map/timeline_feeds/_visit_entry.html.erb`, `maps_maplibre_timeline_feed.css` | — / `4a6c91962` + 본 커밋 |
 
 ### 도메인 메모 (F16–F19)
 

@@ -93,9 +93,8 @@ ID는 바꾸지 않는다. 포기하거나 업스트림에 맡겨도 행은 남�
 | F15 | Visit Card Place ID 표시 | 카드에 place id. 1.22 추가 수정: `Place #%{id}`를 따옴표로 감싸 YAML `#` 주석으로 id가 잘리지 않게 한다 | `고쳐 반영` | `visit_card.js`, timeline visit row, `config/locales` `*.place_id`, `spec/regressions/place_id_locale_interpolation_spec.rb` | `b62179f` / `a5898f1` → 1.22: 2e015dfd7, `8acef9090` |
 | F16 | Place 이름 매칭 (수동 Create) | 50m 내 **동명** Place 재사용, 없으면 생성 | `고쳐 반영` | `visits/create.rb` (`place_finder.rb`는 upstream 동일 계약) | `66fc9bb` / `c9c6eb6` → 1.22: eb3971e94 |
 | F17 | 수동 Visit에 `visit_id` 할당 | 시간 범위 Point에 visit_id | `그대로 반영` | `visits/create.rb` | `5b9eb1c` / `612afb1` → 1.22: eb3971e94 |
-| F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산 | `포기` @1.22.0 (velocity 미이식. Track 재계산은 F20으로 분리) | Visit callbacks / RebuildDay (팁) | `70e7bb0`… / `9ffd211` |
+| F18 | Visit SideEffects (velocity) | 생성 시 velocity 0, 삭제 시 복원 + Track/Stats 재계산. 1.22 릴리즈 수정: Visit이 들어오면 이전 Visit부터 다음 Visit까지 Track을 재계산한다 | `포기` @1.22.0 (velocity 미이식. 범위 재계산은 릴리즈 수정) | Visit callbacks, `Tracks::RebuildAroundVisit` | `70e7bb0`… / `9ffd211` → 1.22: `358349cbc` |
 | F19 | Track에서 Visit Point 제외 | visit_id Point는 트랙 제외·경계 분리 | `업스트림에 맡김` @1.22.0 | `Tracks::StationaryStops` | `17c7422` / — (검증. 잔여 갭 → F20) |
-| F20 | Visit 전후 Track 재계산 | WebUI/API suggested·confirmed Visit 유입·삭제 시 이웃 Visit 범위 Track rebuild + visit_id 제외(잔여 갭) | `유지 중` | `Tracks::RebuildAroundVisit`, Visit callback, segmentation/SQL | — / (본 브랜치) |
 | F22 | Timeline 의 Visit 종료시간 표시 | 시작 시각 아래 종료 시각. `.visit-status-dot`은 행 위·아래 같은 여백의 세로 막대(`--tl-dot-y`·`--tl-dot-bottom` 각 0.45rem, `.visit-row` padding-top 0.42rem). place id는 `#id`만, 종료 시각은 `oklch(var(--bc) / 0.4)`와 앞의 `- ` | `유지 중` | `map/timeline_feeds/_visit_entry.html.erb`, `maps_maplibre_timeline_feed.css` | — / `4a6c91962` + 본 커밋 |
 
 ### 도메인 메모 (F16–F19)
@@ -104,15 +103,14 @@ ID는 바꾸지 않는다. 포기하거나 업스트림에 맡겨도 행은 남�
 
 - **1.14.0 사이클:** `F16 → F17 → F19`를 가져왔다. **F18은 미룸** (velocity는 그때 버리지 않았다. F19만으로 Track 분리를 쓰며 필요성을 다시 보았다).
 - UI 의존 `F13`은 Create 계약(F16/F17) + F14 좌표 인프라 이후 반영이 끝났다.
-- **1.22.0 사이클:** `F14`는 1.21에, `F19`는 1.22에 **업스트림에 맡김** (우리 코드 없음, 검증 필수). `F16`·`F13`은 고쳐 반영, `F17`은 그대로 반영. `F18`의 velocity는 **포기**.
-- **F20:** 1.22에서 빠진 Visit→Track rebuild를 이웃 Visit 범위로 복원. StationaryStops가 놓치는 짧은/반경 밖 수동 Visit은 `visit_id` 제외로 보완. 기계 감지 insert는 rebuild 생략.
+- **1.22.0 사이클:** `F14`는 1.21에, `F19`는 1.22에 **업스트림에 맡김** (우리 코드 없음, 검증 필수). `F16`·`F13`은 고쳐 반영, `F17`은 그대로 반영. `F18`의 velocity는 **포기**. Visit이 들어오면 이전 Visit부터 다음 Visit까지 Track 재계산은 F18의 1.22 릴리즈 수정.
 
 핵심 파일(1.14 sync 기준):
 
 - `app/services/visits/create.rb`
 - `app/services/visits/place_finder.rb`
 - `app/services/tracks/segmentation.rb`
-- `app/services/tracks/rebuild_around_visit.rb` (F20)
+- `app/services/tracks/rebuild_around_visit.rb` (F18)
 - `app/javascript/maps_maplibre/…` (Select Area · VisitCard)
 
 ---

@@ -212,11 +212,10 @@ upstream 1.14.0 위에 fork 카탈로그(F01–F19)를 cherry-pick 없이 **기�
 
 - F18 velocity SideEffects — `raw_data` 복원 경로 불가.
 
-### F20 — Visit 전후 Track 재계산 (복원)
+### F18 — 범위 재계산 (1.22 릴리즈 수정)
 
-- Visit(WebUI/API, suggested·confirmed) 생성·확인·삭제 시 **이웃 Visit 범위** Track rebuild
-- 짧은/반경 밖 수동 Visit을 위해 `visit_id` Point Track 제외(F19 잔여 갭) 병행
-- 기계 감지 suggested insert는 rebuild 생략
+- 제목은 Visit SideEffects (velocity). velocity 복원은 계속 포기
+- Visit이 들어오면 이전 Visit부터 다음 Visit까지 Track을 재계산한다
 
 ### F15 — Place ID 로케일 따옴표 (1.22 추가 수정)
 
@@ -253,4 +252,4 @@ git show --stat <commit-hash>
 
 ---
 
-*마지막 갱신: 2026-11-28 (사이클 1.14.0→1.22.0 open, F15 추가 수정, F22)*
+*마지막 갱신: 2026-11-28 (사이클 1.14.0→1.22.0 open, F15 추가 수정, F18 범위 재계산, F22)*

@@ -1,0 +1,28 @@
+ko:
+  places:
+    polish:
+      selected: 선택됨
+      details: Details
+      location: 위치
+      notifications: 알림
+      visits: 방문
+      manage: 관리
+      total_time: 총 시간
+      avg_dwell: 평균 체류
+      statistics: 통계
+      merge_duplicate: 중복 병합
+      back_to_places: 장소로 돌아가기
+      clear: 지우기
+    inline_tags:
+      new_tag: 새 태그
+      name: 태그 이름
+      emoji: 이모지(선택)
+      create: 태그 만들기
+    drawer:
+      hidden_by_tag: '태그 %{name}로 숨김, %{radius} m'
+      geofence_events: 최근 지오펜스 이벤트
+      no_geofence_events: 입장·퇴장 이벤트가 아직 없습니다.
+      geofence_disabled: 이 장소의 이벤트를 기록하려면 입장·퇴장 알림을 켜세요.
+  javascript:
+    map_info:
+      geofence_boundary: 지오펜스 경계

@@ -1,0 +1,108 @@
+---
+ko:
+  achievements:
+    collections:
+      title: 개인 컬렉션
+      intro: '기록된 역사에서 도시 탐험, 즐겨 찾는 장소 재방문, 계절 수집, 국립공원과 지리적 이정표를 모으세요.'
+      places: 컬렉션용 장소
+      search_places: 내 장소 검색
+      add: 컬렉션에 추가
+      remove: 컬렉션에서 제거
+      no_places: 일치하는 장소가 없습니다. 장소를 만들거나 저장해 개인 컬렉션을 시작하세요.
+      filter_series: 컬렉션 필터
+      all_series: 모든 컬렉션
+      open_map: 탐험 지도 열기
+      fog_rules: 기록된 모든 역사는 도시 카드와 공유되는 고정 H3 셀을 엽니다. 유효한 지상 관측 한 번이 셀을 엽니다. 비행은 제외됩니다. 날짜 범위를 바꾸면 첫 발견이 강조되고 이전 셀은 열린 채로
+        유지됩니다.
+      cities: 도시 탐험
+      city_catalog_note: '초기 경계 카탈로그는 베를린, 함부르크, 드레스덴을 포함합니다. 도시는 숲과 외곽을 포함한 행정 육지 경계를 사용합니다. 더 많은 도시는 버전 있는 카탈로그 업데이트로 추가할
+        수 있으며, 지원되지 않는 도시는 원으로 대체되지 않습니다.'
+      catalog_preparing: 도시와 공원 경계 카탈로그를 백그라운드에서 준비 중입니다.
+      city_progress: '%{percent}% · %{area} km² 개방'
+      city_public_level: '도시 탐험 · %{percent}% 레벨'
+      city_next: '다음 레벨: %{target}% · %{remaining}퍼센트포인트 남음.'
+      source_boundary: 원본 경계 보기
+      share_mosaic: 공개 카드에 내 탐험 모자이크 포함
+      mosaic_privacy_note: '공개 카드는 보통 일반 도시 실루엣과 달성 레벨을 보여 줍니다. 공유 모자이크는 비공개 구역에 닿는 모든 셀을 숨기고 공개 진행률을 다시 계산하므로, 비공개 합계보다 낮을
+        수 있습니다.'
+      calculating: 기록된 역사를 계산 중입니다. 백그라운드 계산이 끝나면 카드가 나타납니다.
+      updating: 컬렉션을 업데이트 중입니다. 계산이 끝날 때까지 마지막으로 일관된 결과가 표시됩니다.
+      calculation_failed: 계산을 마치지 못했습니다. 이전 컬렉션은 유지되며 다시 시도됩니다.
+      timezone_required: 이 장소의 단일 시간대를 확인할 수 없습니다. 아래에서 현지 IANA 시간대를 선택하세요.
+      timezone: '장소 시간대: %{zone}'
+      choose_timezone: 이 장소의 시간대 선택
+      private_place: 이 장소는 비공개 구역에 포함됩니다. 개인 카드는 공개할 수 없습니다.
+      notification_title: '%{name} 잠금 해제!'
+      notification_content: 기록된 역사로 개인 컬렉션에 새 카드가 열렸습니다.
+      national_parks: 국립공원
+      park_progress: '현지 하루 기준 관측 %{minutes}/30분'
+      parks_progress: '국립공원: %{count} · 다음 레벨 %{target}'
+      regions_progress: '지역 %{count}/%{target}'
+      observed_time: '관측 %{minutes}분'
+      nature_catalog_note: '이 파일럿 카탈로그에는 하르츠, 작센 스위스, 아이펠 국립공원이 포함됩니다. 엄선된 지역 선택이며 전체 목록이 아닙니다. 추가 공원은 버전 있는 카탈로그 업데이트가 필요합니다.'
+      public_privacy_note: '공개 진행률은 비공개 구역 안의 관측을 제외하므로 비공개 진행률보다 낮을 수 있습니다. 경계, 시간대 또는 비공개 구역 변경이 적용되는 동안 공개 페이지와 이미지는 일시
+        중지됩니다.'
+      milestones:
+        north_south: 적도 양쪽
+        east_west: 동과 서
+        four_quarters: 세계의 네 사분면
+        arctic: 북극권 너머
+        antarctic: 남극권 너머
+      regions:
+        north: 북반구
+        south: 남반구
+        east: 동반구
+        west: 서반구
+        ne: 북동 사분면
+        nw: 북서 사분면
+        se: 남동 사분면
+        sw: 남서 사분면
+        arctic: 북극 지역
+        antarctic: 남극 지역
+      recorded_visit: 기록된 방문
+      last_visit: '마지막 기록 방문: %{date}'
+      return_waiting: 새 방문으로 재방문을 완료합니다
+      return_years:
+        one: 최소 1년 후 재방문
+        other: '최소 %{count}년 후 재방문'
+      seasons_progress: '계절 %{count}/4'
+      series:
+        return: 재방문
+        seasons: 모든 계절
+        year_round: 연중
+        city: 도시 탐험가
+        park: 국립공원
+        parks: 자연
+        milestone: 지리적 이정표
+      description:
+        return: 기록된 방문 사이에 긴 공백 후 장소를 다시 방문하세요.
+        seasons: 같은 장소를 연중 다른 시기에 다시 방문하세요.
+        city: 도시의 육지를 기록된 H3 셀 단위로 여세요.
+        park: 국립공원 안에서 시간을 보내세요.
+        parks: 여러 국립공원 방문을 모으세요.
+        milestone: 세계 여러 지역에서 시간을 기록하세요.
+      rules:
+        return: '이전 자격 방문 이후 달력 기준 1·3·5년의 공백이 지난 뒤 최소 20분 방문하면 레벨을 얻습니다. 공백은 저장된 역사를 설명하며, 누락된 기록만으로 부재를 증명할 수는 없습니다.'
+        seasons: 각 달력 계절에 최소 20분인 방문을 네 번 모으세요. 다른 해의 방문이어도 되며 시작 시각이 최소 7일 떨어져야 합니다. 열대에서는 네 구간이 월로 표시됩니다. 계절은 장소의 시간대를 사용합니다.
+        city: '도시 행정 육지 면적의 1%, 5%, 10%, 25%에서 레벨이 열립니다. 이상치가 아닌 기록 포인트가 해상도 9 H3 셀을 엽니다. 단, 인식된 비행 중에는 제외됩니다. 물은 제외됩니다. 이
+          비율은 열린 셀 면적을 측정하며 걸은 거리가 아니고, 100% 목표는 없습니다. 지도와 카드는 같은 공개 탐험 스냅샷을 사용합니다.'
+        park: '현지 하루 안에 공원 경계에서 관측 30분을 기록하세요. 연속 포인트는 최대 10분 간격이어야 하며, 그 사이 시간도 집계됩니다. 겹치는 기기는 한 번만 셉니다. 이동은 허용되며 비행과 이상치는
+          제외됩니다.'
+        parks: '카탈로그에서 자격 있는 서로 다른 국립공원 1·5·15곳 후 레벨이 열립니다. 각 공원은 현지 하루 관측 30분이 필요합니다. 지역 카탈로그는 불완전하고 버전이 있으며, 각 공원은 안정적인
+          식별자를 유지합니다.'
+        milestone: '필요한 각 지역에서 현지 하루 기준 최소 관측 10분을 기록하세요. 포인트 쌍은 최대 10분 간격이어야 하며 그 사이 시간도 집계됩니다. 겹치는 기기는 한 번만 셉니다. 비행과 이상치는
+          제외됩니다. 10 km 여백은 적도, 경도 0°와 180°, 고정 게임 위도 66.56°의 극 평행선을 제외합니다. 이는 각 쪽의 존재를 기록하며 교차 증명은 아닙니다.'
+      seasons:
+        winter: 겨울
+        spring: 봄
+        summer: 여름
+        autumn: 가을
+      periods:
+        '0': 12월–2월
+        '1': 3월–5월
+        '2': 6월–8월
+        '3': 9월–11월
+      level_history: 레벨 기록
+      history_earned: 잠금 해제됨
+      history_revoked: 취소됨
+      detected_on: '%{date}에 감지'

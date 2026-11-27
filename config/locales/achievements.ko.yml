@@ -1,0 +1,137 @@
+ko:
+  achievements:
+    unlocks:
+      kicker: 새 발견
+      announcement: 카드 잠금 해제
+      remaining:
+        one: 이 덱의 마지막 카드
+        other: '이 덱에 카드 %{count}장'
+      next: 다음 카드
+      done: 완료
+      dismiss: 이 덱 닫기
+      view: '컬렉션에서 %{name} 보기'
+    ui:
+      themes: 테마 컬렉션
+      themes_hint: 공통 테마를 가진 국가들의 작은 컬렉션입니다.
+      theme_visit_note: 방문한 국가는 지역이 미완성이어도 이 컬렉션에 반영됩니다.
+      title: 업적
+      summary: 요약
+      continents: 대륙
+      countries: 국가
+      regions: 지역
+      world_explored: 탐험한 세계
+      collection_hint: '대륙, 국가, 지역별로 컬렉션을 살펴보세요.'
+      collection_navigation: 업적 컬렉션
+      browse: 컬렉션 둘러보기
+      breadcrumb: 경로
+      getting_started: 위치 데이터를 기록하거나 가져와 이 카드를 탐험하기 시작하세요.
+      import_data: 데이터 가져오기
+      collection_progress: '%{collection} 탐험'
+      completed_on: '%{date}에 잠금 해제'
+      remaining:
+        one: 1개 남음
+        other: '%{count}개 남음'
+      share: 공유
+      enable_sharing: 공개 링크 만들기
+      countries_progress: '방문한 국가 %{count} / %{total}'
+      regions_progress: '탐험한 지역 %{count} / %{total}'
+      browse_children: '%{collection} 둘러보기'
+      search_children: '%{collection} 검색'
+      collection_pages: 컬렉션 페이지
+      prev_page: 이전 페이지
+      next_page: 다음 페이지
+      disable_sharing: 공유 끄기
+      public_link: 공개 링크
+      preview_hint: 카드를 선택하면 자세히 볼 수 있습니다.
+      search_cards: 카드 검색
+      card_status: 카드 상태
+      apply: 적용
+      clear: 필터 지우기
+      page_range: '카드 %{total}장 중 %{first}–%{last}'
+      no_results: 일치하는 카드 없음
+      no_results_hint: 다른 이름을 시도하거나 필터를 지워 전체 컬렉션을 보세요.
+      about_boundaries: 경계 데이터 안내
+      boundaries_note: '지역 감지는 대략적인 경계를 기반으로 합니다. 출처:'
+      threshold_note:
+        one: '장소는 %{count}분 체류 후 집계됩니다.'
+        other: '장소는 %{count}분 체류 후 집계됩니다.'
+      status:
+        all: 모든 카드
+        unlocked: 잠금 해제됨
+        in_progress: 진행 중
+        locked: 잠김
+    cards:
+      themes:
+        thematic_benelux_v1: 베네룩스
+        thematic_baltics_v1: 발트
+        thematic_scandinavia_v1: 스칸디나비아
+      explorer_name: '%{place} 탐험가'
+      description:
+        thematic_set: '%{place}의 모든 국가 %{count}곳에서 시간을 보내세요.'
+        continent: '%{place}의 모든 국가와 영토 %{count}곳에서 시간을 보내세요.'
+        regions: '%{place}의 모든 지역 %{count}곳에서 시간을 보내세요.'
+        country: '%{place}에서 시간을 보내세요.'
+      status:
+        visited_on: '방문 · %{date}'
+        locked: 잠김
+        unlocked: 잠금 해제됨
+        unlocked_on: '잠금 해제 · %{date}'
+        in_progress: 진행 중
+        visited: 방문함
+      metric:
+        explored: 탐험함
+        not_yet_explored: 아직 탐험하지 않음
+        percent_explored: '%{percent}% 탐험'
+        countries: '국가 %{count}/%{total}'
+        regions: '지역 %{count}/%{total}'
+      rarity:
+        common: 일반
+        rare: 희귀
+        epic: 영웅
+        legendary: 전설
+      boundary_unavailable: 경계를 사용할 수 없음
+      open_label: '%{name} 열기 — %{status}'
+      progress_label: 탐험 진행률
+      details_regions: '지역 %{count}/%{total}'
+    modal:
+      detail: 업적 상세
+      close: 닫기
+      share: 공유
+      embed: 임베드
+      public_link: 공개 링크
+      embed_code: 임베드 코드
+      iframe_title: Dawarich 업적
+      copy: 복사
+      copied: 복사됨
+      stop_sharing: 공유 중지
+      share_error: 공유를 업데이트하지 못했습니다. 다시 시도해 주세요.
+      copy_error: 자동으로 복사하지 못했습니다. 링크나 코드를 선택해 직접 복사하세요.
+    public:
+      not_found: 공유된 업적을 찾을 수 없거나 더 이상 사용할 수 없습니다
+      social_description: '%{progress} 탐험. Dawarich로 추적.'
+      tracked_with_html: '%{link}(으)로 추적'
+      city_headline: '%{city}의 %{percent}% 탐험'
+      levels: 레벨
+      next_level: '다음 레벨: %{percent}%'
+      cta_title: 이미 이 업적을 얻었을 수도 있습니다.
+      cta_body: 위치 기록을 가져와 어디에 체크인하지 않고도 어떤 카드가 열리는지 확인하세요.
+      cta_button: 내 카드 보기
+      copy_link: 링크 복사
+      download_share_image: 공유 이미지 다운로드
+      ladder_state:
+        done: 도달
+        current: 현재 레벨
+        next: 아직 미도달
+      tracked_footnote: '오픈 소스, 셀프호스트 또는 Cloud'
+    notifications:
+      region_title: '%{region} 탐험!'
+      region_content: '%{achievement}: 지역 %{count}/%{total} 방문.'
+      country_content: '%{achievement}: 국가 %{count}/%{total} 방문.'
+      digest_title: '새 지역 %{count}곳 탐험!'
+      digest_content: 최신 데이터로 새 지역이 열렸습니다 — 업적 페이지에서 모두 확인하세요.
+      completion_title: '%{achievement} 완료!'
+      completion_country: 이 국가를 탐험했습니다.
+      completion_target_regions: '지역 %{count}곳을 탐험했습니다.'
+      completion_all_regions: '모든 지역 %{count}곳을 탐험했습니다.'
+      completion_target_countries: '국가 %{count}곳을 탐험했습니다.'
+      completion_all_countries: '모든 국가 %{count}곳을 탐험했습니다.'
